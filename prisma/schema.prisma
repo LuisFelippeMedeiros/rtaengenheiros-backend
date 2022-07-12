@@ -13,7 +13,8 @@ model User {
   id          String   @id @default(uuid())
   name        String
   email       String   @unique
-  cpf         Decimal  @unique
+  password    String
+  cpf         String   @unique
   rg          String
   dateOfBirth DateTime
   bank        String
@@ -28,9 +29,21 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  role   Role   @relation(fields: [roleId], references: [id])
-  roleId String
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String
   @@map("users")
+}
+
+model Group {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roles RolesGroup[]
+  @@map("groups")
+  User User[]
 }
 
 model Role {
@@ -40,6 +53,17 @@ model Role {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User[]
+  groups RolesGroup[]
+
   @@map("roles")
+}
+
+model RolesGroup {
+  id      String @id @default(uuid())
+  roleId  String
+  Group   Group  @relation(fields: [groupId], references: [id])
+  groupId String
+  Role    Role   @relation(fields: [roleId], references: [id])
+
+  @@map("rolesGroup")
 }

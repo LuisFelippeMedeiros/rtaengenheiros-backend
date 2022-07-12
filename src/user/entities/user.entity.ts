@@ -1,8 +1,9 @@
-export type UserDTO = {
+export class User {
   id?: string;
   name: string;
   email: string;
-  cpf: number;
+  password: string;
+  cpf: string;
   rg: string;
   dateOfBirth: Date;
   bank: string;
@@ -14,5 +15,5 @@ export type UserDTO = {
   number: string;
   complement: string;
   active: boolean;
-  roleId: string;
-};
+  groupId: string;
+}
