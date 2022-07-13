@@ -7,6 +7,7 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto extends User {
   @IsString()
@@ -29,6 +30,7 @@ export class CreateUserDto extends User {
   rg: string;
 
   @IsDate()
+  @Type(() => Date)
   dateOfBirth: Date;
 
   @IsString()
