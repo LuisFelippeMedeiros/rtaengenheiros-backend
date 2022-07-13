@@ -42,8 +42,8 @@ model Group {
   updatedAt DateTime @updatedAt
 
   roles RolesGroup[]
+  User  User[]
   @@map("groups")
-  User User[]
 }
 
 model Role {
