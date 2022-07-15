@@ -14,6 +14,14 @@ export class UserService {
       password: await bcrypt.hash(createUserDto.password, 10),
     };
 
+    const userExists = this.findByCPF(data.cpf);
+
+    if (userExists) {
+      throw new Error(
+        'Este CPF já se encontra cadastrado em nossa base de dados ',
+      );
+    }
+
     const createdUser = await this.prisma.user.create({ data });
 
     return {
@@ -23,7 +31,7 @@ export class UserService {
   }
 
   findAll() {
-    return `This action returns all user`;
+    return this.prisma.user.findMany();
   }
 
   findByEmail(email: string) {
@@ -32,11 +40,58 @@ export class UserService {
     });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  findByName(name: string) {
+    return this.prisma.user.findFirst({
+      where: { name },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  findByCPF(cpf: string) {
+    return this.prisma.user.findUnique({
+      where: { cpf },
+    });
+  }
+
+  findById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const update = {
+      where: {
+        id: id,
+      },
+      data: {
+        name: updateUserDto.name,
+        dateOfBirth: updateUserDto.dateOfBirth,
+        bank: updateUserDto.bank,
+        agency: updateUserDto.agency,
+        account: updateUserDto.account,
+        pix: updateUserDto.pix,
+        address: updateUserDto.address,
+        district: updateUserDto.district,
+        number: updateUserDto.number,
+        complement: updateUserDto.complement,
+        active: updateUserDto.active,
+        groupId: updateUserDto.groupId,
+      },
+    };
+
+    return this.prisma.user.update(update);
+  }
+
+  async deactivate(id: string, updateUserDto: UpdateUserDto) {
+    const update = {
+      where: {
+        id: id,
+      },
+      data: {
+        active: updateUserDto.active,
+      },
+    };
+
+    return this.prisma.user.update(update);
   }
 }
