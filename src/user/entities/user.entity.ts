@@ -14,6 +14,7 @@ export class User {
   district: string;
   number: string;
   complement: string;
+  telephone: string;
   active: boolean;
   groupId: string;
 }
