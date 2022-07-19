@@ -6,7 +6,6 @@ datasource db {
   provider          = "postgresql"
   url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-
 }
 
 model User {
@@ -32,6 +31,11 @@ model User {
 
   group   Group  @relation(fields: [groupId], references: [id])
   groupId String
+  State   State? @relation(fields: [stateId], references: [id])
+  stateId Int?
+  City    City?  @relation(fields: [cityId], references: [id])
+  cityId  Int?
+
   @@map("users")
 }
 
@@ -44,6 +48,7 @@ model Group {
 
   roles RolesGroup[]
   User  User[]
+
   @@map("groups")
 }
 
@@ -67,4 +72,29 @@ model RolesGroup {
   Role    Role   @relation(fields: [roleId], references: [id])
 
   @@map("rolesGroup")
+}
+
+model City {
+  id        Int      @id
+  name      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  State     State    @relation(fields: [stateId], references: [id])
+  stateId   Int
+  User      User[]
+
+  @@map("cities")
+}
+
+model State {
+  id        Int      @id
+  name      String
+  initials  String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  City City[]
+  User User[]
+
+  @@map("states")
 }
