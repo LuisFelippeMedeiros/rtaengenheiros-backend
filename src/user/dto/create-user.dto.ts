@@ -29,6 +29,9 @@ export class CreateUserDto extends User {
   @IsString()
   rg: string;
 
+  @IsString()
+  telephone: string;
+
   @IsDate()
   @Type(() => Date)
   dateOfBirth: Date;
