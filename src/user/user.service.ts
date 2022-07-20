@@ -14,11 +14,19 @@ export class UserService {
       password: await bcrypt.hash(createUserDto.password, 10),
     };
 
-    const userExists = this.findByCPF(data.cpf);
+    const cpfExists = await this.findByCPF(data.cpf);
 
-    if (userExists) {
+    if (cpfExists) {
       throw new Error(
-        'Este CPF já se encontra cadastrado em nossa base de dados ',
+        'Este CPF já se encontra cadastrado em nossa base de dados, favor verificar!',
+      );
+    }
+
+    const emailExists = await this.findByEmail(data.email);
+
+    if (emailExists) {
+      throw new Error(
+        'Este e-mail já se encontra cadastrado em nossa base de dados, favor verificar!',
       );
     }
 

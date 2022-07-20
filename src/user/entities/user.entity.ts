@@ -5,6 +5,8 @@ export class User {
   password: string;
   cpf: string;
   rg: string;
+  stateId: number;
+  cityId: number;
   dateOfBirth: Date;
   bank: string;
   agency: string;

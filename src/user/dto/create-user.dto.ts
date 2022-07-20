@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsDate,
   IsEmail,
+  IsNumber,
   IsString,
   Matches,
   MinLength,
@@ -35,6 +36,12 @@ export class CreateUserDto extends User {
   @IsDate()
   @Type(() => Date)
   dateOfBirth: Date;
+
+  @IsNumber()
+  stateId: number;
+
+  @IsNumber()
+  cityId: number;
 
   @IsString()
   bank: string;
