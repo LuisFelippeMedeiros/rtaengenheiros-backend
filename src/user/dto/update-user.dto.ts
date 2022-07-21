@@ -10,7 +10,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsDate()
   @Type(() => Date)
-  dateOfBirth: Date;
+  date_of_birth: Date;
 
   @IsString()
   bank: string;
@@ -19,10 +19,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   agency: string;
 
   @IsNumber()
-  cityId?: number;
+  city_id?: number;
 
   @IsNumber()
-  stateId?: number;
+  state_id?: number;
 
   @IsString()
   account: string;
@@ -46,5 +46,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   active?: boolean;
 
   @IsString()
-  groupId: string;
+  group_id: string;
 }

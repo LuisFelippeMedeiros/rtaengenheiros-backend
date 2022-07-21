@@ -7,7 +7,7 @@ CREATE TABLE "users" (
     "cpf" TEXT NOT NULL,
     "rg" TEXT NOT NULL,
     "telephone" TEXT,
-    "dateOfBirth" TIMESTAMP(3) NOT NULL,
+    "date_of_birth" TIMESTAMP(3) NOT NULL,
     "bank" TEXT NOT NULL,
     "agency" TEXT NOT NULL,
     "account" TEXT NOT NULL,
@@ -17,11 +17,11 @@ CREATE TABLE "users" (
     "number" TEXT NOT NULL,
     "complement" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "groupId" TEXT NOT NULL,
-    "stateId" INTEGER,
-    "cityId" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "group_id" TEXT NOT NULL,
+    "state_id" INTEGER,
+    "city_id" INTEGER,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -31,8 +31,8 @@ CREATE TABLE "groups" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "groups_pkey" PRIMARY KEY ("id")
 );
@@ -42,19 +42,19 @@ CREATE TABLE "roles" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "rolesGroup" (
+CREATE TABLE "rolesgroup" (
     "id" TEXT NOT NULL,
-    "roleId" TEXT NOT NULL,
-    "groupId" TEXT NOT NULL,
+    "role_id" TEXT NOT NULL,
+    "group_id" TEXT NOT NULL,
 
-    CONSTRAINT "rolesGroup_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "rolesgroup_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -62,8 +62,8 @@ CREATE TABLE "cities" (
     "id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "stateId" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "state_id" INTEGER NOT NULL,
 
     CONSTRAINT "cities_pkey" PRIMARY KEY ("id")
 );
@@ -74,7 +74,7 @@ CREATE TABLE "states" (
     "name" TEXT NOT NULL,
     "initials" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "states_pkey" PRIMARY KEY ("id")
 );
@@ -98,19 +98,19 @@ CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
 CREATE UNIQUE INDEX "states_initials_key" ON "states"("initials");
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "users" ADD CONSTRAINT "users_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_cityId_fkey" FOREIGN KEY ("cityId") REFERENCES "cities"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "users" ADD CONSTRAINT "users_city_id_fkey" FOREIGN KEY ("city_id") REFERENCES "cities"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_stateId_fkey" FOREIGN KEY ("stateId") REFERENCES "states"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "users" ADD CONSTRAINT "users_state_id_fkey" FOREIGN KEY ("state_id") REFERENCES "states"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "rolesGroup" ADD CONSTRAINT "rolesGroup_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "rolesgroup" ADD CONSTRAINT "rolesgroup_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "rolesGroup" ADD CONSTRAINT "rolesGroup_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "rolesgroup" ADD CONSTRAINT "rolesgroup_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "cities" ADD CONSTRAINT "cities_stateId_fkey" FOREIGN KEY ("stateId") REFERENCES "states"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "cities" ADD CONSTRAINT "cities_state_id_fkey" FOREIGN KEY ("state_id") REFERENCES "states"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

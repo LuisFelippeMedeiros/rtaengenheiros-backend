@@ -5,9 +5,9 @@ export class User {
   password: string;
   cpf: string;
   rg: string;
-  stateId: number;
-  cityId: number;
-  dateOfBirth: Date;
+  state_id: number;
+  city_id: number;
+  date_of_birth: Date;
   bank: string;
   agency: string;
   account: string;
@@ -18,5 +18,5 @@ export class User {
   complement: string;
   telephone: string;
   active: boolean;
-  groupId: string;
+  group_id: string;
 }
