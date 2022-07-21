@@ -8,10 +8,4 @@ export class StateService {
   findAll() {
     return this.prisma.state.findMany();
   }
-
-  findByName(name: string) {
-    return this.prisma.state.findFirst({
-      where: { name },
-    });
-  }
 }

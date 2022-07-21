@@ -9,9 +9,4 @@ export class StateController {
   findAll() {
     return this.stateService.findAll();
   }
-
-  @Get(':name')
-  findOne(@Param('name') name: string) {
-    return this.stateService.findByName(name);
-  }
 }
