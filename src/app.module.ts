@@ -5,9 +5,11 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { StateModule } from './state/state.module';
 import { CityModule } from './city/city.module';
+import { RoleModule } from './role/role.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
-  imports: [UserModule, AuthModule, StateModule, CityModule],
+  imports: [UserModule, AuthModule, StateModule, CityModule, RoleModule, GroupModule],
   controllers: [],
   providers: [
     {
