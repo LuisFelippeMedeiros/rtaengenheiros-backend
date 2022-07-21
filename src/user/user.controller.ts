@@ -7,6 +7,7 @@ import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
   @IsPublic()
   @Post('create-user')
   create(@Body() createUserDto: CreateUserDto) {
