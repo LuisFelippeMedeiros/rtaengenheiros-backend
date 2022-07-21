@@ -35,13 +35,13 @@ export class CreateUserDto extends User {
 
   @IsDate()
   @Type(() => Date)
-  dateOfBirth: Date;
+  date_of_birth: Date;
 
   @IsNumber()
-  stateId: number;
+  state_id: number;
 
   @IsNumber()
-  cityId: number;
+  city_id: number;
 
   @IsString()
   bank: string;
@@ -71,5 +71,5 @@ export class CreateUserDto extends User {
   active: boolean;
 
   @IsString()
-  groupId: string;
+  group_id: string;
 }

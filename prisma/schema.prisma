@@ -9,42 +9,42 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  name        String
-  email       String   @unique
-  password    String
-  cpf         String   @unique
-  rg          String
-  telephone   String?
-  dateOfBirth DateTime
-  bank        String
-  agency      String
-  account     String
-  pix         String   @unique
-  address     String
-  district    String
-  number      String
-  complement  String
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password      String
+  cpf           String   @unique
+  rg            String
+  telephone     String?
+  date_of_birth DateTime
+  bank          String
+  agency        String
+  account       String
+  pix           String   @unique
+  address       String
+  district      String
+  number        String
+  complement    String
+  active        Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
-  group   Group  @relation(fields: [groupId], references: [id])
-  groupId String
-  State   State? @relation(fields: [stateId], references: [id])
-  stateId Int?
-  City    City?  @relation(fields: [cityId], references: [id])
-  cityId  Int?
+  group    Group  @relation(fields: [group_id], references: [id])
+  group_id String
+  State    State? @relation(fields: [state_id], references: [id])
+  state_id Int?
+  City     City?  @relation(fields: [city_id], references: [id])
+  city_id  Int?
 
   @@map("users")
 }
 
 model Group {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String   @unique
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   roles RolesGroup[]
   User  User[]
@@ -53,11 +53,11 @@ model Group {
 }
 
 model Role {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  name       String   @unique
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   groups RolesGroup[]
 
@@ -65,33 +65,33 @@ model Role {
 }
 
 model RolesGroup {
-  id      String @id @default(uuid())
-  roleId  String
-  Group   Group  @relation(fields: [groupId], references: [id])
-  groupId String
-  Role    Role   @relation(fields: [roleId], references: [id])
+  id       String @id @default(uuid())
+  role_id  String
+  Group    Group  @relation(fields: [group_id], references: [id])
+  group_id String
+  Role     Role   @relation(fields: [role_id], references: [id])
 
-  @@map("rolesGroup")
+  @@map("rolesgroup")
 }
 
 model City {
-  id        Int      @id
-  name      String
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  State     State    @relation(fields: [stateId], references: [id])
-  stateId   Int
-  User      User[]
+  id         Int      @id
+  name       String
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  State      State    @relation(fields: [state_id], references: [id])
+  state_id   Int
+  User       User[]
 
   @@map("cities")
 }
 
 model State {
-  id        Int      @id
-  name      String
-  initials  String   @unique
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id         Int      @id
+  name       String
+  initials   String   @unique
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
 
   City City[]
   User User[]
