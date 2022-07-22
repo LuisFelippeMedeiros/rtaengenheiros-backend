@@ -8,11 +8,11 @@ export class GroupService {
   constructor (private readonly prisma: PrismaService) {}
 
   create(createGroupDto: CreateGroupDto) {
-    return this.prisma.group.findMany();
+    return 'This action adds a new group';
   }
 
   findAll() {
-    return `This action returns all group`;
+    return this.prisma.group.findMany();
   }
 
   findOne(id: number) {
