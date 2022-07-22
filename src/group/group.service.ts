@@ -5,25 +5,82 @@ import { UpdateGroupDto } from './dto/update-group.dto';
 
 @Injectable()
 export class GroupService {
-  constructor (private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(createGroupDto: CreateGroupDto) {
-    return 'This action adds a new group';
+  async create(createGroupDto: CreateGroupDto) {
+    const data = {
+      ...createGroupDto,
+    };
+
+    const groupExist = await this.findByName(data.name);
+
+    if (groupExist) {
+      throw new Error(
+        'Grupo de função já cadastrado em nossa base de dados, favor verificar!',
+      );
+    }
+
+    await this.prisma.group.create({ data });
+
+    return data;
   }
 
-  findAll() {
+  async findAll() {
     return this.prisma.group.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} group`;
+  findByName(name: string) {
+    return this.prisma.group.findUnique({
+      where: {
+        name,
+      },
+    });
   }
 
-  update(id: number, updateGroupDto: UpdateGroupDto) {
-    return `This action updates a #${id} group`;
+  findById(name: string) {
+    return this.prisma.group.findUnique({
+      where: {
+        name,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} group`;
+  async update(id: string, updateGroupDto: UpdateGroupDto) {
+    const update = {
+      where: {
+        id: id,
+      },
+      data: {
+        name: updateGroupDto.name,
+        active: updateGroupDto.active,
+      },
+    };
+
+    const updatedGroup = await this.findByName(update.data.name);
+
+    if (updatedGroup == undefined || updatedGroup == null) {
+      return this.prisma.group.update(update);
+    }
+
+    if (updatedGroup.name == update.data.name && id !== updatedGroup.id) {
+      throw new Error(
+        'O nome do grupo modificado já se encontra cadastrado em nossa base de dados, favor verificar!',
+      );
+    }
+
+    return this.prisma.group.update(update);
+  }
+
+  async deactivate(id: string, updateGroupDto: UpdateGroupDto) {
+    const update = {
+      where: {
+        id: id,
+      },
+      data: {
+        active: updateGroupDto.active,
+      },
+    };
+
+    return this.prisma.group.update(update);
   }
 }

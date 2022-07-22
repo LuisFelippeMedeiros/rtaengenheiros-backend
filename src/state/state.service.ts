@@ -8,8 +8,8 @@ export class StateService {
   findAll() {
     return this.prisma.state.findMany({
       orderBy: {
-        name: 'asc'
-      }
+        name: 'asc',
+      },
     });
   }
 }
