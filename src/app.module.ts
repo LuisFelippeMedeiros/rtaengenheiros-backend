@@ -9,7 +9,14 @@ import { RoleModule } from './role/role.module';
 import { GroupModule } from './group/group.module';
 
 @Module({
-  imports: [UserModule, AuthModule, StateModule, CityModule, RoleModule, GroupModule],
+  imports: [
+    UserModule,
+    AuthModule,
+    StateModule,
+    CityModule,
+    RoleModule,
+    GroupModule,
+  ],
   controllers: [],
   providers: [
     {

@@ -6,9 +6,15 @@ import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 export class CityController {
   constructor(private readonly cityService: CityService) {}
 
-  @IsPublic()
+  
+
+  
+  
+    
+
   @Get('state/:id')
   find(@Param('id') ufId: number, @Query('name')filter: string) {
     return this.cityService.findByState(ufId, filter);
+
   }
 }

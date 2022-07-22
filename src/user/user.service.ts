@@ -73,7 +73,7 @@ export class UserService {
       },
       data: {
         name: updateUserDto.name,
-        dateOfBirth: updateUserDto.date_of_birth,
+        date_of_birth: updateUserDto.date_of_birth,
         bank: updateUserDto.bank,
         agency: updateUserDto.agency,
         account: updateUserDto.account,
@@ -83,7 +83,7 @@ export class UserService {
         number: updateUserDto.number,
         complement: updateUserDto.complement,
         active: updateUserDto.active,
-        groupId: updateUserDto.group_id,
+        group_id: updateUserDto.group_id,
       },
     };
 

@@ -1,1 +1,6 @@
-export class Role {}
+export class Role {
+  id?: string;
+  name: string;
+  active: boolean;
+  action: string;
+}
