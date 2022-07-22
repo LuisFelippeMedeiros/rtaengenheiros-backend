@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CityService } from './city.service';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
@@ -7,9 +7,8 @@ export class CityController {
   constructor(private readonly cityService: CityService) {}
 
   @IsPublic()
-  @Get(':state_id')
-  find(@Param('state_id') state_id: number) {
-    console.log('Id do Estado:' + state_id);
-    return this.cityService.findByState(state_id);
+  @Get('state/:id')
+  find(@Param('id') ufId: number, @Query('name')filter: string) {
+    return this.cityService.findByState(ufId, filter);
   }
 }

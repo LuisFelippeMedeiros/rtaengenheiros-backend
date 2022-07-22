@@ -6,6 +6,10 @@ export class StateService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.state.findMany();
+    return this.prisma.state.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    });
   }
 }
