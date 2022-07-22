@@ -9,7 +9,6 @@ export class CityController {
   @IsPublic()
   @Get(':state_id')
   find(@Param('state_id') state_id: number) {
-    console.log('Id do Estado:' + state_id);
     return this.cityService.findByState(state_id);
   }
 }
