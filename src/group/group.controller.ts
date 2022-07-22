@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('groups')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
-  @Post()
+  @IsPublic()
+  @Post('create-group')
   create(@Body() createGroupDto: CreateGroupDto) {
     return this.groupService.create(createGroupDto);
   }
-
+  @IsPublic()
   @Get()
   findAll() {
     return this.groupService.findAll();
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.groupService.findOne(+id);
+  @IsPublic()
+  @Get(':name')
+  findOne(@Param('name') name: string) {
+    return this.groupService.findByName(name);
   }
-
+  @IsPublic()
+  @Get(':id')
+  findGroup(@Param('id') id: string) {
+    return this.groupService.findById(id);
+  }
+  @IsPublic()
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
-    return this.groupService.update(+id, updateGroupDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.groupService.remove(+id);
+    return this.groupService.update(id, updateGroupDto);
   }
 }

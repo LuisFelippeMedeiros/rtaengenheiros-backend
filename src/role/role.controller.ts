@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('roles')
 export class RoleController {
