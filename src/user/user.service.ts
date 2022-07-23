@@ -39,7 +39,25 @@ export class UserService {
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      include: {
+        group: {
+          select: {
+            name: true
+          }
+        },
+        City: {
+          select: {
+            name: true
+          }
+        },
+        State: {
+          select: {
+            name: true
+          }
+        }
+      },
+    });
   }
 
   findByEmail(email: string) {
