@@ -4,6 +4,24 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 
+const include = {
+  group: {
+    select: {
+      name: true
+    }
+  },
+  City: {
+    select: {
+      name: true
+    }
+  },
+  State: {
+    select: {
+      name: true
+    }
+  }
+};
+
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
@@ -39,25 +57,7 @@ export class UserService {
   }
 
   findAll() {
-    return this.prisma.user.findMany({
-      include: {
-        group: {
-          select: {
-            name: true
-          }
-        },
-        City: {
-          select: {
-            name: true
-          }
-        },
-        State: {
-          select: {
-            name: true
-          }
-        }
-      },
-    });
+    return this.prisma.user.findMany({include});
   }
 
   findByEmail(email: string) {
@@ -80,6 +80,7 @@ export class UserService {
 
   findById(id: string) {
     return this.prisma.user.findUnique({
+      include,
       where: { id },
     });
   }
