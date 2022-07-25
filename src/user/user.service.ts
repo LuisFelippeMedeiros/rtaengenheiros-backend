@@ -107,10 +107,16 @@ export class UserService {
         complement: updateUserDto.complement,
         active: updateUserDto.active,
         group_id: updateUserDto.group_id,
+        id: updateUserDto.id
       },
     };
 
-    return this.prisma.user.update(update);
+    this.prisma.user.update(update);
+
+    return {
+      status: true,
+      message: `O usuário ${updateUserDto.name} foi alterado com sucesso`
+    };
   }
 
   async deactivate(id: string, updateUserDto: UpdateUserDto) {

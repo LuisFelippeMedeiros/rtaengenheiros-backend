@@ -13,6 +13,9 @@ import { Type } from 'class-transformer';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsString()
+  id?: string;
+
+  @IsString()
   name: string;
 
   @IsDate()
