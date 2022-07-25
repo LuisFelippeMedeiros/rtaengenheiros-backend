@@ -15,29 +15,34 @@ export class RoleService {
     const roleExist = await this.findByName(data.name);
 
     if (roleExist) {
-      throw new Error(
-        'Função já cadastrada em nossa base de dados, favor verificar!',
-      );
+      return {
+        status: true,
+        message:
+          'Função já cadastrada em nossa base de dados, favor verificar!',
+      };
     }
 
     await this.prisma.role.create({ data });
 
-    return data;
+    return {
+      status: true,
+      message: `A regra ${createRoleDto.name} foi criada com sucesso.`,
+    };
   }
 
-  findAll() {
-    return this.prisma.role.findMany();
+  async findAll() {
+    return await this.prisma.role.findMany();
   }
 
-  findByName(name: string) {
-    return this.prisma.role.findUnique({
+  async findByName(name: string) {
+    return await this.prisma.role.findUnique({
       where: {
         name,
       },
     });
   }
 
-  update(id: string, updateRoleDto: UpdateRoleDto) {
+  async update(id: string, updateRoleDto: UpdateRoleDto) {
     const update = {
       where: {
         id: id,
@@ -49,7 +54,12 @@ export class RoleService {
       },
     };
 
-    return this.prisma.role.update(update);
+    await this.prisma.role.update(update);
+
+    return {
+      status: true,
+      message: `A regra ${updateRoleDto.name} foi alterado com sucesso.`,
+    };
   }
 
   async deactivate(id: string, updateRoleDto: UpdateRoleDto) {
@@ -62,6 +72,11 @@ export class RoleService {
       },
     };
 
-    return this.prisma.role.update(update);
+    await this.prisma.role.update(update);
+
+    return {
+      status: true,
+      message: `A regra ${updateRoleDto.name} foi desativada com sucesso.`,
+    };
   }
 }
