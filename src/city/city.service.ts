@@ -11,8 +11,8 @@ export class CityService {
         state_id,
         name: {
           mode: 'insensitive',
-          contains: filter
-        }
+          contains: filter,
+        },
       },
       orderBy: {
         name: 'asc',

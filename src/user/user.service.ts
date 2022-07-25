@@ -7,19 +7,19 @@ import * as bcrypt from 'bcrypt';
 const include = {
   group: {
     select: {
-      name: true
-    }
+      name: true,
+    },
   },
   City: {
     select: {
-      name: true
-    }
+      name: true,
+    },
   },
   State: {
     select: {
-      name: true
-    }
-  }
+      name: true,
+    },
+  },
 };
 
 @Injectable()
@@ -57,7 +57,7 @@ export class UserService {
   }
 
   findAll() {
-    return this.prisma.user.findMany({include});
+    return this.prisma.user.findMany({ include });
   }
 
   findByEmail(email: string) {

@@ -7,6 +7,7 @@ import { StateModule } from './state/state.module';
 import { CityModule } from './city/city.module';
 import { RoleModule } from './role/role.module';
 import { GroupModule } from './group/group.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { GroupModule } from './group/group.module';
     CityModule,
     RoleModule,
     GroupModule,
+    CompanyModule,
   ],
   controllers: [],
   providers: [
