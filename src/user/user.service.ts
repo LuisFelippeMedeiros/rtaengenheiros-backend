@@ -59,6 +59,7 @@ export class UserService {
 
     return {
       status: true,
+
       message: `O Usuário ${createdUser.name} foi criado com sucesso.`,
     };
   }
@@ -113,6 +114,8 @@ export class UserService {
         group_id: updateUserDto.group_id,
 
         id: updateUserDto.id,
+
+
       },
     };
 
@@ -121,6 +124,7 @@ export class UserService {
     return {
       status: true,
       message: `O usuário ${updateUserDto.name} foi alterado com sucesso.`,
+
     };
   }
 
@@ -134,11 +138,13 @@ export class UserService {
       },
     };
 
+
     await this.prisma.user.update(update);
 
     return {
       status: true,
       message: `O usuário ${updateUserDto.name} foi desativado com sucesso.`,
+
     };
   }
 }
