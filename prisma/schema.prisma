@@ -29,12 +29,14 @@ model User {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
-  group    Group  @relation(fields: [group_id], references: [id])
-  group_id String
-  State    State? @relation(fields: [state_id], references: [id])
-  state_id Int?
-  City     City?  @relation(fields: [city_id], references: [id])
-  city_id  Int?
+  group      Group    @relation(fields: [group_id], references: [id])
+  group_id   String
+  State      State?   @relation(fields: [state_id], references: [id])
+  state_id   Int?
+  City       City?    @relation(fields: [city_id], references: [id])
+  city_id    Int?
+  Company    Company? @relation(fields: [company_id], references: [id])
+  company_id String?
 
   @@map("users")
 }
@@ -76,13 +78,14 @@ model RolesGroup {
 }
 
 model City {
-  id         Int      @id
+  id         Int       @id
   name       String
-  active     Boolean  @default(true)
-  created_at DateTime @default(now())
-  State      State    @relation(fields: [state_id], references: [id])
+  active     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  State      State     @relation(fields: [state_id], references: [id])
   state_id   Int
   User       User[]
+  Company    Company[]
 
   @@map("cities")
 }
@@ -94,8 +97,24 @@ model State {
   active     Boolean  @default(true)
   created_at DateTime @default(now())
 
-  City City[]
-  User User[]
+  City    City[]
+  User    User[]
+  Company Company[]
 
   @@map("states")
+}
+
+model Company {
+  id         String   @id @default(uuid())
+  name       String
+  cnpj       String
+  created_at DateTime @default(now())
+
+  User     User[]
+  State    State? @relation(fields: [state_id], references: [id])
+  state_id Int?
+  City     City?  @relation(fields: [city_id], references: [id])
+  city_id  Int?
+
+  @@map("companies")
 }
