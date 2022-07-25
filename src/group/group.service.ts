@@ -15,30 +15,35 @@ export class GroupService {
     const groupExist = await this.findByName(data.name);
 
     if (groupExist) {
-      throw new Error(
-        'Grupo de função já cadastrado em nossa base de dados, favor verificar!',
-      );
+      return {
+        status: true,
+        message:
+          'Grupo de função já cadastrado em nossa base de dados, favor verificar!',
+      };
     }
 
     await this.prisma.group.create({ data });
 
-    return data;
+    return {
+      status: true,
+      message: `O grupo ${createGroupDto.name}, foi criado com sucesso.`,
+    };
   }
 
   async findAll() {
-    return this.prisma.group.findMany();
+    return await this.prisma.group.findMany();
   }
 
-  findByName(name: string) {
-    return this.prisma.group.findUnique({
+  async findByName(name: string) {
+    return await this.prisma.group.findUnique({
       where: {
         name,
       },
     });
   }
 
-  findById(name: string) {
-    return this.prisma.group.findUnique({
+  async findById(name: string) {
+    return await this.prisma.group.findUnique({
       where: {
         name,
       },
@@ -59,16 +64,28 @@ export class GroupService {
     const updatedGroup = await this.findByName(update.data.name);
 
     if (updatedGroup == undefined || updatedGroup == null) {
-      return this.prisma.group.update(update);
+      await this.prisma.group.update(update);
+
+      return {
+        status: true,
+        message: `O grupo ${updateGroupDto.name} foi alterado com sucesso.`,
+      };
     }
 
     if (updatedGroup.name == update.data.name && id !== updatedGroup.id) {
-      throw new Error(
-        'O nome do grupo modificado já se encontra cadastrado em nossa base de dados, favor verificar!',
-      );
+      return {
+        status: true,
+        message:
+          'O nome do grupo que está tentando alterar já se encontra cadastrado em nossa base de dados, favor verificar!',
+      };
     }
 
-    return this.prisma.group.update(update);
+    await this.prisma.group.update(update);
+
+    return {
+      status: true,
+      message: `O grupo ${updateGroupDto.name} foi alterado com sucesso.`,
+    };
   }
 
   async deactivate(id: string, updateGroupDto: UpdateGroupDto) {
@@ -81,6 +98,11 @@ export class GroupService {
       },
     };
 
-    return this.prisma.group.update(update);
+    await this.prisma.group.update(update);
+
+    return {
+      status: true,
+      message: `O grupo ${updateGroupDto.name}, foi desativado com sucesso.`,
+    };
   }
 }
