@@ -4,6 +4,7 @@
 
 #env
 .env
+.env.development
 
 # Logs
 logs
@@ -36,3 +37,4 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+*.development
