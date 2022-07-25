@@ -54,8 +54,8 @@ export class UserService {
     const createdUser = await this.prisma.user.create({ data });
 
     return {
-      ...createdUser,
-      password: undefined,
+      status: true,
+      message: `O Usuário ${createdUser.name} foi criado com sucesso!`
     };
   }
 
@@ -111,7 +111,7 @@ export class UserService {
       },
     };
 
-    this.prisma.user.update(update);
+    await this.prisma.user.update(update);
 
     return {
       status: true,
@@ -129,6 +129,11 @@ export class UserService {
       },
     };
 
-    return this.prisma.user.update(update);
+    await this.prisma.user.update(update)
+
+    return {
+      status: true,
+      message: `O usuário ${updateUserDto.name} foi desativado com sucesso`
+    };
   }
 }
