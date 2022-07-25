@@ -1,7 +1,14 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
 
-import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNumber,
+  IsString,
+  MinLength,
+  Matches,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
@@ -17,6 +24,13 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsString()
   agency: string;
+
+  @IsString()
+  @MinLength(6)
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'password too weak',
+  })
+  password: string;
 
   @IsNumber()
   city_id?: number;

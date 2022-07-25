@@ -93,6 +93,7 @@ export class UserService {
       data: {
         name: updateUserDto.name,
         date_of_birth: updateUserDto.date_of_birth,
+        password: await bcrypt.hash(updateUserDto.password, 10),
         bank: updateUserDto.bank,
         agency: updateUserDto.agency,
         account: updateUserDto.account,
