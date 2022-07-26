@@ -59,8 +59,18 @@ export class UserService {
     };
   }
 
-  findAll() {
-    return this.prisma.user.findMany({ include });
+  async findAll(status: boolean) {
+    return await this.prisma.user.findMany({ 
+      include,
+      where: {
+        active: {
+          equals: status
+        }
+      }, 
+      orderBy: {
+        name: 'asc'
+      }
+    });
   }
 
   findByEmail(email: string) {
