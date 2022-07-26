@@ -38,24 +38,29 @@ export class UserService {
     const cpfExists = await this.findByCPF(data.cpf);
 
     if (cpfExists) {
-      throw new Error(
-        'Este CPF já se encontra cadastrado em nossa base de dados, favor verificar!',
-      );
+      return {
+        status: true,
+        message:
+          'Este CPF já se encontra cadastrado em nossa base de dados, favor verificar.',
+      };
     }
 
     const emailExists = await this.findByEmail(data.email);
 
     if (emailExists) {
-      throw new Error(
-        'Este e-mail já se encontra cadastrado em nossa base de dados, favor verificar!',
-      );
+      return {
+        status: true,
+        message:
+          'Este e-mail já se encontra cadastrado em nossa base de dados, favor verificar.',
+      };
     }
 
     const createdUser = await this.prisma.user.create({ data });
 
     return {
       status: true,
-      message: `O Usuário ${createdUser.name} foi criado com sucesso!`
+
+      message: `O Usuário ${createdUser.name} foi criado com sucesso.`,
     };
   }
 
@@ -73,26 +78,26 @@ export class UserService {
     });
   }
 
-  findByEmail(email: string) {
-    return this.prisma.user.findUnique({
+  async findByEmail(email: string) {
+    return await this.prisma.user.findUnique({
       where: { email },
     });
   }
 
-  findByName(name: string) {
-    return this.prisma.user.findFirst({
+  async findByName(name: string) {
+    return await this.prisma.user.findFirst({
       where: { name },
     });
   }
 
-  findByCPF(cpf: string) {
-    return this.prisma.user.findUnique({
+  async findByCPF(cpf: string) {
+    return await this.prisma.user.findUnique({
       where: { cpf },
     });
   }
 
-  findById(id: string) {
-    return this.prisma.user.findUnique({
+  async findById(id: string) {
+    return await this.prisma.user.findUnique({
       include,
       where: { id },
     });
@@ -117,7 +122,10 @@ export class UserService {
         complement: updateUserDto.complement,
         active: updateUserDto.active,
         group_id: updateUserDto.group_id,
-        id: updateUserDto.id
+
+        id: updateUserDto.id,
+
+
       },
     };
 
@@ -125,7 +133,8 @@ export class UserService {
 
     return {
       status: true,
-      message: `O usuário ${updateUserDto.name} foi alterado com sucesso`
+      message: `O usuário ${updateUserDto.name} foi alterado com sucesso.`,
+
     };
   }
 
@@ -139,11 +148,13 @@ export class UserService {
       },
     };
 
-    await this.prisma.user.update(update)
+
+    await this.prisma.user.update(update);
 
     return {
       status: true,
-      message: `O usuário ${updateUserDto.name} foi desativado com sucesso`
+      message: `O usuário ${updateUserDto.name} foi desativado com sucesso.`,
+
     };
   }
 }
