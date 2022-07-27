@@ -30,9 +30,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsString()
   @MinLength(6)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password too weak',
-  })
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'Senha muito fraca' })
   password: string;
 
   @IsNumber()

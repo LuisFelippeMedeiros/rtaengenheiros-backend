@@ -104,14 +104,13 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const update = {
+    const update: any = {
       where: {
         id: id,
       },
       data: {
         name: updateUserDto.name,
         date_of_birth: updateUserDto.date_of_birth,
-        password: await bcrypt.hash(updateUserDto.password, 10),
         bank: updateUserDto.bank,
         agency: updateUserDto.agency,
         account: updateUserDto.account,
@@ -122,10 +121,7 @@ export class UserService {
         complement: updateUserDto.complement,
         active: updateUserDto.active,
         group_id: updateUserDto.group_id,
-
-        id: updateUserDto.id,
-
-
+        id: updateUserDto.id
       },
     };
 
