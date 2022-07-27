@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,39 +11,20 @@ const include = {
       name: true,
     },
   },
-  City: {
-    select: {
-      id: true,
-      name: true,
-    },
-  },
-  State: {
-    select: {
-      id: true,
-      name: true,
-    },
-  },
 };
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, @Req() req: any) {
     const data = {
-      ...createUserDto,
+      name: createUserDto.name,
+      email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, 10),
+      group_id: createUserDto.group_id,
+      created_by: req.user.id,
     };
-
-    const cpfExists = await this.findByCPF(data.cpf);
-
-    if (cpfExists) {
-      return {
-        status: true,
-        message:
-          'Este CPF já se encontra cadastrado em nossa base de dados, favor verificar.',
-      };
-    }
 
     const emailExists = await this.findByEmail(data.email);
 
@@ -55,26 +36,25 @@ export class UserService {
       };
     }
 
-    const createdUser = await this.prisma.user.create({ data });
+    await this.prisma.user.create({ data });
 
     return {
       status: true,
-
-      message: `O Usuário ${createdUser.name} foi criado com sucesso.`,
+      message: `O Usuário ${createUserDto.name} foi criado com sucesso.`,
     };
   }
 
   async findAll(status: boolean) {
-    return await this.prisma.user.findMany({ 
+    return await this.prisma.user.findMany({
       include,
       where: {
         active: {
-          equals: status
-        }
-      }, 
+          equals: status,
+        },
+      },
       orderBy: {
-        name: 'asc'
-      }
+        name: 'asc',
+      },
     });
   }
 
@@ -90,12 +70,6 @@ export class UserService {
     });
   }
 
-  async findByCPF(cpf: string) {
-    return await this.prisma.user.findUnique({
-      where: { cpf },
-    });
-  }
-
   async findById(id: string) {
     return await this.prisma.user.findUnique({
       include,
@@ -103,29 +77,17 @@ export class UserService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
       },
       data: {
         name: updateUserDto.name,
-        date_of_birth: updateUserDto.date_of_birth,
         password: await bcrypt.hash(updateUserDto.password, 10),
-        bank: updateUserDto.bank,
-        agency: updateUserDto.agency,
-        account: updateUserDto.account,
-        pix: updateUserDto.pix,
-        address: updateUserDto.address,
-        district: updateUserDto.district,
-        number: updateUserDto.number,
-        complement: updateUserDto.complement,
         active: updateUserDto.active,
         group_id: updateUserDto.group_id,
-
-        id: updateUserDto.id,
-
-
+        updated_by: req.user.id,
       },
     };
 
@@ -134,27 +96,25 @@ export class UserService {
     return {
       status: true,
       message: `O usuário ${updateUserDto.name} foi alterado com sucesso.`,
-
     };
   }
 
-  async deactivate(id: string, updateUserDto: UpdateUserDto) {
+  async deactivate(id: string, updateUserDto: UpdateUserDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
       },
       data: {
         active: updateUserDto.active,
+        deleted_by: req.user.id,
       },
     };
-
 
     await this.prisma.user.update(update);
 
     return {
       status: true,
       message: `O usuário ${updateUserDto.name} foi desativado com sucesso.`,
-
     };
   }
 }

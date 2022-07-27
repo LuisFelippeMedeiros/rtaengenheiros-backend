@@ -9,32 +9,20 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  password      String
-  cpf           String   @unique
-  rg            String
-  telephone     String?
-  date_of_birth DateTime
-  bank          String
-  agency        String
-  account       String
-  pix           String   @unique
-  address       String
-  district      String
-  number        String
-  complement    String
-  active        Boolean  @default(true)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id         String    @id @default(uuid())
+  name       String
+  email      String    @unique
+  password   String
+  active     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  created_by String?
+  updated_at DateTime  @updatedAt
+  updated_by String?
+  deleted_at DateTime?
+  deteled_by String?
 
   group      Group    @relation(fields: [group_id], references: [id])
   group_id   String
-  State      State?   @relation(fields: [state_id], references: [id])
-  state_id   Int?
-  City       City?    @relation(fields: [city_id], references: [id])
-  city_id    Int?
   Company    Company? @relation(fields: [company_id], references: [id])
   company_id String?
 
@@ -84,7 +72,6 @@ model City {
   created_at DateTime  @default(now())
   State      State     @relation(fields: [state_id], references: [id])
   state_id   Int
-  User       User[]
   Company    Company[]
 
   @@map("cities")
@@ -98,7 +85,6 @@ model State {
   created_at DateTime @default(now())
 
   City    City[]
-  User    User[]
   Company Company[]
 
   @@map("states")
