@@ -35,7 +35,6 @@ export class UserService {
           'Este e-mail já se encontra cadastrado em nossa base de dados, favor verificar.',
       };
     }
-
     await this.prisma.user.create({ data });
 
     return {
