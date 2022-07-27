@@ -2,11 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('groups')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
-
+  @IsPublic()
   @Post('create-group')
   create(@Body() createGroupDto: CreateGroupDto) {
     return this.groupService.create(createGroupDto);
