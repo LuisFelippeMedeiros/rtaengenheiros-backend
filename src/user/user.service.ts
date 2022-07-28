@@ -46,11 +46,6 @@ export class UserService {
   async findAll(pagination: IPagination, status: boolean) {
     const { pageIndex, pageSize, onlyRowCount } = pagination
     const rowCount = await this.prisma.user.count()
-    const where = {
-      active: { 
-        equals: status
-      }
-    }
 
     if (onlyRowCount) {
       return { rowCount }
@@ -60,7 +55,11 @@ export class UserService {
       return {
         rowCount,
         data: await this.prisma.user.findMany({
-          where,
+          where: {
+            active: { 
+              equals: Boolean(status)
+            }
+          },
           include,
           take: pageSize
         })
@@ -70,7 +69,11 @@ export class UserService {
       return {
         rowCount,
         data: await this.prisma.user.findMany({
-          where,
+          where: {
+            active: { 
+              equals: Boolean(status)
+            }
+          },
           include,
           skip: pageIndex - 1,
           take: pageSize,
