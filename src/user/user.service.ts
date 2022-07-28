@@ -43,34 +43,43 @@ export class UserService {
     };
   }
 
-  async findPagination(pagination: IPagination) {
-    const { pageIndex, pageSize } = pagination
+  async findAll(pagination: IPagination, status: boolean) {
+    const { pageIndex, pageSize, onlyRowCount } = pagination
+    const rowCount = await this.prisma.user.count()
+    const where = {
+      active: { 
+        equals: status
+      }
+    }
+
+    if (onlyRowCount) {
+      return { rowCount }
+    }
 
     if (isNaN(pageIndex)) {
-      return this.prisma.user.findMany({ take: pageSize })
-    } else {
-      return this.prisma.user.findMany({
-        skip: pageIndex,
-        take: pageSize,
-        orderBy: {
-          name: 'asc'
-        }
-      })
+      return {
+        rowCount,
+        data: await this.prisma.user.findMany({
+          where,
+          include,
+          take: pageSize
+        })
+      }
     }
-  }
-
-  async findAll(status: boolean) {
-    return await this.prisma.user.findMany({
-      include,
-      where: {
-        active: {
-          equals: status,
-        },
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    });
+    else {
+      return {
+        rowCount,
+        data: await this.prisma.user.findMany({
+          where,
+          include,
+          skip: pageIndex - 1,
+          take: pageSize,
+          orderBy: {
+            name: 'asc'
+          }
+        })
+      }
+    }
   }
 
   async findByEmail(email: string) {

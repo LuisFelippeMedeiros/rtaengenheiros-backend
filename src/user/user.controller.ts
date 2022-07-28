@@ -26,15 +26,14 @@ export class UserController {
   }
 
   @Get()
-  async findAll(@Query('active') active = true) {
-    return await this.userService.findAll(active);
-  }
-
-  @Get('pagination')
-  async findPagination(@Query('pageIndex')pageIndex: number = 1, @Query('pageSize')pageSize: number = 1) {
-    let pagination: IPagination = { pageIndex, pageSize }
-
-    return await this.userService.findPagination(pagination);
+  async findPagination(
+    @Query('pageIndex') pageIndex: number = 1,
+    @Query('pageSize') pageSize: number = 1,
+    @Query('onlyRowCount') onlyRowCount: boolean = false,
+    @Query('active') active = true
+  ) {
+    let pagination: IPagination = { pageIndex, pageSize, onlyRowCount }
+    return await this.userService.findAll(pagination, active);
   }
 
   @Get(':id')
