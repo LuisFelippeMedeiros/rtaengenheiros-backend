@@ -13,8 +13,8 @@ import { AuthRequest } from './models/AuthRequest';
 import { RouteVersion } from 'src/statics/route.version';
 
 @Controller({
-  path: RouteVersion.version + 'auth',
-  version: '1'
+  path: RouteVersion.route + 'auth',
+  version: RouteVersion.version
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

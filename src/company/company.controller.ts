@@ -1,7 +1,11 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { RouteVersion } from 'src/statics/route.version';
 import { CompanyService } from './company.service';
 
-@Controller('company')
+@Controller({
+  path: RouteVersion.route + 'company',
+  version: RouteVersion.version
+})
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 

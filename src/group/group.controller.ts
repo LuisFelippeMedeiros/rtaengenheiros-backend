@@ -3,8 +3,12 @@ import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { RouteVersion } from 'src/statics/route.version';
 
-@Controller('groups')
+@Controller({
+  path: RouteVersion.route + 'groups',
+  version: RouteVersion.version
+})
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
   @IsPublic()

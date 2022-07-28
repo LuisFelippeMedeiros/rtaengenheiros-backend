@@ -2,8 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { RouteVersion } from 'src/statics/route.version';
 
-@Controller('roles')
+@Controller({
+  path: RouteVersion.route + 'roles',
+  version: RouteVersion.version
+})
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 

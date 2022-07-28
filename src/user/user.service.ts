@@ -1,10 +1,8 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Req } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
-import { map, Observable } from 'rxjs';
-import { classToPlain } from 'class-transformer';
 
 const include = {
   group: {

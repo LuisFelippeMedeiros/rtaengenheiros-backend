@@ -16,8 +16,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 
 @Controller({
-  path: RouteVersion.version + 'users',
-  version: '1'
+  path: RouteVersion.route + 'users',
+  version: RouteVersion.version
 })
 export class UserController {
   constructor(private readonly userService: UserService) {}
