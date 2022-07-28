@@ -3,6 +3,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Get,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -25,5 +26,10 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   login(@Request() req: AuthRequest) {
     return this.authService.login(req.user);
+  }
+
+  @Get('token')
+  token() {
+    return this.authService.verifyToken()
   }
 }
