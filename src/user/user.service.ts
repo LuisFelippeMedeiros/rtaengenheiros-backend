@@ -22,6 +22,7 @@ export class UserService {
       name: createUserDto.name,
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, 10),
+      active: createUserDto.active,
       group_id: createUserDto.group_id,
       created_by: req.user.id,
     };
