@@ -7,6 +7,8 @@ import {
   Put,
   Query,
   Req,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,6 +27,7 @@ export class UserController {
     return this.userService.create(createUserDto, req);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async findPagination(
     @Query('pageIndex') pageIndex: number = 1,

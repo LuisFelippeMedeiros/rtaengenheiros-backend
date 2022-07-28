@@ -1,8 +1,10 @@
-import { Injectable, Req } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { map, Observable } from 'rxjs';
+import { classToPlain } from 'class-transformer';
 
 const include = {
   group: {
@@ -44,8 +46,12 @@ export class UserService {
   }
 
   async findAll(pagination: IPagination, status: boolean) {
-    const { pageIndex, pageSize, onlyRowCount } = pagination
+    let { pageIndex, pageSize, onlyRowCount } = pagination
     const rowCount = await this.prisma.user.count()
+
+    if (isNaN(pageSize)) {
+      pageSize = 5
+    }
 
     if (onlyRowCount) {
       return { rowCount }
