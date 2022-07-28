@@ -10,8 +10,12 @@ import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/is-public.decorator';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
+import { RouteVersion } from 'src/statics/route.version';
 
-@Controller()
+@Controller({
+  path: RouteVersion.version + 'auth',
+  version: '1'
+})
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
