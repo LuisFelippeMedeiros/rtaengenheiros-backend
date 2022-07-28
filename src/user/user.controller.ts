@@ -11,8 +11,12 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RouteVersion } from 'src/statics/route.version';
 
-@Controller('users')
+@Controller({
+  path: RouteVersion.version + 'users',
+  version: '1'
+})
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -24,6 +28,13 @@ export class UserController {
   @Get()
   async findAll(@Query('active') active = true) {
     return await this.userService.findAll(active);
+  }
+
+  @Get('pagination')
+  async findPagination(@Query('pageIndex')pageIndex: number = 1, @Query('pageSize')pageSize: number = 1) {
+    let pagination: IPagination = { pageIndex, pageSize }
+
+    return await this.userService.findPagination(pagination);
   }
 
   @Get(':id')

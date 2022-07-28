@@ -43,6 +43,22 @@ export class UserService {
     };
   }
 
+  async findPagination(pagination: IPagination) {
+    const { pageIndex, pageSize } = pagination
+
+    if (isNaN(pageIndex)) {
+      return this.prisma.user.findMany({ take: pageSize })
+    } else {
+      return this.prisma.user.findMany({
+        skip: pageIndex,
+        take: pageSize,
+        orderBy: {
+          name: 'asc'
+        }
+      })
+    }
+  }
+
   async findAll(status: boolean) {
     return await this.prisma.user.findMany({
       include,
