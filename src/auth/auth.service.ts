@@ -25,8 +25,8 @@ export class AuthService {
     };
   }
 
-  async verifyToken () {
-    return
+  async verifyToken() {
+    return;
   }
 
   async validateUser(email: string, password: string) {

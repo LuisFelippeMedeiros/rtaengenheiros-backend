@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import {
   Controller,
   Get,
@@ -9,15 +10,18 @@ import {
   Req,
   UseInterceptors,
   ClassSerializerInterceptor,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
+import { User } from './entities/user.entity';
 
 @Controller({
   path: RouteVersion.route + 'users',
-  version: RouteVersion.version
+  version: RouteVersion.version,
 })
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -33,15 +37,21 @@ export class UserController {
     @Query('pageIndex') pageIndex: number = 1,
     @Query('pageSize') pageSize: number = 1,
     @Query('onlyRowCount') onlyRowCount: boolean = false,
-    @Query('active') active = true
+    @Query('active') active = true,
   ) {
-    let pagination: IPagination = { pageIndex, pageSize, onlyRowCount }
+    // eslint-disable-next-line prefer-const
+    let pagination: IPagination = { pageIndex, pageSize, onlyRowCount };
     return await this.userService.findAll(pagination, active);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findById(id);
+  async findOne(@Param('id') id: string) {
+    const user = await this.userService.findById(id);
+
+    if (user) return new User(user);
+    else
+      throw new HttpException('Usuário não encontrado', HttpStatus.BAD_REQUEST);
   }
 
   @Put(':id')

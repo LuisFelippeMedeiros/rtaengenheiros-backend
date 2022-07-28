@@ -15,7 +15,7 @@ import { RouteVersion } from 'src/statics/route.version';
 
 @Controller({
   path: RouteVersion.route + 'auth',
-  version: RouteVersion.version
+  version: RouteVersion.version,
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -30,6 +30,6 @@ export class AuthController {
 
   @Get('token')
   token() {
-    return this.authService.verifyToken()
+    return this.authService.verifyToken();
   }
 }

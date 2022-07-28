@@ -4,7 +4,7 @@ import { CompanyService } from './company.service';
 
 @Controller({
   path: RouteVersion.route + 'company',
-  version: RouteVersion.version
+  version: RouteVersion.version,
 })
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}

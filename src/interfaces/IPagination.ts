@@ -1,5 +1,5 @@
 interface IPagination {
-  pageSize: number
-  pageIndex: number
-  onlyRowCount: boolean
+  pageSize: number;
+  pageIndex: number;
+  onlyRowCount: boolean;
 }

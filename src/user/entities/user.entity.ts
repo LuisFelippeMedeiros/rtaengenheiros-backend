@@ -1,5 +1,4 @@
-import { Exclude } from "class-transformer";
-
+import { Exclude } from 'class-transformer';
 export class User {
   id?: string;
   name: string;
@@ -12,7 +11,14 @@ export class User {
   @Exclude()
   group_id: string;
 
-  constructor (partial: Partial<User>) {
-    Object.assign(this, partial)
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
   }
+}
+
+export class UserPost {
+  name: string;
+  email: string;
+  password: string;
+  group_id: string;
 }
