@@ -5,7 +5,7 @@ import { CityService } from './city.service';
 
 @Controller({
   path: RouteVersion.route + 'cities',
-  version: RouteVersion.version
+  version: RouteVersion.version,
 })
 export class CityController {
   constructor(private readonly cityService: CityService) {}

@@ -7,7 +7,7 @@ import { RouteVersion } from 'src/statics/route.version';
 
 @Controller({
   path: RouteVersion.route + 'groups',
-  version: RouteVersion.version
+  version: RouteVersion.version,
 })
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}

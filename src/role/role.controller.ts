@@ -6,7 +6,7 @@ import { RouteVersion } from 'src/statics/route.version';
 
 @Controller({
   path: RouteVersion.route + 'roles',
-  version: RouteVersion.version
+  version: RouteVersion.version,
 })
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}

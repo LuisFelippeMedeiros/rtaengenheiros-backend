@@ -44,15 +44,16 @@ export class UserService {
   }
 
   async findAll(pagination: IPagination, status: boolean) {
-    let { pageIndex, pageSize, onlyRowCount } = pagination
-    const rowCount = await this.prisma.user.count()
+    // eslint-disable-next-line prefer-const
+    let { pageIndex, pageSize, onlyRowCount } = pagination;
+    const rowCount = await this.prisma.user.count();
 
     if (isNaN(pageSize)) {
-      pageSize = 5
+      pageSize = 5;
     }
 
     if (onlyRowCount) {
-      return { rowCount }
+      return { rowCount };
     }
 
     if (isNaN(pageIndex)) {
@@ -60,32 +61,31 @@ export class UserService {
         rowCount,
         data: await this.prisma.user.findMany({
           where: {
-            active: { 
-              equals: Boolean(status)
-            }
+            active: {
+              equals: Boolean(status),
+            },
           },
           include,
-          take: pageSize
-        })
-      }
-    }
-    else {
+          take: pageSize,
+        }),
+      };
+    } else {
       return {
         rowCount,
         data: await this.prisma.user.findMany({
           where: {
-            active: { 
-              equals: Boolean(status)
-            }
+            active: {
+              equals: Boolean(status),
+            },
           },
           include,
           skip: pageIndex - 1,
           take: pageSize,
           orderBy: {
-            name: 'asc'
-          }
-        })
-      }
+            name: 'asc',
+          },
+        }),
+      };
     }
   }
 

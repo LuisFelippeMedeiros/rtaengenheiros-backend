@@ -5,7 +5,7 @@ import { StateService } from './state.service';
 
 @Controller({
   path: RouteVersion.route + 'state',
-  version: RouteVersion.version
+  version: RouteVersion.version,
 })
 export class StateController {
   constructor(private readonly stateService: StateService) {}
