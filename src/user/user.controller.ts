@@ -40,7 +40,7 @@ export class UserController {
     @Query('active') active = true,
   ) {
     // eslint-disable-next-line prefer-const
-    let pagination: IPagination = { pageIndex, pageSize, onlyRowCount };
+    const pagination: IPagination = { pageIndex, pageSize, onlyRowCount };
     return await this.userService.findAll(pagination, active);
   }
 

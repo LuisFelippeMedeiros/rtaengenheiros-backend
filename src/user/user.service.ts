@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 const include = {
@@ -46,47 +47,51 @@ export class UserService {
   async findAll(pagination: IPagination, status: boolean) {
     // eslint-disable-next-line prefer-const
     let { pageIndex, pageSize, onlyRowCount } = pagination;
-    const rowCount = await this.prisma.user.count();
+    let users: Array<User> = []
 
     if (isNaN(pageSize)) {
       pageSize = 5;
     }
 
     if (onlyRowCount) {
-      return { rowCount };
+      return {
+        rowCount: await this.prisma.user.count()
+      };
     }
 
     if (isNaN(pageIndex)) {
-      return {
-        rowCount,
-        data: await this.prisma.user.findMany({
-          where: {
-            active: {
-              equals: Boolean(status),
-            },
+      users = await this.prisma.user.findMany({
+        where: {
+          active: {
+            equals: Boolean(status),
           },
-          include,
-          take: pageSize,
-        }),
-      };
+        },
+        include,
+        take: pageSize,
+      })
     } else {
-      return {
-        rowCount,
-        data: await this.prisma.user.findMany({
-          where: {
-            active: {
-              equals: Boolean(status),
-            },
+      users = await this.prisma.user.findMany({
+        where: {
+          active: {
+            equals: Boolean(status),
           },
-          include,
-          skip: pageIndex - 1,
-          take: pageSize,
-          orderBy: {
-            name: 'asc',
-          },
-        }),
-      };
+        },
+        include,
+        skip: pageIndex - 1,
+        take: pageSize,
+        orderBy: {
+          name: 'asc',
+        },
+      })
     }
+
+    if (users.length > 0) {
+      for (var i = 0; i < users.length; i++) {
+        users[i] = new User(users[i])
+      }
+    }
+
+    return users;
   }
 
   async findByEmail(email: string) {
