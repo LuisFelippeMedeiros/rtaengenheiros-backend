@@ -1,14 +1,9 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
-<<<<<<< HEAD
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-=======
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
->>>>>>> 04a1639d4a56845102256cf5a950871323059ca8
 import * as bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
 
 const include = {
   group: {
