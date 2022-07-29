@@ -46,16 +46,14 @@ export class UserService {
 
   async findAll(pagination: IPagination, status: boolean) {
     // eslint-disable-next-line prefer-const
-    let { pageIndex, pageSize, onlyRowCount } = pagination;
+    const rowCount = await this.prisma.user.count()
+    let { pageIndex, pageSize } = pagination;
     let users: Array<User> = [];
+
     if (isNaN(pageSize)) {
       pageSize = 5;
     }
-    if (onlyRowCount) {
-      return {
-        rowCount: await this.prisma.user.count(),
-      };
-    }
+
     if (isNaN(pageIndex)) {
       users = await this.prisma.user.findMany({
         where: {
@@ -81,12 +79,17 @@ export class UserService {
         },
       });
     }
+
     if (users.length > 0) {
       for (let i = 0; i < users.length; i++) {
         users[i] = new User(users[i]);
       }
     }
-    return users;
+
+    return {
+      rowCount,
+      body: users
+    };
   }
 
   async findByEmail(email: string) {

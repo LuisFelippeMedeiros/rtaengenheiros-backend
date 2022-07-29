@@ -37,11 +37,10 @@ export class UserController {
   async findPagination(
     @Query('pageIndex') pageIndex: number = 1,
     @Query('pageSize') pageSize: number = 1,
-    @Query('onlyRowCount') onlyRowCount: boolean = false,
     @Query('active') active = true,
   ) {
     // eslint-disable-next-line prefer-const
-    const pagination: IPagination = { pageIndex, pageSize, onlyRowCount };
+    const pagination: IPagination = { pageIndex, pageSize };
     return await this.userService.findAll(pagination, active);
   }
 
