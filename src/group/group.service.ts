@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
+import { PostGroupDto } from './dto/post-group.dto';
+import { PutGroupDto } from './dto/put-group.dto';
 
 @Injectable()
 export class GroupService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createGroupDto: CreateGroupDto) {
+  async create(postGroupDto: PostGroupDto) {
     const data = {
-      ...createGroupDto,
+      ...postGroupDto,
     };
 
     const groupExist = await this.findByName(data.name);
@@ -26,7 +26,7 @@ export class GroupService {
 
     return {
       status: true,
-      message: `O grupo ${createGroupDto.name}, foi criado com sucesso.`,
+      message: `O grupo ${postGroupDto.name}, foi criado com sucesso.`,
     };
   }
 
@@ -42,22 +42,22 @@ export class GroupService {
     });
   }
 
-  async findById(name: string) {
+  async findById(id: string) {
     return await this.prisma.group.findUnique({
       where: {
-        name,
+        id,
       },
     });
   }
 
-  async update(id: string, updateGroupDto: UpdateGroupDto) {
+  async update(id: string, putGroupDto: PutGroupDto) {
     const update = {
       where: {
         id: id,
       },
       data: {
-        name: updateGroupDto.name,
-        active: updateGroupDto.active,
+        name: putGroupDto.name,
+        active: putGroupDto.active,
       },
     };
 
@@ -68,7 +68,7 @@ export class GroupService {
 
       return {
         status: true,
-        message: `O grupo ${updateGroupDto.name} foi alterado com sucesso.`,
+        message: `O grupo ${putGroupDto.name} foi alterado com sucesso.`,
       };
     }
 
@@ -84,17 +84,17 @@ export class GroupService {
 
     return {
       status: true,
-      message: `O grupo ${updateGroupDto.name} foi alterado com sucesso.`,
+      message: `O grupo ${putGroupDto.name} foi alterado com sucesso.`,
     };
   }
 
-  async deactivate(id: string, updateGroupDto: UpdateGroupDto) {
+  async deactivate(id: string, putGroupDto: PutGroupDto) {
     const update = {
       where: {
         id: id,
       },
       data: {
-        active: updateGroupDto.active,
+        active: putGroupDto.active,
       },
     };
 
@@ -102,7 +102,7 @@ export class GroupService {
 
     return {
       status: true,
-      message: `O grupo ${updateGroupDto.name}, foi desativado com sucesso.`,
+      message: `O grupo ${putGroupDto.name}, foi desativado com sucesso.`,
     };
   }
 }

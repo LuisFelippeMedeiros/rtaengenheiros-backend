@@ -14,8 +14,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { PostUserDto } from './dto/post-user.dto';
+import { PutUserDto } from './dto/put-user.dto';
+// import { GetUserDto } from './dto/get-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
 
@@ -27,8 +28,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('create-user')
-  create(@Body() createUserDto: CreateUserDto, @Req() req: any) {
-    return this.userService.create(createUserDto, req);
+  create(@Body() postUserDto: PostUserDto, @Req() req: any) {
+    return this.userService.create(postUserDto, req);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -57,18 +58,18 @@ export class UserController {
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() putUserDto: PutUserDto,
     @Req() req: any,
   ) {
-    return this.userService.update(id, updateUserDto, req);
+    return this.userService.update(id, putUserDto, req);
   }
 
   @Put('deactivate/:id')
   deactivate(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() putUserDto: PutUserDto,
     @Req() req: any,
   ) {
-    return this.userService.update(id, updateUserDto, req);
+    return this.userService.update(id, putUserDto, req);
   }
 }

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { PostRoleDto } from './dto/post-role.dto';
+import { PutRoleDto } from './dto/put-role.dto';
 import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()
 export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createRoleDto: CreateRoleDto) {
+  async create(postRoleDto: PostRoleDto) {
     const data = {
-      ...createRoleDto,
+      ...postRoleDto,
     };
 
     const roleExist = await this.findByName(data.name);
@@ -26,7 +26,7 @@ export class RoleService {
 
     return {
       status: true,
-      message: `A regra ${createRoleDto.name} foi criada com sucesso.`,
+      message: `A regra ${postRoleDto.name} foi criada com sucesso.`,
     };
   }
 
@@ -42,15 +42,15 @@ export class RoleService {
     });
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto) {
+  async update(id: string, putRoleDto: PutRoleDto) {
     const update = {
       where: {
         id: id,
       },
       data: {
-        name: updateRoleDto.name,
-        active: updateRoleDto.active,
-        action: updateRoleDto.action,
+        name: putRoleDto.name,
+        active: putRoleDto.active,
+        action: putRoleDto.action,
       },
     };
 
@@ -58,17 +58,17 @@ export class RoleService {
 
     return {
       status: true,
-      message: `A regra ${updateRoleDto.name} foi alterado com sucesso.`,
+      message: `A regra ${putRoleDto.name} foi alterado com sucesso.`,
     };
   }
 
-  async deactivate(id: string, updateRoleDto: UpdateRoleDto) {
+  async deactivate(id: string, putRoleDto: PutRoleDto) {
     const update = {
       where: {
         id: id,
       },
       data: {
-        active: updateRoleDto.active,
+        active: putRoleDto.active,
       },
     };
 
@@ -76,7 +76,7 @@ export class RoleService {
 
     return {
       status: true,
-      message: `A regra ${updateRoleDto.name} foi desativada com sucesso.`,
+      message: `A regra ${putRoleDto.name} foi desativada com sucesso.`,
     };
   }
 }
