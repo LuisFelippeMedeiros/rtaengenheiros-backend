@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
 import { GroupService } from './group.service';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { PostGroupDto } from './dto/post-group.dto';
+import { PutGroupDto } from './dto/put-group.dto';
 import { RouteVersion } from 'src/statics/route.version';
 
 @Controller({
@@ -11,29 +10,29 @@ import { RouteVersion } from 'src/statics/route.version';
 })
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
-  @IsPublic()
+
   @Post('create-group')
-  create(@Body() createGroupDto: CreateGroupDto) {
-    return this.groupService.create(createGroupDto);
+  async create(@Body() postGroupDto: PostGroupDto) {
+    return await this.groupService.create(postGroupDto);
   }
 
   @Get()
-  findAll() {
-    return this.groupService.findAll();
+  async findAll() {
+    return await this.groupService.findAll();
   }
 
-  @Get(':name')
-  findOne(@Param('name') name: string) {
-    return this.groupService.findByName(name);
+  @Get('/byname/:name')
+  async findOne(@Param('name') name: string) {
+    return await this.groupService.findByName(name);
   }
 
-  @Get(':id')
-  findGroup(@Param('id') id: string) {
-    return this.groupService.findById(id);
+  @Get('/byid/:id')
+  async findGroup(@Param('id') id: string) {
+    return await this.groupService.findById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
-    return this.groupService.update(id, updateGroupDto);
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() putGroupDto: PutGroupDto) {
+    return await this.groupService.update(id, putGroupDto);
   }
 }

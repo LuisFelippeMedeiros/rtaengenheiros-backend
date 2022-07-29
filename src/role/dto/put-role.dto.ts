@@ -1,9 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateRoleDto } from './create-role.dto';
+import { PostRoleDto } from './post-role.dto';
 
 import { IsBoolean, IsString } from 'class-validator';
 
-export class UpdateRoleDto extends PartialType(CreateRoleDto) {
+export class PutRoleDto extends PartialType(PostRoleDto) {
   @IsString()
   name: string;
 

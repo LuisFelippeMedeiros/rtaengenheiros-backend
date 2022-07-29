@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { PostRoleDto } from './dto/post-role.dto';
+import { PutRoleDto } from './dto/put-role.dto';
 import { RouteVersion } from 'src/statics/route.version';
 
 @Controller({
@@ -12,8 +12,8 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post('create-role')
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.roleService.create(createRoleDto);
+  create(@Body() postRoleDto: PostRoleDto) {
+    return this.roleService.create(postRoleDto);
   }
 
   @Get()
@@ -27,7 +27,7 @@ export class RoleController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.roleService.update(id, updateRoleDto);
+  update(@Param('id') id: string, @Body() putRoleDto: PutRoleDto) {
+    return this.roleService.update(id, putRoleDto);
   }
 }
