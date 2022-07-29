@@ -48,17 +48,14 @@ export class UserService {
     // eslint-disable-next-line prefer-const
     let { pageIndex, pageSize, onlyRowCount } = pagination;
     let users: Array<User> = []
-
     if (isNaN(pageSize)) {
       pageSize = 5;
     }
-
     if (onlyRowCount) {
       return {
         rowCount: await this.prisma.user.count()
       };
     }
-
     if (isNaN(pageIndex)) {
       users = await this.prisma.user.findMany({
         where: {
@@ -84,13 +81,11 @@ export class UserService {
         },
       })
     }
-
     if (users.length > 0) {
       for (var i = 0; i < users.length; i++) {
         users[i] = new User(users[i])
       }
     }
-
     return users;
   }
 
