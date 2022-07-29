@@ -47,13 +47,13 @@ export class UserService {
   async findAll(pagination: IPagination, status: boolean) {
     // eslint-disable-next-line prefer-const
     let { pageIndex, pageSize, onlyRowCount } = pagination;
-    let users: Array<User> = []
+    let users: Array<User> = [];
     if (isNaN(pageSize)) {
       pageSize = 5;
     }
     if (onlyRowCount) {
       return {
-        rowCount: await this.prisma.user.count()
+        rowCount: await this.prisma.user.count(),
       };
     }
     if (isNaN(pageIndex)) {
@@ -65,7 +65,7 @@ export class UserService {
         },
         include,
         take: pageSize,
-      })
+      });
     } else {
       users = await this.prisma.user.findMany({
         where: {
@@ -79,11 +79,11 @@ export class UserService {
         orderBy: {
           name: 'asc',
         },
-      })
+      });
     }
     if (users.length > 0) {
-      for (var i = 0; i < users.length; i++) {
-        users[i] = new User(users[i])
+      for (let i = 0; i < users.length; i++) {
+        users[i] = new User(users[i]);
       }
     }
     return users;
