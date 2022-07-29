@@ -1,7 +1,7 @@
 import { UserPost } from '../entities/user.entity';
 import { IsEmail, IsString, Matches, MinLength } from 'class-validator';
 
-export class CreateUserDto extends UserPost {
+export class PostUserDto extends UserPost {
   @IsString()
   name: string;
 

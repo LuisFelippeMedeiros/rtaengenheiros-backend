@@ -18,6 +18,7 @@ export class User {
 }
 
 export class UserPost {
+  id?: string;
   name: string;
   email: string;
   password: string;

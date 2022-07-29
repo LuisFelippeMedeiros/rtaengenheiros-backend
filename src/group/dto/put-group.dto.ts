@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateGroupDto } from './create-group.dto';
+import { PostGroupDto } from './post-group.dto';
 import { IsBoolean, IsString } from 'class-validator';
 
-export class UpdateGroupDto extends PartialType(CreateGroupDto) {
+export class PutGroupDto extends PartialType(PostGroupDto) {
   @IsString()
   name: string;
 

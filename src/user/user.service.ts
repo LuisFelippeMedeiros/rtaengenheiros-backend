@@ -1,8 +1,13 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
+<<<<<<< HEAD
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+=======
+import { PostUserDto } from './dto/post-user.dto';
+import { PutUserDto } from './dto/put-user.dto';
+>>>>>>> 04a1639d4a56845102256cf5a950871323059ca8
 import * as bcrypt from 'bcrypt';
 
 const include = {
@@ -18,12 +23,12 @@ const include = {
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto, @Req() req: any) {
+  async create(putUserDto: PostUserDto, @Req() req: any) {
     const data = {
-      name: createUserDto.name,
-      email: createUserDto.email,
-      password: await bcrypt.hash(createUserDto.password, 10),
-      group_id: createUserDto.group_id,
+      name: putUserDto.name,
+      email: putUserDto.email,
+      password: await bcrypt.hash(putUserDto.password, 10),
+      group_id: putUserDto.group_id,
       created_by: req.user.id,
     };
 
@@ -40,7 +45,7 @@ export class UserService {
 
     return {
       status: true,
-      message: `O Usuário ${createUserDto.name} foi criado com sucesso.`,
+      message: `O Usuário ${putUserDto.name} foi criado com sucesso.`,
     };
   }
 
@@ -113,16 +118,16 @@ export class UserService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, @Req() req: any) {
+  async update(id: string, putUserDto: PutUserDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
       },
       data: {
-        name: updateUserDto.name,
-        password: await bcrypt.hash(updateUserDto.password, 10),
-        active: updateUserDto.active,
-        group_id: updateUserDto.group_id,
+        name: putUserDto.name,
+        password: await bcrypt.hash(putUserDto.password, 10),
+        active: putUserDto.active,
+        group_id: putUserDto.group_id,
         updated_by: req.user.id,
       },
     };
@@ -131,17 +136,17 @@ export class UserService {
 
     return {
       status: true,
-      message: `O usuário ${updateUserDto.name} foi alterado com sucesso.`,
+      message: `O usuário ${putUserDto.name} foi alterado com sucesso.`,
     };
   }
 
-  async deactivate(id: string, updateUserDto: UpdateUserDto, @Req() req: any) {
+  async deactivate(id: string, putUserDto: PutUserDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
       },
       data: {
-        active: updateUserDto.active,
+        active: putUserDto.active,
         deleted_by: req.user.id,
       },
     };
@@ -150,7 +155,7 @@ export class UserService {
 
     return {
       status: true,
-      message: `O usuário ${updateUserDto.name} foi desativado com sucesso.`,
+      message: `O usuário ${putUserDto.name} foi desativado com sucesso.`,
     };
   }
 }
