@@ -12,4 +12,7 @@ export class PutRoleDto extends PartialType(PostRoleDto) {
 
   @IsBoolean()
   active: boolean;
+
+  @IsString()
+  module: string;
 }

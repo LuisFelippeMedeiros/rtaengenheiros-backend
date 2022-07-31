@@ -1,5 +1,5 @@
 import { Role } from '../entities/role.entity';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class PostRoleDto extends Role {
   @IsString()
@@ -8,6 +8,6 @@ export class PostRoleDto extends Role {
   @IsString()
   action: string;
 
-  @IsBoolean()
-  active: boolean;
+  @IsString()
+  module: string;
 }
