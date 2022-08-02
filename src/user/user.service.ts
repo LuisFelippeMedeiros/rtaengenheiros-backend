@@ -3,7 +3,6 @@ import { PrismaService } from 'src/database/PrismaService';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from './entities/user.entity';
 
 const include = {
   group: {
@@ -44,52 +43,16 @@ export class UserService {
     };
   }
 
-  async findAll(pagination: IPagination, status: boolean) {
-    // eslint-disable-next-line prefer-const
-    const rowCount = await this.prisma.user.count()
-    let { pageIndex, pageSize } = pagination;
-    let users: Array<User> = [];
+  async findAll(page = 1, active) {
+    const users = await this.prisma.user.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      where: {
+        active: active,
+      },
+    });
 
-    if (isNaN(pageSize)) {
-      pageSize = 5;
-    }
-
-    if (isNaN(pageIndex)) {
-      users = await this.prisma.user.findMany({
-        where: {
-          active: {
-            equals: Boolean(status),
-          },
-        },
-        include,
-        take: pageSize,
-      });
-    } else {
-      users = await this.prisma.user.findMany({
-        where: {
-          active: {
-            equals: Boolean(status),
-          },
-        },
-        include,
-        skip: pageIndex - 1,
-        take: pageSize,
-        orderBy: {
-          name: 'asc',
-        },
-      });
-    }
-
-    if (users.length > 0) {
-      for (let i = 0; i < users.length; i++) {
-        users[i] = new User(users[i]);
-      }
-    }
-
-    return {
-      rowCount,
-      body: users
-    };
+    return users;
   }
 
   async findByEmail(email: string) {
