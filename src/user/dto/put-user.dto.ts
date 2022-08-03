@@ -10,12 +10,15 @@ export class PutUserDto extends PartialType(PostUserDto) {
   @IsString()
   name: string;
 
-  @IsString()
-  @MinLength(6)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Senha muito fraca',
-  })
-  password: string;
+  // @IsString()
+  // @MinLength(6)
+  // @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+  //   message: 'Senha muito fraca',
+  // })
+  // password: string;
+
+  // @IsBoolean()
+  // active?: boolean;
 
   @IsString()
   group_id: string;

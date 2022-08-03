@@ -90,7 +90,7 @@ export class UserService {
       },
       data: {
         name: putUserDto.name,
-        password: await bcrypt.hash(putUserDto.password, 10),
+        // password: await bcrypt.hash(putUserDto.password, 10),
         group_id: putUserDto.group_id,
         updated_by: req.user.id,
       },
