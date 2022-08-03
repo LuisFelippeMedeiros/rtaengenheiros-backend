@@ -16,7 +16,6 @@ import {
 import { UserService } from './user.service';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
-// import { GetUserDto } from './dto/get-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
 
@@ -32,16 +31,15 @@ export class UserController {
     return this.userService.create(postUserDto, req);
   }
 
+  @Get('rowCount')
+  async countRows() {
+    return await this.userService.rowCount()
+  }
+
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  async findPagination(
-    @Query('pageIndex') pageIndex: number = 1,
-    @Query('pageSize') pageSize: number = 1,
-    @Query('active') active = true,
-  ) {
-    // eslint-disable-next-line prefer-const
-    const pagination: IPagination = { pageIndex, pageSize };
-    return await this.userService.findAll(pagination, active);
+  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
+    return await this.userService.findAll(page, active);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
