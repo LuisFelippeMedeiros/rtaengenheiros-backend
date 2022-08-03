@@ -31,6 +31,11 @@ export class UserController {
     return this.userService.create(postUserDto, req);
   }
 
+  @Get('rowCount')
+  async countRows() {
+    return await this.userService.rowCount()
+  }
+
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async findAll(@Query('page') page: number, @Query('active') active: boolean) {

@@ -17,9 +17,6 @@ export class PutUserDto extends PartialType(PostUserDto) {
   })
   password: string;
 
-  @IsBoolean()
-  active?: boolean;
-
   @IsString()
   group_id: string;
 }

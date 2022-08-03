@@ -3,6 +3,7 @@ import { PrismaService } from 'src/database/PrismaService';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import * as bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
 
 const include = {
   group: {
@@ -43,13 +44,21 @@ export class UserService {
     };
   }
 
+  async rowCount () {
+    return await this.prisma.user.count()
+  }
+
   async findAll(page = 1, active) {
     const users = await this.prisma.user.findMany({
       take: 5,
       skip: 5 * (page - 1),
+      include,
       where: {
         active: active,
       },
+      orderBy: {
+        name: 'asc'
+      }
     });
 
     return users;
@@ -82,7 +91,6 @@ export class UserService {
       data: {
         name: putUserDto.name,
         password: await bcrypt.hash(putUserDto.password, 10),
-        active: putUserDto.active,
         group_id: putUserDto.group_id,
         updated_by: req.user.id,
       },
@@ -102,7 +110,7 @@ export class UserService {
         id: id,
       },
       data: {
-        active: putUserDto.active,
+        active: false,
         deleted_by: req.user.id,
       },
     };
