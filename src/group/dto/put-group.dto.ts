@@ -6,6 +6,9 @@ export class PutGroupDto extends PartialType(PostGroupDto) {
   @IsString()
   name: string;
 
+  @IsString()
+  description?: string;
+
   @IsBoolean()
   active: boolean;
 }
