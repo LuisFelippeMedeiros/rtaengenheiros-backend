@@ -6,5 +6,6 @@ export class PostGroupDto extends Group {
   name: string;
 
   @IsString()
-  description: string;
+  description?: string;
+
 }
