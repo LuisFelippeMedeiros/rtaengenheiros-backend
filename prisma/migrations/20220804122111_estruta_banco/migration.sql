@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "suppliers" ALTER COLUMN "account" DROP NOT NULL,
+ALTER COLUMN "bank" DROP NOT NULL;
