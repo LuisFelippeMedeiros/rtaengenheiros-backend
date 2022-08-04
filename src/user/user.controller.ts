@@ -18,6 +18,7 @@ import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller({
   path: RouteVersion.route + 'users',
@@ -25,7 +26,7 @@ import { User } from './entities/user.entity';
 })
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  @IsPublic()
   @Post('create-user')
   create(@Body() postUserDto: PostUserDto, @Req() req: any) {
     return this.userService.create(postUserDto, req);
@@ -33,7 +34,7 @@ export class UserController {
 
   @Get('rowCount')
   async countRows() {
-    return await this.userService.rowCount()
+    return await this.userService.rowCount();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
