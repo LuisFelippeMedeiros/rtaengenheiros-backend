@@ -3,4 +3,5 @@ export class Group {
   name: string;
   description?: string;
   active: boolean;
+  delete_at: Date;
 }

@@ -3,7 +3,6 @@ import { PrismaService } from 'src/database/PrismaService';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from './entities/user.entity';
 
 const include = {
   group: {
@@ -24,7 +23,7 @@ export class UserService {
       email: putUserDto.email,
       password: await bcrypt.hash(putUserDto.password, 10),
       group_id: putUserDto.group_id,
-      created_by: req.user.id,
+      // created_by: req.user.id,
     };
 
     const emailExists = await this.findByEmail(data.email);
@@ -44,8 +43,8 @@ export class UserService {
     };
   }
 
-  async rowCount () {
-    return await this.prisma.user.count()
+  async rowCount() {
+    return await this.prisma.user.count();
   }
 
   async findAll(page = 1, active) {
@@ -57,8 +56,8 @@ export class UserService {
         active: active,
       },
       orderBy: {
-        name: 'asc'
-      }
+        name: 'asc',
+      },
     });
 
     return users;

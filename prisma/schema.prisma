@@ -120,20 +120,25 @@ model Company {
   @@map("companies")
 }
 
-// model Supplier {
-//   id         String    @id @default(uuid())
-//   name       String
-//   cnpj       String
-//   ie         String
-//   telephone  String
-//   account String
+model Supplier {
+  id         String    @id @default(uuid())
+  name       String
+  cnpj       String
+  ie         String
+  telephone  String
+  account    String?
+  bank       String?
+  pix        String?
+  address    String?
+  district   String?
+  number     String?
+  complement String?
+  created_at DateTime  @default(now())
+  created_by String?
+  updated_at DateTime  @updatedAt
+  updated_by String?
+  deleted_at DateTime?
+  deleted_by String?
 
-//   created_at DateTime  @default(now())
-//   created_by String?
-//   updated_at DateTime  @updatedAt
-//   updated_by String?
-//   deleted_at DateTime?
-//   deleted_by String?
-
-//   @@map("suppliers")
-// }
+  @@map("suppliers")
+}

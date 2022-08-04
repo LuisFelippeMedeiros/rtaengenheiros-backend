@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostGroupDto } from './dto/post-group.dto';
 import { PutGroupDto } from './dto/put-group.dto';
@@ -7,9 +7,11 @@ import { PutGroupDto } from './dto/put-group.dto';
 export class GroupService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(postGroupDto: PostGroupDto) {
+  async create(postGroupDto: PostGroupDto, @Req() req: any) {
     const data = {
-      ...postGroupDto,
+      name: postGroupDto.name,
+      description: postGroupDto.description,
+      created_by: req.user.id,
     };
 
     const groupExist = await this.findByName(data.name);
@@ -50,7 +52,7 @@ export class GroupService {
     });
   }
 
-  async update(id: string, putGroupDto: PutGroupDto) {
+  async update(id: string, putGroupDto: PutGroupDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
@@ -58,6 +60,8 @@ export class GroupService {
       data: {
         name: putGroupDto.name,
         active: putGroupDto.active,
+        description: putGroupDto.description,
+        updated_by: req.user.id,
       },
     };
 
@@ -88,13 +92,14 @@ export class GroupService {
     };
   }
 
-  async deactivate(id: string, putGroupDto: PutGroupDto) {
+  async deactivate(id: string, putGroupDto: PutGroupDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
       },
       data: {
         active: putGroupDto.active,
+        deleted_by: req.user.id,
       },
     };
 
