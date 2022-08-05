@@ -27,7 +27,7 @@ export class GroupController {
     return await this.groupService.findByName(name);
   }
 
-  @Get('/byid/:id')
+  @Get(':id')
   async findGroup(@Param('id') id: string) {
     return await this.groupService.findById(id);
   }
