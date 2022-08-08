@@ -18,7 +18,7 @@ model User {
   created_by String?
   updated_at DateTime  @updatedAt
   updated_by String?
-  deleted_at DateTime?
+  deleted_at DateTime? @updatedAt
   deteled_by String?
 
   group      Group    @relation(fields: [group_id], references: [id])
@@ -38,7 +38,7 @@ model Group {
   created_by  String?
   updated_at  DateTime  @updatedAt
   updated_by  String?
-  deleted_at  DateTime?
+  deleted_at  DateTime? @updatedAt
   deleted_by  String?
 
   roles RolesGroup[]
@@ -57,7 +57,7 @@ model Role {
   created_by String?
   updated_at DateTime  @updatedAt
   updated_by String?
-  deleted_at DateTime?
+  deleted_at DateTime? @updatedAt
   deleted_by String?
 
   groups RolesGroup[]
@@ -108,7 +108,7 @@ model Company {
   created_by String?
   updated_at DateTime  @updatedAt
   updated_by String?
-  deleted_at DateTime?
+  deleted_at DateTime? @updatedAt
   deleted_by String?
 
   User     User[]
@@ -137,7 +137,7 @@ model Supplier {
   created_by String?
   updated_at DateTime  @updatedAt
   updated_by String?
-  deleted_at DateTime?
+  deleted_at DateTime? @updatedAt
   deleted_by String?
 
   @@map("suppliers")
