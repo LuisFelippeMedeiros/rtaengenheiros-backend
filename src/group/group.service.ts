@@ -46,9 +46,13 @@ export class GroupService {
 
   async findById(id: string) {
     return await this.prisma.group.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
+    });
+  }
+
+  async findRolesById(group_id: string) {
+    return await this.prisma.rolesGroup.findMany({
+      where: { group_id },
     });
   }
 
