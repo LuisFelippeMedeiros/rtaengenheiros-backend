@@ -15,9 +15,7 @@ export class RolesGroupService {
 
     await this.prisma.rolesGroup.create({ data });
 
-    return {
-      data,
-    };
+    return;
   }
 
   findAll() {

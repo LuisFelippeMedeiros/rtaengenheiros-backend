@@ -1,5 +1,7 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
+import { PostRolesGroupDto } from 'src/rolesgroup/dto/post-rolesgroup.dto';
+import { RolesGroupService } from 'src/rolesgroup/rolesgroup.service';
 import { PostGroupDto } from './dto/post-group.dto';
 import { PutGroupDto } from './dto/put-group.dto';
 
@@ -24,7 +26,17 @@ export class GroupService {
       };
     }
 
-    await this.prisma.group.create({ data });
+    let group = await this.prisma.group.create({ data });
+
+    if (postGroupDto.roles.length > 0) {
+      for (var i in postGroupDto.roles) {
+        const data: PostRolesGroupDto = {
+          group_id: group.id,
+          role_id: postGroupDto.roles[i]
+        }
+        await this.prisma.rolesGroup.create({ data });
+      }
+    }
 
     return {
       status: true,
