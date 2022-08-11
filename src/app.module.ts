@@ -8,6 +8,7 @@ import { CityModule } from './city/city.module';
 import { RoleModule } from './role/role.module';
 import { GroupModule } from './group/group.module';
 import { CompanyModule } from './company/company.module';
+import { RolesgroupModule } from './rolesgroup/rolesgroup.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CompanyModule } from './company/company.module';
     RoleModule,
     GroupModule,
     CompanyModule,
+    RolesgroupModule,
   ],
   controllers: [],
   providers: [
