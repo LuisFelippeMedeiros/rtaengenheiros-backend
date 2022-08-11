@@ -23,11 +23,11 @@ export class RolesGroupService {
   }
 
   findOne(id: string) {
-    return this.prisma.rolesGroup.findUnique({
+    return this.prisma.rolesGroup.findMany({
       where: {
-        id,
-      },
-    });
+        group_id: id
+      }
+    })
   }
 
   async update(id: string, putRolesGroupDto: PutRolesGroupDto) {

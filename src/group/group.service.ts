@@ -1,7 +1,6 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostRolesGroupDto } from 'src/rolesgroup/dto/post-rolesgroup.dto';
-import { RolesGroupService } from 'src/rolesgroup/rolesgroup.service';
 import { PostGroupDto } from './dto/post-group.dto';
 import { PutGroupDto } from './dto/put-group.dto';
 
@@ -45,19 +44,47 @@ export class GroupService {
   }
 
   async findAll() {
-    return await this.prisma.group.findMany();
+    const groups = await this.prisma.group.findMany({
+      include: {
+        roles: {
+          select: {
+            Role: {
+              select: {
+                module: true,
+                action: true,
+                type: true
+              }
+            },
+          }
+        }
+      }
+    });
+    return groups
   }
 
   async findByName(name: string) {
     return await this.prisma.group.findUnique({
       where: {
         name,
-      },
+      }
     });
   }
 
   async findById(id: string) {
     return await this.prisma.group.findUnique({
+      include: {
+        roles: {
+          select: {
+            Role: {
+              select: {
+                module: true,
+                action: true,
+                type: true
+              }
+            },
+          }
+        }
+      },
       where: { id },
     });
   }
