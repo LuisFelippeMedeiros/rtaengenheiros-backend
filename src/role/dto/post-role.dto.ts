@@ -9,5 +9,8 @@ export class PostRoleDto extends Role {
   action: string;
 
   @IsString()
+  type: string;
+
+  @IsString()
   module: string;
 }

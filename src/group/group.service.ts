@@ -78,7 +78,8 @@ export class GroupService {
             Role: {
               select: {
                 module: true,
-                action: true
+                action: true,
+                type: true
               }
             },
           }
