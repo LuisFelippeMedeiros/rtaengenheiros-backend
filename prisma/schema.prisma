@@ -53,6 +53,7 @@ model Role {
   active     Boolean   @default(true)
   action     String?
   module     String?
+  type       String?
   created_at DateTime  @default(now())
   created_by String?
   updated_at DateTime  @updatedAt

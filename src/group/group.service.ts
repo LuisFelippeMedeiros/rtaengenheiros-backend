@@ -25,14 +25,14 @@ export class GroupService {
       };
     }
 
-    let group = await this.prisma.group.create({ data });
+    const group = await this.prisma.group.create({ data });
 
     if (postGroupDto.roles.length > 0) {
-      for (var i in postGroupDto.roles) {
+      for (const i in postGroupDto.roles) {
         const data: PostRolesGroupDto = {
           group_id: group.id,
-          role_id: postGroupDto.roles[i]
-        }
+          role_id: postGroupDto.roles[i],
+        };
         await this.prisma.rolesGroup.create({ data });
       }
     }
@@ -52,21 +52,21 @@ export class GroupService {
               select: {
                 module: true,
                 action: true,
-                type: true
-              }
+                type: true,
+              },
             },
-          }
-        }
-      }
+          },
+        },
+      },
     });
-    return groups
+    return groups;
   }
 
   async findByName(name: string) {
     return await this.prisma.group.findUnique({
       where: {
         name,
-      }
+      },
     });
   }
 
@@ -79,11 +79,11 @@ export class GroupService {
               select: {
                 module: true,
                 action: true,
-                type: true
-              }
+                type: true,
+              },
             },
-          }
-        }
+          },
+        },
       },
       where: { id },
     });
