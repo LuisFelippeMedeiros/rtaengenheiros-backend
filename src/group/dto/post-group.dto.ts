@@ -1,5 +1,5 @@
 import { Group } from '../entities/group.entity';
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 
 export class PostGroupDto extends Group {
   @IsString()
@@ -8,4 +8,6 @@ export class PostGroupDto extends Group {
   @IsString()
   description?: string;
 
+  @IsArray()
+  roles: Array<string>;
 }

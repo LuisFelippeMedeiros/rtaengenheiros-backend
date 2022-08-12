@@ -1,5 +1,6 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
+import { PostRolesGroupDto } from 'src/rolesgroup/dto/post-rolesgroup.dto';
 import { PostGroupDto } from './dto/post-group.dto';
 import { PutGroupDto } from './dto/put-group.dto';
 
@@ -24,7 +25,17 @@ export class GroupService {
       };
     }
 
-    await this.prisma.group.create({ data });
+    const group = await this.prisma.group.create({ data });
+
+    if (postGroupDto.roles.length > 0) {
+      for (const i in postGroupDto.roles) {
+        const data: PostRolesGroupDto = {
+          group_id: group.id,
+          role_id: postGroupDto.roles[i],
+        };
+        await this.prisma.rolesGroup.create({ data });
+      }
+    }
 
     return {
       status: true,
@@ -33,7 +44,22 @@ export class GroupService {
   }
 
   async findAll() {
-    return await this.prisma.group.findMany();
+    const groups = await this.prisma.group.findMany({
+      include: {
+        roles: {
+          select: {
+            Role: {
+              select: {
+                module: true,
+                action: true,
+                type: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return groups;
   }
 
   async findByName(name: string) {
@@ -46,9 +72,26 @@ export class GroupService {
 
   async findById(id: string) {
     return await this.prisma.group.findUnique({
-      where: {
-        id,
+      include: {
+        roles: {
+          select: {
+            Role: {
+              select: {
+                module: true,
+                action: true,
+                type: true,
+              },
+            },
+          },
+        },
       },
+      where: { id },
+    });
+  }
+
+  async findRolesById(group_id: string) {
+    return await this.prisma.rolesGroup.findMany({
+      where: { group_id },
     });
   }
 

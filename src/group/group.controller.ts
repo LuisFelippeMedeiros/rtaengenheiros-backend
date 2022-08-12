@@ -3,7 +3,6 @@ import { GroupService } from './group.service';
 import { PostGroupDto } from './dto/post-group.dto';
 import { PutGroupDto } from './dto/put-group.dto';
 import { RouteVersion } from 'src/statics/route.version';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller({
   path: RouteVersion.route + 'groups',
@@ -16,7 +15,7 @@ export class GroupController {
   async create(@Body() postGroupDto: PostGroupDto, @Req() req: any) {
     return await this.groupService.create(postGroupDto, req);
   }
-  @IsPublic()
+
   @Get()
   async findAll() {
     return await this.groupService.findAll();
@@ -30,6 +29,11 @@ export class GroupController {
   @Get(':id')
   async findGroup(@Param('id') id: string) {
     return await this.groupService.findById(id);
+  }
+
+  @Get('/rolesgroup/:id')
+  async findRolesByGroup(@Param('group_id') group_id: string) {
+    return await this.groupService.findRolesById(group_id);
   }
 
   @Put(':id')
