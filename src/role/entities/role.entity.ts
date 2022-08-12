@@ -8,4 +8,5 @@ export class Role {
   updated_by: string;
   deleted_by: string;
   module: string;
+  type: string;
 }

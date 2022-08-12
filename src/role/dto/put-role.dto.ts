@@ -18,4 +18,7 @@ export class PutRoleDto extends PartialType(PostRoleDto) {
 
   @IsString()
   module: string;
+
+  @IsString()
+  type: string;
 }
