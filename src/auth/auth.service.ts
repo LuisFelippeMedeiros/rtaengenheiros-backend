@@ -7,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/entities/user.entity';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
-import { RolesGroupService } from 'src/rolesgroup/rolesgroup.service';
 
 @Injectable()
 export class AuthService {
