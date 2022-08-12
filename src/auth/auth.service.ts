@@ -22,12 +22,12 @@ export class AuthService {
       sub: user.id,
     };
 
-    const group = await this.groupService.findById(user.group_id)
+    const group = await this.groupService.findById(user.group_id);
     const jwtToken = this.jwtService.sign(payload);
 
     return {
       access_token: jwtToken,
-      group: new GroupExclude(group)
+      group: new GroupExclude(group),
     };
   }
 
