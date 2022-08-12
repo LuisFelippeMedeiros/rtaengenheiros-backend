@@ -7,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/entities/user.entity';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
-import { RolesGroupService } from 'src/rolesgroup/rolesgroup.service';
 
 @Injectable()
 export class AuthService {
@@ -22,12 +21,12 @@ export class AuthService {
       sub: user.id,
     };
 
-    const group = await this.groupService.findById(user.group_id)
+    const group = await this.groupService.findById(user.group_id);
     const jwtToken = this.jwtService.sign(payload);
 
     return {
       access_token: jwtToken,
-      group: new GroupExclude(group)
+      group: new GroupExclude(group),
     };
   }
 

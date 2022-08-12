@@ -12,7 +12,7 @@ export class RoleService {
       name: postRoleDto.name,
       action: postRoleDto.action,
       module: postRoleDto.module,
-      type: postRoleDto.type
+      type: postRoleDto.type,
     };
 
     const roleExist = await this.findByName(data.name);
@@ -55,7 +55,7 @@ export class RoleService {
         active: putRoleDto.active,
         action: putRoleDto.action,
         module: putRoleDto.module,
-        type: putRoleDto.type
+        type: putRoleDto.type,
       },
     };
 

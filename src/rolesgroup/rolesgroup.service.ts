@@ -25,9 +25,9 @@ export class RolesGroupService {
   findOne(id: string) {
     return this.prisma.rolesGroup.findMany({
       where: {
-        group_id: id
-      }
-    })
+        group_id: id,
+      },
+    });
   }
 
   async update(id: string, putRolesGroupDto: PutRolesGroupDto) {
