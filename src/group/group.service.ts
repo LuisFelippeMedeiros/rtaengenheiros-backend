@@ -53,6 +53,7 @@ export class GroupService {
                 module: true,
                 action: true,
                 type: true,
+                name: true
               },
             },
           },
@@ -80,6 +81,7 @@ export class GroupService {
                 module: true,
                 action: true,
                 type: true,
+                name: true
               },
             },
           },
