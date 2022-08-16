@@ -124,16 +124,20 @@ model Company {
 model Supplier {
   id         String    @id @default(uuid())
   name       String
-  cnpj       String
+  cnpj       String    @unique
   ie         String
   telephone  String
+  email      String?
   account    String?
+  agency     String?
   bank       String?
   pix        String?
+  pix2       String?
   address    String?
   district   String?
   number     String?
   complement String?
+  active     Boolean?  @default(true)
   created_at DateTime  @default(now())
   created_by String?
   updated_at DateTime  @updatedAt
