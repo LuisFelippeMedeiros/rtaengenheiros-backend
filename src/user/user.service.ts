@@ -23,7 +23,7 @@ export class UserService {
       email: putUserDto.email,
       password: await bcrypt.hash(putUserDto.password, 10),
       group_id: putUserDto.group_id,
-      // created_by: req.user.id,
+      created_by: req.user.id,
     };
 
     const emailExists = await this.findByEmail(data.email);
@@ -47,7 +47,7 @@ export class UserService {
     return await this.prisma.user.count();
   }
 
-  async findAll(page = 1, active) {
+  async findAll(page = 1, active: boolean) {
     const users = await this.prisma.user.findMany({
       take: 5,
       skip: 5 * (page - 1),
