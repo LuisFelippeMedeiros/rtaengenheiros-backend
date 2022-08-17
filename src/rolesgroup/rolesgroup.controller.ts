@@ -3,7 +3,9 @@ import { RolesGroupService } from './rolesgroup.service';
 import { PostRolesGroupDto } from './dto/post-rolesgroup.dto';
 import { PutRolesGroupDto } from './dto/put-rolesgroup.dto';
 import { RouteVersion } from 'src/statics/route.version';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('RolesGroup')
 @Controller({
   path: RouteVersion.route + 'rolesgroup',
   version: RouteVersion.version,

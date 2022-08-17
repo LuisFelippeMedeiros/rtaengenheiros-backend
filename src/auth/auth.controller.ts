@@ -13,7 +13,9 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { RouteVersion } from 'src/statics/route.version';
 import { UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller({
   path: RouteVersion.route + 'auth',
   version: RouteVersion.version,

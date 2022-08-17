@@ -3,7 +3,9 @@ import { GroupService } from './group.service';
 import { PostGroupDto } from './dto/post-group.dto';
 import { PutGroupDto } from './dto/put-group.dto';
 import { RouteVersion } from 'src/statics/route.version';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Groups')
 @Controller({
   path: RouteVersion.route + 'groups',
   version: RouteVersion.version,
