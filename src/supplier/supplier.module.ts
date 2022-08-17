@@ -4,7 +4,7 @@ import { SupplierService } from './supplier.service';
 import { SupplierController } from './supplier.controller';
 
 @Module({
-  controllers: [SupplierController, PrismaService],
-  providers: [SupplierService],
+  controllers: [SupplierController],
+  providers: [SupplierService, PrismaService],
 })
 export class SupplierModule {}

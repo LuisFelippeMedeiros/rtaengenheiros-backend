@@ -3,7 +3,9 @@ import { RoleService } from './role.service';
 import { PostRoleDto } from './dto/post-role.dto';
 import { PutRoleDto } from './dto/put-role.dto';
 import { RouteVersion } from 'src/statics/route.version';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Roles')
 @Controller({
   path: RouteVersion.route + 'roles',
   version: RouteVersion.version,

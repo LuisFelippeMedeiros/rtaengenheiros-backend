@@ -19,7 +19,9 @@ import { PutUserDto } from './dto/put-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller({
   path: RouteVersion.route + 'users',
   version: RouteVersion.version,

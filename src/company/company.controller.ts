@@ -1,7 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { CompanyService } from './company.service';
 
+@ApiTags('Companies')
 @Controller({
   path: RouteVersion.route + 'company',
   version: RouteVersion.version,

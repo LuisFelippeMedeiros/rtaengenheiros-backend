@@ -13,7 +13,9 @@ import { SupplierService } from './supplier.service';
 import { PostSupplierDto } from './dto/post-supplier.dto';
 import { PutSupplierDto } from './dto/put-supplier.dto';
 import { RouteVersion } from 'src/statics/route.version';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Suppliers')
 @Controller({
   path: RouteVersion.route + 'supplier',
   version: RouteVersion.version,
