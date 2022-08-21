@@ -12,6 +12,7 @@ import {
   ClassSerializerInterceptor,
   HttpException,
   HttpStatus,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { PostUserDto } from './dto/post-user.dto';
@@ -64,12 +65,8 @@ export class UserController {
     return this.userService.update(id, putUserDto, req);
   }
 
-  @Put('deactivate/:id')
-  deactivate(
-    @Param('id') id: string,
-    @Body() putUserDto: PutUserDto,
-    @Req() req: any,
-  ) {
-    return this.userService.update(id, putUserDto, req);
+  @Delete('deactivate/:id')
+  deactivate(@Param('id') id: string, @Req() req: any) {
+    return this.userService.deactivate(id, req);
   }
 }
