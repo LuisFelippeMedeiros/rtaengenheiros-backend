@@ -18,12 +18,12 @@ export class PurchaseRequestService {
   }
 
   async findAll() {
-    const purchaseRequests = await this.prisma.purchaserequest.findMany();
+    const purchaseRequests = await this.prisma.purchaseRequest.findMany();
     return purchaseRequests;
   }
 
   async findById(id: string) {
-    return await this.prisma.purchaserequest.findUnique({
+    return await this.prisma.purchaseRequest.findUnique({
       where: {
         id,
       },
@@ -56,7 +56,7 @@ export class PurchaseRequestService {
       },
     };
 
-    await this.prisma.purchaserequest.update(update);
+    await this.prisma.purchaseRequest.update(update);
 
     return {
       status: true,
