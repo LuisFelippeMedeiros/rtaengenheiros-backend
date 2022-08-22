@@ -41,6 +41,11 @@ export class AuthService {
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (isPasswordValid) {
+        if (!user.active) {
+          throw new UnauthorizedError(
+            'Usuário está inativo no sistema'
+          );
+        }
         return {
           ...user,
           password: undefined,

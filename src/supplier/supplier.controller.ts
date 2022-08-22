@@ -34,6 +34,11 @@ export class SupplierController {
     return this.supplierService.findAll(page, active);
   }
 
+  @Get('rowCount')
+  async countRows() {
+    return await this.supplierService.rowCount();
+  }
+
   @Get(':id')
   findOne(@Param('cnpj') cnpj: string) {
     return this.supplierService.findByCNPJ(cnpj);
