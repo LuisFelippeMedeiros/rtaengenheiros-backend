@@ -122,28 +122,104 @@ model Company {
 }
 
 model Supplier {
-  id         String    @id @default(uuid())
-  name       String
-  cnpj       String    @unique
-  ie         String
-  telephone  String
-  email      String?
-  account    String?
-  agency     String?
-  bank       String?
-  pix        String?
-  pix2       String?
-  address    String?
-  district   String?
-  number     String?
-  complement String?
-  active     Boolean?  @default(true)
-  created_at DateTime  @default(now())
-  created_by String?
-  updated_at DateTime  @updatedAt
-  updated_by String?
-  deleted_at DateTime? @updatedAt
-  deleted_by String?
+  id               String                  @id @default(uuid())
+  name             String
+  cnpj             String                  @unique
+  ie               String
+  telephone        String
+  email            String?
+  account          String?
+  agency           String?
+  bank             String?
+  pix              String?
+  pix2             String?
+  address          String?
+  district         String?
+  number           String?
+  complement       String?
+  active           Boolean?                @default(true)
+  created_at       DateTime                @default(now())
+  created_by       String?
+  updated_at       DateTime                @updatedAt
+  updated_by       String?
+  deleted_at       DateTime?               @updatedAt
+  deleted_by       String?
+  purchaserequests PurchaseRequestBudget[]
 
   @@map("suppliers")
+}
+
+model Product {
+  id              String            @id @default(uuid())
+  name            String
+  active          Boolean           @default(true)
+  created_at      DateTime          @default(now())
+  created_by      String?
+  updated_at      DateTime          @updatedAt
+  updated_by      String?
+  deleted_at      DateTime?
+  deleted_by      String?
+  category        CategoryProduct[]
+  purchaserequest PurchaseRequest[]
+
+  @@map("products")
+}
+
+model Category {
+  id               String            @id @default(uuid())
+  name             String
+  active           Boolean           @default(true)
+  created_at       DateTime          @default(now())
+  created_by       String?
+  updated_at       DateTime          @updatedAt
+  updated_by       String?
+  deleted_at       DateTime?
+  deleted_by       String?
+  purchaserequests PurchaseRequest[]
+  products         CategoryProduct[]
+
+  @@map("categories")
+}
+
+model CategoryProduct {
+  id          String    @id @default(uuid())
+  Product     Product?  @relation(fields: [product_id], references: [id])
+  product_id  String?
+  Category    Category? @relation(fields: [category_id], references: [id])
+  category_id String?
+
+  @@map("categoriesproduct")
+}
+
+model PurchaseRequest {
+  id          String                  @id @default(uuid())
+  quantity    String?
+  reason      String
+  status      String                  @default("Pendente")
+  active      Boolean                 @default(true)
+  comment     String
+  created_at  DateTime                @default(now())
+  created_by  String?
+  updated_at  DateTime                @updatedAt
+  updated_by  String?
+  rejected_at DateTime?
+  rejected_by String?
+  supplier    PurchaseRequestBudget[]
+  Category    Category?               @relation(fields: [category_id], references: [id])
+  category_id String?
+  Product     Product?                @relation(fields: [product_id], references: [id])
+  product_id  String?
+
+  @@map("purchaserequests")
+}
+
+model PurchaseRequestBudget {
+  id                 String           @id @default(uuid())
+  budget             String
+  Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
+  supplier_id        String?
+  PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
+  purchaserequest_id String?
+
+  @@map("purchaserequestbudgets")
 }
