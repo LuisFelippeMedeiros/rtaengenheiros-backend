@@ -58,6 +58,10 @@ export class SupplierService {
     return suppliers;
   }
 
+  async rowCount () {
+    return await this.prisma.supplier.count()
+  }
+
   async findByCNPJ(cnpj: string) {
     return await this.prisma.supplier.findUnique({
       where: { cnpj },
