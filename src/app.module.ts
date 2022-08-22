@@ -10,6 +10,7 @@ import { GroupModule } from './group/group.module';
 import { CompanyModule } from './company/company.module';
 import { RolesgroupModule } from './rolesgroup/rolesgroup.module';
 import { SupplierModule } from './supplier/supplier.module';
+import { PurchaserequestModule } from './purchaserequest/purchaserequest.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SupplierModule } from './supplier/supplier.module';
     CompanyModule,
     RolesgroupModule,
     SupplierModule,
+    PurchaserequestModule,
   ],
   controllers: [],
   providers: [
