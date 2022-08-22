@@ -104,22 +104,21 @@ export class UserService {
   }
 
   async deactivate(id_user: string, @Req() req: any) {
-    const user = await this.prisma.user.findFirst({ where: { id: id_user } })
+    const user = await this.prisma.user.findFirst({ where: { id: id_user } });
 
     if (!user) {
       return {
         status: false,
-        message: 'Este usuário não existe no sistema'
+        message: 'Este usuário não existe no sistema',
       };
     } else {
-      user.active = false
-      user.deteled_by = req.body.id,
-      user.deleted_at = new Date()
+      user.active = false;
+      (user.deteled_by = req.body.id), (user.deleted_at = new Date());
     }
 
     await this.prisma.user.update({
       where: { id: id_user },
-      data: user
+      data: user,
     });
 
     return {
