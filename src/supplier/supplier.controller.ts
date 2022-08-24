@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Delete,
   Put,
   Param,
   Req,
@@ -40,11 +40,11 @@ export class SupplierController {
   }
 
   @Get(':id')
-  findOne(@Param('cnpj') cnpj: string) {
-    return this.supplierService.findByCNPJ(cnpj);
+  findOne(@Param('id')id: string) {
+    return this.supplierService.findById(id);
   }
 
-  @Put('update/:id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() putSupplierDto: PutSupplierDto,
@@ -53,12 +53,11 @@ export class SupplierController {
     return this.supplierService.update(id, putSupplierDto, req);
   }
 
-  @Patch('deactivate:id')
+  @Delete('deactivate/:id')
   deactivate(
     @Param('id') id: string,
-    @Body() putSupplierDto: PutSupplierDto,
     @Req() req: any,
   ) {
-    return this.supplierService.deactivate(id, putSupplierDto, req);
+    return this.supplierService.deactivate(id, req);
   }
 }

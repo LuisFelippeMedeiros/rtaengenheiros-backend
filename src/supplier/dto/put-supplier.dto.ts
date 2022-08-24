@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { PostSupplierDto } from './post-supplier.dto';
-import { IsString, IsBoolean } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class PutSupplierDto extends PartialType(PostSupplierDto) {
   @IsString()
@@ -11,6 +11,12 @@ export class PutSupplierDto extends PartialType(PostSupplierDto) {
 
   @IsString()
   account: string;
+
+  @IsString()
+  cnpj: string;
+
+  @IsString()
+  ie: string;
 
   @IsString()
   agency: string;
@@ -35,7 +41,4 @@ export class PutSupplierDto extends PartialType(PostSupplierDto) {
 
   @IsString()
   complement: string;
-
-  @IsBoolean()
-  active: boolean;
 }

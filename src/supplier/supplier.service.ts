@@ -26,7 +26,7 @@ export class SupplierService {
       created_by: req.user.id,
     };
 
-    const supplierExists = this.findByCNPJ(data.cnpj);
+    const supplierExists = await this.findByCNPJ(data.cnpj);
 
     if (supplierExists) {
       return {
@@ -59,7 +59,17 @@ export class SupplierService {
   }
 
   async rowCount () {
-    return await this.prisma.supplier.count()
+    return await this.prisma.supplier.count({
+      where: {
+        active: true
+      }
+    })
+  }
+
+  async findById(id: string) {
+    return await this.prisma.supplier.findUnique({
+      where: { id },
+    });
   }
 
   async findByCNPJ(cnpj: string) {
@@ -85,6 +95,8 @@ export class SupplierService {
         email: putSupplierDto.email,
         account: putSupplierDto.account,
         agency: putSupplierDto.agency,
+        cnpj: putSupplierDto.cnpj,
+        ie: putSupplierDto.ie,
         bank: putSupplierDto.bank,
         pix: putSupplierDto.pix,
         pix2: putSupplierDto.pix2,
@@ -104,26 +116,28 @@ export class SupplierService {
     };
   }
 
-  async deactivate(
-    id: string,
-    putSupplierDto: PutSupplierDto,
-    @Req() req: any,
-  ) {
-    const update = {
-      where: {
-        id: id,
-      },
-      data: {
-        active: false,
-        deleted_by: req.user.id,
-      },
-    };
+  async deactivate(id: string, @Req() req: any) {
+    const supplier = await this.prisma.supplier.findFirst({ where: { id } })
 
-    await this.prisma.user.update(update);
+    if (!supplier) {
+      return {
+        status: false,
+        message: 'Este usuário não existe no sistema'
+      }
+    } else {
+      supplier.active = false;
+      (supplier.deleted_at = new Date()),
+      (supplier.deleted_by = req.body.id)
+    }
+
+    await this.prisma.supplier.update({
+      where: { id },
+      data: supplier
+    });
 
     return {
       status: true,
-      message: `O fornecedor ${putSupplierDto.name} foi desativado com sucesso.`,
+      message: `O fornecedor ${supplier.name} foi desativado com sucesso.`,
     };
   }
 }
