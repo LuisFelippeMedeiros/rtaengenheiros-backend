@@ -43,8 +43,10 @@ export class UserService {
     };
   }
 
-  async rowCount() {
-    return await this.prisma.user.count();
+  async rowCount(active: boolean = true) {
+    return await this.prisma.user.count({
+      where: { active }
+    });
   }
 
   async findAll(page = 1, active: boolean) {

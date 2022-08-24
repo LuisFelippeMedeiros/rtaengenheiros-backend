@@ -58,11 +58,9 @@ export class SupplierService {
     return suppliers;
   }
 
-  async rowCount () {
+  async rowCount (active: boolean = true) {
     return await this.prisma.supplier.count({
-      where: {
-        active: true
-      }
+      where: { active }
     })
   }
 

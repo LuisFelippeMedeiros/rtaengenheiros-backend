@@ -35,8 +35,8 @@ export class SupplierController {
   }
 
   @Get('rowCount')
-  async countRows() {
-    return await this.supplierService.rowCount();
+  async countRows(@Query('active') active: boolean) {
+    return await this.supplierService.rowCount(active);
   }
 
   @Get(':id')

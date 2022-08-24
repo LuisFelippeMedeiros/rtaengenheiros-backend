@@ -36,8 +36,8 @@ export class UserController {
   }
 
   @Get('rowCount')
-  async countRows() {
-    return await this.userService.rowCount();
+  async countRows(@Query('active') active: boolean) {
+    return await this.userService.rowCount(active);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
