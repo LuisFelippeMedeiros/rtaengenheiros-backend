@@ -7,4 +7,7 @@ export class PostProductDto extends Product {
 
   @IsBoolean()
   active: boolean;
+
+  @IsString()
+  category_id: string;
 }

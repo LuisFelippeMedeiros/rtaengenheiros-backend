@@ -1,6 +1,7 @@
 export class Product {
   id?: string;
   name: string;
+  category_id: string;
   active: boolean;
   created_at: Date;
   created_by?: string;

@@ -8,4 +8,7 @@ export class PutProductDto extends PartialType(PostProductDto) {
 
   @IsBoolean()
   active: boolean;
+
+  @IsString()
+  category_id: string;
 }
