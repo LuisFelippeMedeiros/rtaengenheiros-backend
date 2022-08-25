@@ -23,7 +23,7 @@ export class UserService {
       email: putUserDto.email,
       password: await bcrypt.hash(putUserDto.password, 10),
       group_id: putUserDto.group_id,
-      created_by: req.user.id,
+      created_by: req.body.id,
     };
 
     const emailExists = await this.findByEmail(data.email);
