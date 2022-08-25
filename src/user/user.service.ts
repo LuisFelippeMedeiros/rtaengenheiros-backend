@@ -43,9 +43,9 @@ export class UserService {
     };
   }
 
-  async rowCount(active: boolean = true) {
+  async rowCount(active = true) {
     return await this.prisma.user.count({
-      where: { active }
+      where: { active },
     });
   }
 
