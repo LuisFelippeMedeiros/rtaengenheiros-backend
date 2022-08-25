@@ -159,35 +159,26 @@ model Product {
   updated_by      String?
   deleted_at      DateTime?
   deleted_by      String?
-  category        CategoryProduct[]
   purchaserequest PurchaseRequest[]
+  Category        Category?         @relation(fields: [category_id], references: [id])
+  category_id     String?
 
   @@map("products")
 }
 
 model Category {
-  id         String            @id @default(uuid())
+  id         String    @id @default(uuid())
   name       String
-  active     Boolean           @default(true)
-  created_at DateTime          @default(now())
+  active     Boolean   @default(true)
+  created_at DateTime  @default(now())
   created_by String?
-  updated_at DateTime          @updatedAt
+  updated_at DateTime  @updatedAt
   updated_by String?
   deleted_at DateTime?
   deleted_by String?
-  products   CategoryProduct[]
+  products   Product[]
 
   @@map("categories")
-}
-
-model CategoryProduct {
-  id          String    @id @default(uuid())
-  Product     Product?  @relation(fields: [product_id], references: [id])
-  product_id  String?
-  Category    Category? @relation(fields: [category_id], references: [id])
-  category_id String?
-
-  @@map("categoriesproduct")
 }
 
 model PurchaseRequest {

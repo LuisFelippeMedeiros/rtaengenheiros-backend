@@ -10,6 +10,7 @@ export class ProductService {
   async create(postProductDto: PostProductDto, @Req() req: any) {
     const data = {
       name: postProductDto.name,
+      category_id: postProductDto.category_id,
       created_by: req.user.id,
     };
 
@@ -60,6 +61,7 @@ export class ProductService {
       },
       data: {
         name: putProductDto.name,
+        category_id: putProductDto.category_id,
         active: putProductDto.active,
         updated_by: req.user.id,
       },
