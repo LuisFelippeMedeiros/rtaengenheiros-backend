@@ -138,22 +138,21 @@ export class GroupService {
   }
 
   async deactivate(id: string, @Req() req: any) {
-    const group = await this.prisma.group.findFirst({ where: { id } })
+    const group = await this.prisma.group.findFirst({ where: { id } });
 
     if (!group) {
       return {
         status: false,
-        message: 'Este grupo de permissão não existe no sistema'
-      }
+        message: 'Este grupo de permissão não existe no sistema',
+      };
     } else {
       group.active = false;
-      (group.deleted_at = new Date()),
-      (group.deleted_by = req.body.id)
+      (group.deleted_at = new Date()), (group.deleted_by = req.body.id);
     }
 
     await this.prisma.group.update({
       where: { id },
-      data: group
+      data: group,
     });
 
     return {

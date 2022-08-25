@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Put, Param, Req, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Req,
+  Delete,
+} from '@nestjs/common';
 import { GroupService } from './group.service';
 import { PostGroupDto } from './dto/post-group.dto';
 import { PutGroupDto } from './dto/put-group.dto';
@@ -48,10 +57,7 @@ export class GroupController {
   }
 
   @Delete('deactivate/:id')
-  async deactivate(
-    @Param('id') id: string,
-    @Req() req: any,
-  ) {
+  async deactivate(@Param('id') id: string, @Req() req: any) {
     return await this.groupService.deactivate(id, req);
   }
 }

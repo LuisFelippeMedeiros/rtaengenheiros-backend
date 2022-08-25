@@ -151,7 +151,7 @@ model Supplier {
 
 model Product {
   id              String            @id @default(uuid())
-  name            String
+  name            String            @unique
   active          Boolean           @default(true)
   created_at      DateTime          @default(now())
   created_by      String?
@@ -166,17 +166,16 @@ model Product {
 }
 
 model Category {
-  id               String            @id @default(uuid())
-  name             String
-  active           Boolean           @default(true)
-  created_at       DateTime          @default(now())
-  created_by       String?
-  updated_at       DateTime          @updatedAt
-  updated_by       String?
-  deleted_at       DateTime?
-  deleted_by       String?
-  purchaserequests PurchaseRequest[]
-  products         CategoryProduct[]
+  id         String            @id @default(uuid())
+  name       String
+  active     Boolean           @default(true)
+  created_at DateTime          @default(now())
+  created_by String?
+  updated_at DateTime          @updatedAt
+  updated_by String?
+  deleted_at DateTime?
+  deleted_by String?
+  products   CategoryProduct[]
 
   @@map("categories")
 }
@@ -205,8 +204,6 @@ model PurchaseRequest {
   rejected_at DateTime?
   rejected_by String?
   supplier    PurchaseRequestBudget[]
-  Category    Category?               @relation(fields: [category_id], references: [id])
-  category_id String?
   Product     Product?                @relation(fields: [product_id], references: [id])
   product_id  String?
 
