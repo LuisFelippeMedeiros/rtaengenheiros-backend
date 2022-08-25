@@ -137,22 +137,28 @@ export class GroupService {
     };
   }
 
-  async deactivate(id: string, putGroupDto: PutGroupDto, @Req() req: any) {
-    const update = {
-      where: {
-        id: id,
-      },
-      data: {
-        active: putGroupDto.active,
-        deleted_by: req.user.id,
-      },
-    };
+  async deactivate(id: string, @Req() req: any) {
+    const group = await this.prisma.group.findFirst({ where: { id } })
 
-    await this.prisma.group.update(update);
+    if (!group) {
+      return {
+        status: false,
+        message: 'Este grupo de permissão não existe no sistema'
+      }
+    } else {
+      group.active = false;
+      (group.deleted_at = new Date()),
+      (group.deleted_by = req.body.id)
+    }
+
+    await this.prisma.group.update({
+      where: { id },
+      data: group
+    });
 
     return {
       status: true,
-      message: `O grupo ${putGroupDto.name}, foi desativado com sucesso.`,
+      message: `O grupo ${group.name}, foi desativado com sucesso.`,
     };
   }
 }
