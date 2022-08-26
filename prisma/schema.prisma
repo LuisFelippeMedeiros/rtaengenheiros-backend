@@ -168,7 +168,7 @@ model Product {
 
 model Category {
   id         String    @id @default(uuid())
-  name       String
+  name       String    @unique
   active     Boolean   @default(true)
   created_at DateTime  @default(now())
   created_by String?
