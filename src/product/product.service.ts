@@ -14,7 +14,7 @@ export class ProductService {
       created_by: req.user.id,
     };
 
-    const productExists = await this.findById(data.name);
+    const productExists = await this.findByName(data.name);
 
     if (productExists) {
       return {
@@ -90,7 +90,7 @@ export class ProductService {
 
     return {
       status: true,
-      message: `O produto ${putProductDto.name} foi alterado com sucesso.`,
+      message: `O produto ${putProductDto.name}, foi alterado com sucesso.`,
     };
   }
 
@@ -100,7 +100,7 @@ export class ProductService {
     if (!product) {
       return {
         status: false,
-        message: 'Este produto não existe em nossa base de dados',
+        message: 'Este produto não existe em nossa base de dados.',
       };
     } else {
       product.active = false;
