@@ -8,11 +8,11 @@ import {
   Delete,
   Req,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { RouteVersion } from 'src/statics/route.version';
 import { CategoryService } from './category.service';
 import { PostCategoryDto } from './dto/post-category.dto';
 import { PutCategoryDto } from './dto/put-category.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { RouteVersion } from 'src/statics/route.version';
 
 @ApiTags('Categories')
 @Controller({
