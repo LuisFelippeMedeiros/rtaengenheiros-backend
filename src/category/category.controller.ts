@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Query
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
@@ -28,8 +29,13 @@ export class CategoryController {
   }
 
   @Get()
-  async findAll() {
-    return await this.categoryService.findAll();
+  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
+    return await this.categoryService.findAll(page, active);
+  }
+
+  @Get('rowCount')
+  async countRows(@Query('active') active: boolean) {
+    return await this.categoryService.rowCount(active);
   }
 
   @Get(':id')

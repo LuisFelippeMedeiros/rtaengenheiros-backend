@@ -32,10 +32,23 @@ export class ProductService {
     };
   }
 
-  async findAll() {
-    const products = await this.prisma.product.findMany();
+  async findAll(page = 1, active: boolean) {
+    const products = await this.prisma.product.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      where: { active },
+      orderBy: {
+        name: 'asc'
+      }
+    });
 
     return products;
+  }
+
+  async rowCount (active: boolean = true) {
+    return await this.prisma.product.count({
+      where: { active }
+    })
   }
 
   async findById(id: string) {

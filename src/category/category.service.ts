@@ -30,10 +30,23 @@ export class CategoryService {
     };
   }
 
-  async findAll() {
-    const categories = await this.prisma.category.findMany();
+  async findAll(page = 1, active: boolean) {
+    const categories = await this.prisma.category.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      where: { active },
+      orderBy: {
+        name: 'asc',
+      },
+    });
 
     return categories;
+  }
+
+  async rowCount (active: boolean = true) {
+    return await this.prisma.category.count({
+      where: { active }
+    })
   }
 
   async findById(id: string) {

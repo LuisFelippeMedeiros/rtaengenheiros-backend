@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Req,
+  Query
+
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { PostProductDto } from './dto/post-product.dto';
@@ -28,8 +30,13 @@ export class ProductController {
   }
 
   @Get()
-  async findAll() {
-    return await this.productService.findAll();
+  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
+    return await this.productService.findAll(page, active);
+  }
+
+  @Get('rowCount')
+  async countRows(@Query('active') active: boolean) {
+    return await this.productService.rowCount(active);
   }
 
   @Get(':id')
