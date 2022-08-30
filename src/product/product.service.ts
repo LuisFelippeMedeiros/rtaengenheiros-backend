@@ -37,6 +37,14 @@ export class ProductService {
       take: 5,
       skip: 5 * (page - 1),
       where: { active },
+      include: {
+        Category: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      },
       orderBy: {
         name: 'asc'
       }
@@ -56,6 +64,14 @@ export class ProductService {
       where: {
         id,
       },
+      include: {
+        Category: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
     });
   }
 
