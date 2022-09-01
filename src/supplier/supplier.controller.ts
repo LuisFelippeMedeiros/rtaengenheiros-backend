@@ -40,7 +40,7 @@ export class SupplierController {
   }
 
   @Get(':id')
-  findOne(@Param('id')id: string) {
+  findOne(@Param('id') id: string) {
     return this.supplierService.findById(id);
   }
 
@@ -54,10 +54,7 @@ export class SupplierController {
   }
 
   @Delete('deactivate/:id')
-  deactivate(
-    @Param('id') id: string,
-    @Req() req: any,
-  ) {
+  deactivate(@Param('id') id: string, @Req() req: any) {
     return this.supplierService.deactivate(id, req);
   }
 }
