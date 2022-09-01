@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
 import { PutPurchaseRequestDto } from './dto/put-purchaserequest.dto';
+import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 
 @Injectable()
 export class PurchaseRequestService {
@@ -11,14 +12,32 @@ export class PurchaseRequestService {
     postPurchaseRequestDto: PostPurchaseRequestDto,
     @Req() req: any,
   ) {
+    const data = {
+      product_id: postPurchaseRequestDto.product_id,
+      quantity: postPurchaseRequestDto.quantity,
+      reason: postPurchaseRequestDto.reason,
+      status: postPurchaseRequestDto.status,
+      comment: postPurchaseRequestDto.comment,
+      created_by: req.user.id,
+    };
+
+    const productName = await this.prisma.product.findFirst({
+      where: {
+        id: postPurchaseRequestDto.product_id,
+      },
+    });
+
+    await this.prisma.purchaseRequest.create({ data });
+
     return {
       status: true,
-      message: `A Solicitação de compra ${postPurchaseRequestDto.product}, foi criada com sucesso.`,
+      message: `A Solicitação de compra ${productName}, foi criada com sucesso.`,
     };
   }
 
   async findAll() {
     const purchaseRequests = await this.prisma.purchaseRequest.findMany();
+
     return purchaseRequests;
   }
 
@@ -35,9 +54,88 @@ export class PurchaseRequestService {
     putPurchaseRequestDto: PutPurchaseRequestDto,
     @Req() req: any,
   ) {
+    const update = {
+      where: {
+        id: id,
+      },
+      data: {
+        quantity: putPurchaseRequestDto.quantity,
+        reason: putPurchaseRequestDto.reason,
+        status: putPurchaseRequestDto.status,
+        comment: putPurchaseRequestDto.comment,
+        updated_by: req.user.id,
+      },
+    };
+
+    const productName = await this.prisma.product.findFirst({
+      where: { id: putPurchaseRequestDto.product_id },
+    });
+
+    await this.prisma.purchaseRequest.update(update);
+
     return {
       status: true,
-      message: `A solicitação de compra ${putPurchaseRequestDto.product}, foi alterado com sucesso.`,
+      message: `A solicitação de compra ${productName}, foi alterado com sucesso.`,
+    };
+  }
+
+  async aprove(
+    id: string,
+    patchPurchaseRequestDto: PatchPurchaseRequestDto,
+    @Req() req: any,
+  ) {
+    const update = {
+      where: {
+        id: id,
+      },
+      data: {
+        quantity: patchPurchaseRequestDto.quantity,
+        status: patchPurchaseRequestDto.status,
+        comment: patchPurchaseRequestDto.comment,
+        aproved_by: req.user.id,
+        aproved_at: new Date(),
+      },
+    };
+
+    const productName = await this.prisma.product.findFirst({
+      where: { id: patchPurchaseRequestDto.product_id },
+    });
+
+    await this.prisma.purchaseRequest.update(update);
+
+    return {
+      status: true,
+      message: `A solicitação de compra ${productName}, foi rejeitado com sucesso.`,
+    };
+  }
+
+  async reject(
+    id: string,
+    patchPurchaseRequestDto: PatchPurchaseRequestDto,
+    @Req() req: any,
+  ) {
+    const update = {
+      where: {
+        id: id,
+      },
+      data: {
+        quantity: patchPurchaseRequestDto.quantity,
+        status: patchPurchaseRequestDto.status,
+        comment: patchPurchaseRequestDto.comment,
+        rejected_by: req.user.id,
+        rejected_at: new Date(),
+      },
+    };
+
+    const productName = await this.prisma.product.findFirst({
+      where: { id: patchPurchaseRequestDto.product_id },
+    });
+
+    await this.prisma.purchaseRequest.update(update);
+
+    return {
+      status: true,
+      message: `A solicitação de compra ${productName}, foi aprovado com sucesso.`,
     };
   }
 
@@ -46,21 +144,26 @@ export class PurchaseRequestService {
     putPurchaseRequestDto: PutPurchaseRequestDto,
     @Req() req: any,
   ) {
-    const update = {
+    const deactivate = {
       where: {
         id: id,
       },
       data: {
         active: putPurchaseRequestDto.active,
-        rejected_by: req.user.id,
+        deleted_by: req.user.id,
+        deleted_at: new Date(),
       },
     };
 
-    await this.prisma.purchaseRequest.update(update);
+    const productName = await this.prisma.product.findFirst({
+      where: { id: putPurchaseRequestDto.product_id },
+    });
+
+    await this.prisma.purchaseRequest.update(deactivate);
 
     return {
       status: true,
-      message: `O grupo ${putPurchaseRequestDto.product}, foi desativado com sucesso.`,
+      message: `O grupo ${productName}, foi desativado com sucesso.`,
     };
   }
 }
