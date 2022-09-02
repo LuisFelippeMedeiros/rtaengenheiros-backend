@@ -85,9 +85,7 @@ export class ProductService {
 
   async update(id: string, putProductDto: PutProductDto, @Req() req: any) {
     const update = {
-      where: {
-        id: id,
-      },
+      where: { id },
       data: {
         name: putProductDto.name,
         category_id: putProductDto.category_id,
@@ -114,13 +112,6 @@ export class ProductService {
           'O nome do produto que está tentando alterar já se encontra cadastrado em nossa base de dados, favor verificar.',
       };
     }
-
-    await this.prisma.product.update(update);
-
-    return {
-      status: true,
-      message: `O produto ${putProductDto.name}, foi alterado com sucesso.`,
-    };
   }
 
   async deactivate(id: string, @Req() req: any) {

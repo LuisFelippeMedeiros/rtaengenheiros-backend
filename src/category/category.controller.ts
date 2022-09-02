@@ -28,9 +28,14 @@ export class CategoryController {
     return await this.categoryService.create(postCategoryDto, req);
   }
 
+  @Get('all')
+  async findAll() {
+    return await this.categoryService.findAll();
+  }
+
   @Get()
-  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
-    return await this.categoryService.findAll(page, active);
+  async findPagination(@Query('page') page: number, @Query('active') active: boolean) {
+    return await this.categoryService.findPagination(page, active);
   }
 
   @Get('rowCount')

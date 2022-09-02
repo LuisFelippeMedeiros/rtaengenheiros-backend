@@ -2,8 +2,8 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
-  Patch,
   Param,
   Delete,
   Req,
@@ -49,7 +49,7 @@ export class ProductController {
     return await this.productService.findByName(name);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() putProductDto: PutProductDto,

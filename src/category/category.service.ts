@@ -30,7 +30,15 @@ export class CategoryService {
     };
   }
 
-  async findAll(page = 1, active: boolean) {
+  async findAll() {
+    return await this.prisma.category.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    })
+  }
+
+  async findPagination(page = 1, active: boolean) {
     const categories = await this.prisma.category.findMany({
       take: 5,
       skip: 5 * (page - 1),
