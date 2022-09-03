@@ -1,19 +1,21 @@
-export class PostPurchaseRequestDto {
-  id?: string;
-  product: string;
+import { IsBoolean, IsString } from 'class-validator';
+import { PurchaseRequest } from '../entities/purchaserequest.entity';
+export class PostPurchaseRequestDto extends PurchaseRequest {
+  @IsString()
   quantity?: string;
-  budge1?: string;
-  budge2?: string;
-  budge3?: string;
+
+  @IsString()
   reason: string;
+
+  @IsString()
   status: string;
+
+  @IsBoolean()
   active: boolean;
 
+  @IsString()
   comment: string;
-  created_at: Date;
-  created_by?: string;
-  updated_at: Date;
-  updated_by?: string;
-  rejected_at?: Date;
-  rejected_by?: string;
+
+  @IsString()
+  product_id?: string;
 }
