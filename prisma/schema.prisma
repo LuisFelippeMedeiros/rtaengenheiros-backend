@@ -172,7 +172,7 @@ model Category {
   active     Boolean   @default(true)
   created_at DateTime  @default(now())
   created_by String?
-  updated_at DateTime?  @updatedAt
+  updated_at DateTime? @updatedAt
   updated_by String?
   deleted_at DateTime?
   deleted_by String?
@@ -196,8 +196,8 @@ model PurchaseRequest {
   deleted_by  String?
   rejected_at DateTime?
   rejected_by String?
-  aproved_at  DateTime?
-  aproved_by  String?
+  approved_at DateTime?
+  approved_by String?
   supplier    PurchaseRequestBudget[]
   Product     Product?                @relation(fields: [product_id], references: [id])
   product_id  String?

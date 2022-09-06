@@ -79,7 +79,7 @@ export class PurchaseRequestService {
     };
   }
 
-  async aprove(
+  async approve(
     id: string,
     patchPurchaseRequestDto: PatchPurchaseRequestDto,
     @Req() req: any,
@@ -92,8 +92,8 @@ export class PurchaseRequestService {
         quantity: patchPurchaseRequestDto.quantity,
         status: patchPurchaseRequestDto.status,
         comment: patchPurchaseRequestDto.comment,
-        aproved_by: req.user.id,
-        aproved_at: new Date(),
+        approved_by: req.user.id,
+        approved_at: new Date(),
       },
     };
 
