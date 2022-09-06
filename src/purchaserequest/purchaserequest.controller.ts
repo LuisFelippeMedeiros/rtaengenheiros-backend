@@ -59,13 +59,13 @@ export class PurchaseRequestController {
     );
   }
 
-  @Patch('aprove/:id')
-  async aprove(
+  @Patch('approve/:id')
+  async approve(
     @Param('id') id: string,
     @Body() patchPurchaseRequestDto: PatchPurchaseRequestDto,
     @Req() req: any,
   ) {
-    return await this.purchaseRequestService.aprove(
+    return await this.purchaseRequestService.approve(
       id,
       patchPurchaseRequestDto,
       req,
