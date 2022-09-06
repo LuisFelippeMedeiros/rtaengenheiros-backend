@@ -13,6 +13,7 @@ import { SupplierModule } from './supplier/supplier.module';
 import { PurchaserequestModule } from './purchaserequest/purchaserequest.module';
 import { ProductModule } from './product/product.module';
 import { CategoryModule } from './category/category.module';
+import { StatusModule } from './status/status.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CategoryModule } from './category/category.module';
     PurchaserequestModule,
     ProductModule,
     CategoryModule,
+    StatusModule,
   ],
   controllers: [],
   providers: [
