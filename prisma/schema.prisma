@@ -185,7 +185,6 @@ model PurchaseRequest {
   id          String                  @id @default(uuid())
   quantity    String?
   reason      String
-  status      String                  @default("Pendente")
   active      Boolean                 @default(true)
   comment     String
   created_at  DateTime                @default(now())
@@ -201,6 +200,8 @@ model PurchaseRequest {
   supplier    PurchaseRequestBudget[]
   Product     Product?                @relation(fields: [product_id], references: [id])
   product_id  String?
+  Status      Status?                 @relation(fields: [status_id], references: [id])
+  status_id   String?
 
   @@map("purchaserequests")
 }
@@ -214,4 +215,18 @@ model PurchaseRequestBudget {
   purchaserequest_id String?
 
   @@map("purchaserequestbudgets")
+}
+
+model Status {
+  id         String    @id @default(uuid())
+  name       String    @unique
+  active     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  created_by String?
+  updated_at DateTime  @updatedAt
+  updated_by String?
+  deleted_at DateTime?
+  deleted_by String?
+
+  PurchaseRequest PurchaseRequest[]
 }
