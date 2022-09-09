@@ -145,6 +145,7 @@ model Supplier {
   deleted_at       DateTime?               @updatedAt
   deleted_by       String?
   purchaserequests PurchaseRequestBudget[]
+  billstopay       BillToPay[]
 
   @@map("suppliers")
 }
@@ -208,7 +209,7 @@ model PurchaseRequest {
 
 model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
-  budget             String
+  budget             Decimal
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
@@ -229,4 +230,29 @@ model Status {
   deleted_by String?
 
   PurchaseRequest PurchaseRequest[]
+
+  @@map("status")
+}
+
+model BillToPay {
+  id                 String    @id @default(uuid())
+  name               String
+  payment_info       String
+  authorized         String
+  invoice            String
+  due_date           DateTime
+  scheduling         DateTime
+  Supplier           Supplier? @relation(fields: [supplier_id], references: [id])
+  supplier_id        String?
+  dda                Boolean
+  price              Decimal
+  invoice_attachment String
+  created_at         DateTime  @default(now())
+  created_by         String?
+  updated_at         DateTime  @updatedAt
+  updated_by         String?
+  deleted_at         DateTime?
+  deleted_by         String?
+
+  @@map("billstopay")
 }
