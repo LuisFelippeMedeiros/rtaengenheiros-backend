@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   Req,
@@ -53,7 +53,7 @@ export class CategoryController {
     return await this.categoryService.findByName(name);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() putCategoryDto: PutCategoryDto,
