@@ -17,7 +17,7 @@ export class CategoryService {
 
     if (categoryExists) {
       return {
-        status: true,
+        status: false,
         message:
           'Categoria já cadastrada em nossa base de dados, favor verificar!',
       };
@@ -26,7 +26,8 @@ export class CategoryService {
     await this.prisma.category.create({ data });
 
     return {
-      status: `A categoria ${postCategoryDto.name}, foi criada com sucesso.`,
+      status: true,
+      message: `A categoria ${postCategoryDto.name}, foi criada com sucesso.`,
     };
   }
 
@@ -127,7 +128,7 @@ export class CategoryService {
       };
     } else {
       category.active = false;
-      (category.deleted_at = new Date()), (category.deleted_by = req.body.id);
+      (category.deleted_at = new Date()), (category.deleted_by = req.user.id);
     }
 
     await this.prisma.category.update({
