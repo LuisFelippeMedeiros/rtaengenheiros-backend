@@ -42,9 +42,7 @@ export class AuthService {
 
       if (isPasswordValid) {
         if (!user.active) {
-          throw new UnauthorizedError(
-            'Usuário está inativo no sistema'
-          );
+          throw new UnauthorizedError('Usuário está inativo no sistema');
         }
         return {
           ...user,
