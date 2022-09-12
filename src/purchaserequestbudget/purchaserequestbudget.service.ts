@@ -9,6 +9,7 @@ export class PurchaseRequestBudgetService {
 
   async create(postPurchaseRequestBudgetDto: PostPurchaseRequestBudgetDto) {
     const data = {
+      quantity: postPurchaseRequestBudgetDto.quantity,
       budget: postPurchaseRequestBudgetDto.budget,
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
@@ -38,6 +39,7 @@ export class PurchaseRequestBudgetService {
         id,
       },
       data: {
+        quantity: putPurchaseRequestBudgetDto.quantity,
         budget: putPurchaseRequestBudgetDto.budget,
         purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
         supplier_id: putPurchaseRequestBudgetDto.supplier_id,

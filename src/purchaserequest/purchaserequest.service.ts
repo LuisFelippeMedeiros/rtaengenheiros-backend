@@ -14,7 +14,6 @@ export class PurchaseRequestService {
   ) {
     const data = {
       product_id: postPurchaseRequestDto.product_id,
-      quantity: postPurchaseRequestDto.quantity,
       reason: postPurchaseRequestDto.reason,
       status: postPurchaseRequestDto.status,
       comment: postPurchaseRequestDto.comment,
@@ -59,7 +58,6 @@ export class PurchaseRequestService {
         id: id,
       },
       data: {
-        quantity: putPurchaseRequestDto.quantity,
         reason: putPurchaseRequestDto.reason,
         status: putPurchaseRequestDto.status,
         comment: putPurchaseRequestDto.comment,
@@ -89,7 +87,6 @@ export class PurchaseRequestService {
         id: id,
       },
       data: {
-        quantity: patchPurchaseRequestDto.quantity,
         status: patchPurchaseRequestDto.status,
         comment: patchPurchaseRequestDto.comment,
         approved_by: req.user.id,
@@ -119,7 +116,6 @@ export class PurchaseRequestService {
         id: id,
       },
       data: {
-        quantity: patchPurchaseRequestDto.quantity,
         status: patchPurchaseRequestDto.status,
         comment: patchPurchaseRequestDto.comment,
         rejected_by: req.user.id,
