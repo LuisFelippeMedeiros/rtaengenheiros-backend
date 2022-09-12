@@ -34,18 +34,18 @@ export class ProductService {
 
   async findAll() {
     return await this.prisma.product.findMany({
-      include:{
+      include: {
         Category: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       orderBy: {
-        name: 'asc'
-      }
-    })
+        name: 'asc',
+      },
+    });
   }
 
   async findPagination(page = 1, active: boolean) {
@@ -57,22 +57,22 @@ export class ProductService {
         Category: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       orderBy: {
-        name: 'asc'
-      }
+        name: 'asc',
+      },
     });
 
     return products;
   }
 
-  async rowCount (active: boolean = true) {
+  async rowCount(active = true) {
     return await this.prisma.product.count({
-      where: { active }
-    })
+      where: { active },
+    });
   }
 
   async findById(id: string) {
@@ -84,10 +84,10 @@ export class ProductService {
         Category: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
   }
 
@@ -107,6 +107,7 @@ export class ProductService {
         category_id: putProductDto.category_id,
         active: putProductDto.active,
         updated_by: req.user.id,
+        updated_at: new Date(),
       },
     };
 

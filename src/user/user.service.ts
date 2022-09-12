@@ -94,6 +94,7 @@ export class UserService {
         // password: await bcrypt.hash(putUserDto.password, 10),
         group_id: putUserDto.group_id,
         updated_by: req.user.id,
+        updated_at: new Date(),
       },
     };
 

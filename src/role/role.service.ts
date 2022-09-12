@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { PostRoleDto } from './dto/post-role.dto';
 import { PutRoleDto } from './dto/put-role.dto';
 import { PrismaService } from 'src/database/PrismaService';
@@ -7,12 +7,13 @@ import { PrismaService } from 'src/database/PrismaService';
 export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(postRoleDto: PostRoleDto) {
+  async create(postRoleDto: PostRoleDto, @Req() req: any) {
     const data = {
       name: postRoleDto.name,
       action: postRoleDto.action,
       module: postRoleDto.module,
       type: postRoleDto.type,
+      created_by: req.user.id,
     };
 
     const roleExist = await this.findByName(data.name);
@@ -45,7 +46,7 @@ export class RoleService {
     });
   }
 
-  async update(id: string, putRoleDto: PutRoleDto) {
+  async update(id: string, putRoleDto: PutRoleDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
@@ -56,6 +57,8 @@ export class RoleService {
         action: putRoleDto.action,
         module: putRoleDto.module,
         type: putRoleDto.type,
+        updated_by: req.user.id,
+        updated_at: new Date(),
       },
     };
 
@@ -67,13 +70,15 @@ export class RoleService {
     };
   }
 
-  async deactivate(id: string, putRoleDto: PutRoleDto) {
+  async deactivate(id: string, putRoleDto: PutRoleDto, @Req() req: any) {
     const update = {
       where: {
         id: id,
       },
       data: {
         active: putRoleDto.active,
+        deleted_by: req.user.id,
+        deleted_at: new Date(),
       },
     };
 
