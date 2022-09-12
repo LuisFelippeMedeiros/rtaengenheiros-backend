@@ -16,9 +16,9 @@ model User {
   active     Boolean   @default(true)
   created_at DateTime  @default(now())
   created_by String?
-  updated_at DateTime  @updatedAt
+  updated_at DateTime?
   updated_by String?
-  deleted_at DateTime? @updatedAt
+  deleted_at DateTime?
   deteled_by String?
 
   group      Group    @relation(fields: [group_id], references: [id])
@@ -36,9 +36,9 @@ model Group {
   active      Boolean   @default(true)
   created_at  DateTime  @default(now())
   created_by  String?
-  updated_at  DateTime  @updatedAt
+  updated_at  DateTime?
   updated_by  String?
-  deleted_at  DateTime? @updatedAt
+  deleted_at  DateTime?
   deleted_by  String?
 
   roles RolesGroup[]
@@ -56,9 +56,9 @@ model Role {
   type       String?
   created_at DateTime  @default(now())
   created_by String?
-  updated_at DateTime  @updatedAt
+  updated_at DateTime?
   updated_by String?
-  deleted_at DateTime? @updatedAt
+  deleted_at DateTime?
   deleted_by String?
 
   groups RolesGroup[]
@@ -107,9 +107,9 @@ model Company {
   cnpj       String
   created_at DateTime  @default(now())
   created_by String?
-  updated_at DateTime  @updatedAt
+  updated_at DateTime?
   updated_by String?
-  deleted_at DateTime? @updatedAt
+  deleted_at DateTime?
   deleted_by String?
 
   User     User[]
@@ -140,9 +140,9 @@ model Supplier {
   active           Boolean?                @default(true)
   created_at       DateTime                @default(now())
   created_by       String?
-  updated_at       DateTime                @updatedAt
+  updated_at       DateTime?
   updated_by       String?
-  deleted_at       DateTime?               @updatedAt
+  deleted_at       DateTime?
   deleted_by       String?
   purchaserequests PurchaseRequestBudget[]
   billstopay       BillToPay[]
@@ -156,7 +156,7 @@ model Product {
   active          Boolean           @default(true)
   created_at      DateTime          @default(now())
   created_by      String?
-  updated_at      DateTime          @updatedAt
+  updated_at      DateTime?
   updated_by      String?
   deleted_at      DateTime?
   deleted_by      String?
@@ -173,7 +173,7 @@ model Category {
   active     Boolean   @default(true)
   created_at DateTime  @default(now())
   created_by String?
-  updated_at DateTime? @updatedAt
+  updated_at DateTime?
   updated_by String?
   deleted_at DateTime?
   deleted_by String?
@@ -189,7 +189,7 @@ model PurchaseRequest {
   comment     String
   created_at  DateTime                @default(now())
   created_by  String?
-  updated_at  DateTime                @updatedAt
+  updated_at  DateTime?
   updated_by  String?
   deleted_at  DateTime?
   deleted_by  String?
@@ -224,7 +224,7 @@ model Status {
   active     Boolean   @default(true)
   created_at DateTime  @default(now())
   created_by String?
-  updated_at DateTime  @updatedAt
+  updated_at DateTime?
   updated_by String?
   deleted_at DateTime?
   deleted_by String?
@@ -249,7 +249,7 @@ model BillToPay {
   invoice_attachment String
   created_at         DateTime  @default(now())
   created_by         String?
-  updated_at         DateTime  @updatedAt
+  updated_at         DateTime?
   updated_by         String?
   deleted_at         DateTime?
   deleted_by         String?

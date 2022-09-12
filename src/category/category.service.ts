@@ -33,9 +33,9 @@ export class CategoryService {
   async findAll() {
     return await this.prisma.category.findMany({
       orderBy: {
-        name: 'asc'
-      }
-    })
+        name: 'asc',
+      },
+    });
   }
 
   async findPagination(page = 1, active: boolean) {
@@ -51,10 +51,10 @@ export class CategoryService {
     return categories;
   }
 
-  async rowCount (active: boolean = true) {
+  async rowCount(active = true) {
     return await this.prisma.category.count({
-      where: { active }
-    })
+      where: { active },
+    });
   }
 
   async findById(id: string) {
@@ -82,6 +82,7 @@ export class CategoryService {
         name: putCategoryDto.name,
         active: putCategoryDto.active,
         updated_by: req.user.id,
+        updated_at: new Date(),
       },
     };
 

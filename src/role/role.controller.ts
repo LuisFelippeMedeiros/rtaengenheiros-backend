@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Req } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { PostRoleDto } from './dto/post-role.dto';
 import { PutRoleDto } from './dto/put-role.dto';
@@ -14,8 +14,8 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post('create-role')
-  create(@Body() postRoleDto: PostRoleDto) {
-    return this.roleService.create(postRoleDto);
+  create(@Body() postRoleDto: PostRoleDto, @Req() req: any) {
+    return this.roleService.create(postRoleDto, req);
   }
 
   @Get()
@@ -29,7 +29,11 @@ export class RoleController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() putRoleDto: PutRoleDto) {
-    return this.roleService.update(id, putRoleDto);
+  update(
+    @Param('id') id: string,
+    @Body() putRoleDto: PutRoleDto,
+    @Req() req: any,
+  ) {
+    return this.roleService.update(id, putRoleDto, req);
   }
 }

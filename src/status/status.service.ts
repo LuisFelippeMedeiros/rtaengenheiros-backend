@@ -66,6 +66,7 @@ export class StatusService {
         name: putStatusDto.name,
         active: putStatusDto.active,
         updated_by: req.user.id,
+        updated_at: new Date(),
       },
     };
 

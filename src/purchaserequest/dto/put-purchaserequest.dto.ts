@@ -4,9 +4,6 @@ import { PostPurchaseRequestDto } from './post-purchaserequest.dto';
 
 export class PutPurchaseRequestDto extends PartialType(PostPurchaseRequestDto) {
   @IsString()
-  quantity?: string;
-
-  @IsString()
   reason: string;
 
   @IsString()

@@ -107,6 +107,7 @@ export class GroupService {
         active: putGroupDto.active,
         description: putGroupDto.description,
         updated_by: req.user.id,
+        updated_at: new Date(),
       },
     };
 

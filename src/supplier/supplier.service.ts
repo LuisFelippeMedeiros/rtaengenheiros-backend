@@ -58,10 +58,10 @@ export class SupplierService {
     return suppliers;
   }
 
-  async rowCount (active: boolean = true) {
+  async rowCount(active = true) {
     return await this.prisma.supplier.count({
-      where: { active }
-    })
+      where: { active },
+    });
   }
 
   async findById(id: string) {
@@ -103,6 +103,7 @@ export class SupplierService {
         number: putSupplierDto.number,
         complement: putSupplierDto.complement,
         updated_by: req.user.id,
+        updated_at: new Date(),
       },
     };
 
@@ -115,22 +116,21 @@ export class SupplierService {
   }
 
   async deactivate(id: string, @Req() req: any) {
-    const supplier = await this.prisma.supplier.findFirst({ where: { id } })
+    const supplier = await this.prisma.supplier.findFirst({ where: { id } });
 
     if (!supplier) {
       return {
         status: false,
-        message: 'Este usuário não existe no sistema'
-      }
+        message: 'Este usuário não existe no sistema',
+      };
     } else {
       supplier.active = false;
-      (supplier.deleted_at = new Date()),
-      (supplier.deleted_by = req.body.id)
+      (supplier.deleted_at = new Date()), (supplier.deleted_by = req.body.id);
     }
 
     await this.prisma.supplier.update({
       where: { id },
-      data: supplier
+      data: supplier,
     });
 
     return {
