@@ -30,8 +30,13 @@ export class ProductController {
   }
 
   @Get()
-  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
-    return await this.productService.findAll(page, active);
+  async findPagination(@Query('page') page: number, @Query('active') active: boolean) {
+    return await this.productService.findPagination(page, active);
+  }
+
+  @Get('all')
+  async findAll() {
+    return await this.productService.findAll();
   }
 
   @Get('rowCount')

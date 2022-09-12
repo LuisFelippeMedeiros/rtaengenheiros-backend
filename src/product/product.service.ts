@@ -32,7 +32,23 @@ export class ProductService {
     };
   }
 
-  async findAll(page = 1, active: boolean) {
+  async findAll() {
+    return await this.prisma.product.findMany({
+      include:{
+        Category: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        name: 'asc'
+      }
+    })
+  }
+
+  async findPagination(page = 1, active: boolean) {
     const products = await this.prisma.product.findMany({
       take: 5,
       skip: 5 * (page - 1),

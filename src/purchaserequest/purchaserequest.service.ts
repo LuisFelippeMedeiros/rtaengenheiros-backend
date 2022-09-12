@@ -16,22 +16,16 @@ export class PurchaseRequestService {
       product_id: postPurchaseRequestDto.product_id,
       quantity: postPurchaseRequestDto.quantity,
       reason: postPurchaseRequestDto.reason,
-      status: postPurchaseRequestDto.status,
+      status_id: postPurchaseRequestDto.status,
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
     };
-
-    const productName = await this.prisma.product.findFirst({
-      where: {
-        id: postPurchaseRequestDto.product_id,
-      },
-    });
 
     await this.prisma.purchaseRequest.create({ data });
 
     return {
       status: true,
-      message: `A Solicitação de compra ${productName}, foi criada com sucesso.`,
+      message: `A Solicitação de compra foi criada com sucesso.`,
     };
   }
 
