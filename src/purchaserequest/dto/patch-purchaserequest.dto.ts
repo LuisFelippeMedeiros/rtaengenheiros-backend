@@ -6,9 +6,6 @@ export class PatchPurchaseRequestDto extends PartialType(
   PostPurchaseRequestDto,
 ) {
   @IsString()
-  quantity?: string;
-
-  @IsString()
   status: string;
 
   @IsBoolean()

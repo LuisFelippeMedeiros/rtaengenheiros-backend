@@ -184,7 +184,6 @@ model Category {
 
 model PurchaseRequest {
   id          String                  @id @default(uuid())
-  quantity    String?
   reason      String
   active      Boolean                 @default(true)
   comment     String
@@ -209,6 +208,7 @@ model PurchaseRequest {
 
 model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
+  quantity           String?
   budget             Decimal
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?

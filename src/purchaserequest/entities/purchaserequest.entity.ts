@@ -1,6 +1,5 @@
 export class PurchaseRequest {
   id: string;
-  quantity?: string;
   reason: string;
   status: string;
   active: boolean;
