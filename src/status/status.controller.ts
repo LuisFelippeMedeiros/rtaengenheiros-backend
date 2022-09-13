@@ -27,7 +27,7 @@ export class StatusController {
     return this.statusService.create(postStatusDto, req);
   }
 
-  @Get()
+  @Get('all')
   async findAll() {
     return this.statusService.findAll();
   }

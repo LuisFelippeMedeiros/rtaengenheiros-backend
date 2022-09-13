@@ -15,7 +15,7 @@ export class PurchaserequestbudgetController {
     private readonly purchaseRequestBudgetService: PurchaseRequestBudgetService,
   ) {}
 
-  @Post()
+  @Post('create-purchase-request-budget')
   async create(
     @Body() postPurchaseRequestBudgetDto: PostPurchaseRequestBudgetDto,
   ) {
@@ -24,7 +24,7 @@ export class PurchaserequestbudgetController {
     );
   }
 
-  @Get()
+  @Get('all')
   async findAll() {
     return this.purchaseRequestBudgetService.findAll();
   }

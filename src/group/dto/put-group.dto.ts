@@ -4,9 +4,6 @@ import { IsBoolean, IsString } from 'class-validator';
 
 export class PutGroupDto extends PartialType(PostGroupDto) {
   @IsString()
-  id?: string;
-
-  @IsString()
   name: string;
 
   @IsString()

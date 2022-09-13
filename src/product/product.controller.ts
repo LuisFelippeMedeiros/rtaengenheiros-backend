@@ -7,8 +7,7 @@ import {
   Param,
   Delete,
   Req,
-  Query
-
+  Query,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { PostProductDto } from './dto/post-product.dto';
@@ -24,13 +23,16 @@ import { RouteVersion } from 'src/statics/route.version';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post()
+  @Post('create-product')
   async create(@Body() postProductDto: PostProductDto, @Req() req: any) {
     return await this.productService.create(postProductDto, req);
   }
 
   @Get()
-  async findPagination(@Query('page') page: number, @Query('active') active: boolean) {
+  async findPagination(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+  ) {
     return await this.productService.findPagination(page, active);
   }
 

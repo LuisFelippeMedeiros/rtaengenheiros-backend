@@ -30,7 +30,7 @@ export class UserService {
 
     if (emailExists) {
       return {
-        status: true,
+        status: false,
         message:
           'Este e-mail já se encontra cadastrado em nossa base de dados, favor verificar.',
       };
