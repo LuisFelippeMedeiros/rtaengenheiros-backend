@@ -8,6 +8,7 @@ import {
   Req,
   Delete,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { PurchaseRequestService } from './purchaserequest.service';
 import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
@@ -35,6 +36,19 @@ export class PurchaseRequestController {
       postPurchaserequestDto,
       req,
     );
+  }
+
+  @Get()
+  async findPagination(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+  ) {
+    return await this.purchaseRequestService.findPagination(page, active);
+  }
+
+  @Get('rowCount')
+  async countRows(@Query('active') active: boolean) {
+    return await this.purchaseRequestService.rowCount(active);
   }
 
   @Get()
@@ -87,13 +101,7 @@ export class PurchaseRequestController {
   }
 
   @Delete('deactivate/:id')
-  async deactivate(
-    @Param('id') id: string,
-    @Req() req: any,
-  ) {
-    return await this.purchaseRequestService.deactivate(
-      id,
-      req,
-    );
+  async deactivate(@Param('id') id: string, @Req() req: any) {
+    return await this.purchaseRequestService.deactivate(id, req);
   }
 }

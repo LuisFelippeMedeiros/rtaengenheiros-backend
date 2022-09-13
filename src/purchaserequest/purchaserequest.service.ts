@@ -34,16 +34,16 @@ export class PurchaseRequestService {
         Product: {
           select: {
             id: true,
-            name: true
-          }
+            name: true,
+          },
         },
         Status: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     return purchaseRequests;
@@ -58,16 +58,32 @@ export class PurchaseRequestService {
         Product: {
           select: {
             id: true,
-            name: true
-          }
+            name: true,
+          },
         },
         Status: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findPagination(page = 1, active: boolean) {
+    const categories = await this.prisma.purchaseRequest.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      where: { active },
+    });
+
+    return categories;
+  }
+
+  async rowCount(active = true) {
+    return await this.prisma.purchaseRequest.count({
+      where: { active },
     });
   }
 
@@ -173,7 +189,7 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `O pedido foi desativado com sucesso.`
+      message: `O pedido foi desativado com sucesso.`,
     };
   }
 }
