@@ -142,7 +142,7 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName}, foi rejeitado com sucesso.`,
+      message: `A solicitação de compra ${productName}, foi aprovado com sucesso.`,
     };
   }
 
@@ -171,7 +171,7 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName}, foi aprovado com sucesso.`,
+      message: `A solicitação de compra ${productName}, foi rejeitado com sucesso.`,
     };
   }
 

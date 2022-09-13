@@ -100,7 +100,7 @@ export class CategoryService {
 
     if (updatedCategory.name == update.data.name && id !== updatedCategory.id) {
       return {
-        status: true,
+        status: false,
         message:
           'O nome da categoria que está tentando alterar já se encontra cadastrada em nossa base de dados, favor verificar.',
       };

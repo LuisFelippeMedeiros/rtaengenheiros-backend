@@ -20,7 +20,7 @@ export class RoleService {
 
     if (roleExist) {
       return {
-        status: true,
+        status: false,
         message:
           'Função já cadastrada em nossa base de dados, favor verificar!',
       };

@@ -17,7 +17,7 @@ export class StatusService {
 
     if (statusExists) {
       return {
-        status: true,
+        status: false,
         message: 'Status já cadastrado em nossa base de dados, favor verificar',
       };
     }
@@ -83,7 +83,7 @@ export class StatusService {
 
     if (updatedStatus.name == update.data.name && id !== updatedStatus.id) {
       return {
-        status: true,
+        status: false,
         message:
           'O status que está tentando alterar já se encontra cadastrado em nossa base de dados, favor verificar.',
       };

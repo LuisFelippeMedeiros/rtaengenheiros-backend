@@ -23,7 +23,7 @@ import { RouteVersion } from 'src/statics/route.version';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
+  @Post('create-category')
   async create(@Body() postCategoryDto: PostCategoryDto, @Req() req: any) {
     return await this.categoryService.create(postCategoryDto, req);
   }

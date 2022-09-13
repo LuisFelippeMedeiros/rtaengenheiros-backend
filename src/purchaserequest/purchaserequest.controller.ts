@@ -27,7 +27,7 @@ export class PurchaseRequestController {
     private readonly purchaseRequestService: PurchaseRequestService,
   ) {}
 
-  @Post('create-purchaserequest')
+  @Post('create-purchase-request')
   async create(
     @Body() postPurchaserequestDto: PostPurchaseRequestDto,
     @Req() req: any,
@@ -51,7 +51,7 @@ export class PurchaseRequestController {
     return await this.purchaseRequestService.rowCount(active);
   }
 
-  @Get()
+  @Get('all')
   async findAll() {
     return await this.purchaseRequestService.findAll();
   }
@@ -101,7 +101,7 @@ export class PurchaseRequestController {
   }
 
   @Delete('deactivate/:id')
-  async deactivate(@Param('id') id: string, @Req() req: any) {
+  async remove(@Param('id') id: string, @Req() req: any) {
     return await this.purchaseRequestService.deactivate(id, req);
   }
 }

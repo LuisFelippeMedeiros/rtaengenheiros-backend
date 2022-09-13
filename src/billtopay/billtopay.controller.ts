@@ -28,7 +28,7 @@ export class BillToPayController {
     return this.billtopayService.create(postBillToPayDto, req);
   }
 
-  @Get()
+  @Get('all')
   async findAll() {
     return this.billtopayService.findAll();
   }
