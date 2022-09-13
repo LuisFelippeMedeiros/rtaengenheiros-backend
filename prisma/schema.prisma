@@ -185,6 +185,7 @@ model Category {
 
 model PurchaseRequest {
   id          String                  @id @default(uuid())
+  identifier  Int                     @default(autoincrement())
   reason      String
   active      Boolean                 @default(true)
   comment     String
