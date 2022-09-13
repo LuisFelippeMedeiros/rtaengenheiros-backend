@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Req,
+  Delete,
   Patch,
 } from '@nestjs/common';
 import { PurchaseRequestService } from './purchaserequest.service';
@@ -85,15 +86,13 @@ export class PurchaseRequestController {
     );
   }
 
-  @Put('deactivate/:id')
+  @Delete('deactivate/:id')
   async deactivate(
     @Param('id') id: string,
-    @Body() putPurchaseRequestDto: PutPurchaseRequestDto,
     @Req() req: any,
   ) {
     return await this.purchaseRequestService.deactivate(
       id,
-      putPurchaseRequestDto,
       req,
     );
   }
