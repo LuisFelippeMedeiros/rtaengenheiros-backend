@@ -72,13 +72,13 @@ export class PurchaseRequestService {
   }
 
   async findPagination(page = 1, active: boolean) {
-    const categories = await this.prisma.purchaseRequest.findMany({
+    const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 5,
       skip: 5 * (page - 1),
       where: { active },
     });
 
-    return categories;
+    return purchaseRequest;
   }
 
   async rowCount(active = true) {
