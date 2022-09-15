@@ -218,7 +218,7 @@ model PurchaseRequest {
 
 model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
-  quantity           String?
+  quantity           Int?
   budget             Decimal
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
