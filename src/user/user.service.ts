@@ -17,12 +17,13 @@ const include = {
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(putUserDto: PostUserDto, @Req() req: any) {
+  async create(postUserDto: PostUserDto, @Req() req: any) {
     const data = {
-      name: putUserDto.name,
-      email: putUserDto.email,
-      password: await bcrypt.hash(putUserDto.password, 10),
-      group_id: putUserDto.group_id,
+      name: postUserDto.name,
+      email: postUserDto.email,
+      password: await bcrypt.hash(postUserDto.password, 10),
+      group_id: postUserDto.group_id,
+      company_id: postUserDto.company_id,
       created_by: req.body.id,
     };
 
@@ -39,7 +40,7 @@ export class UserService {
 
     return {
       status: true,
-      message: `O Usuário ${putUserDto.name} foi criado com sucesso.`,
+      message: `O Usuário ${postUserDto.name} foi criado com sucesso.`,
     };
   }
 
@@ -91,7 +92,6 @@ export class UserService {
       },
       data: {
         name: putUserDto.name,
-        // password: await bcrypt.hash(putUserDto.password, 10),
         group_id: putUserDto.group_id,
         updated_by: req.user.id,
         updated_at: new Date(),
