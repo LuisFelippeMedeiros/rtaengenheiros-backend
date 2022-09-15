@@ -5,8 +5,8 @@ import { PostPurchaseRequestBudgetDto } from './post-purchaserequestbudget.dto';
 export class PutPurchaseRequestBudgetDto extends PartialType(
   PostPurchaseRequestBudgetDto,
 ) {
-  @IsString()
-  quantity?: string;
+  @IsNumber()
+  quantity?: number;
 
   @IsNumber()
   budget: number;

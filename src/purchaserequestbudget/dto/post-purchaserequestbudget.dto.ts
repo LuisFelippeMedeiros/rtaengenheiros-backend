@@ -2,8 +2,8 @@ import { PurchaseRequestBudget } from '../entities/purchaserequestbudget.entity'
 import { IsNumber, IsString } from 'class-validator';
 
 export class PostPurchaseRequestBudgetDto extends PurchaseRequestBudget {
-  @IsString()
-  quantity?: string;
+  @IsNumber()
+  quantity?: number;
 
   @IsNumber()
   budget: number;
