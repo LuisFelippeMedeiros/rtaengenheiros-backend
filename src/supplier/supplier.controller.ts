@@ -28,7 +28,7 @@ export class SupplierController {
     return await this.supplierService.create(postSupplierDto, req);
   }
 
-  @Get('all')
+  @Get()
   async findAll(@Query('page') page: number, @Query('active') active: boolean) {
     return await this.supplierService.findAll(page, active);
   }

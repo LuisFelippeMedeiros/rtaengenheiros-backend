@@ -22,11 +22,17 @@ export class PurchaseRequestBudgetService {
     return this.prisma.purchaseRequestBudget.findMany();
   }
 
-  async findOne(id: string) {
+  async findOne(purchaserequest_id: string) {
     return this.prisma.purchaseRequestBudget.findMany({
-      where: {
-        purchaserequest_id: id,
-      },
+      where: { purchaserequest_id },
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
     });
   }
 

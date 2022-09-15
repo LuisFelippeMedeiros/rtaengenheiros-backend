@@ -42,13 +42,14 @@ export class PurchaseRequestController {
   async findPagination(
     @Query('page') page: number,
     @Query('active') active: boolean,
+    @Query('status') status: string
   ) {
-    return await this.purchaseRequestService.findPagination(page, active);
+    return await this.purchaseRequestService.findPagination(page, active, status);
   }
 
   @Get('rowCount')
-  async countRows(@Query('active') active: boolean) {
-    return await this.purchaseRequestService.rowCount(active);
+  async countRows(@Query('active') active: boolean, @Query('status') status: string) {
+    return await this.purchaseRequestService.rowCount(active, status);
   }
 
   @Get('all')
