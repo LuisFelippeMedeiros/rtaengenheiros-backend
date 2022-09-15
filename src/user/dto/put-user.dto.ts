@@ -5,21 +5,21 @@ import { IsBoolean, IsString, MinLength, Matches } from 'class-validator';
 
 export class PutUserDto extends PartialType(PostUserDto) {
   @IsString()
-  id?: string;
-
-  @IsString()
   name: string;
 
-  // @IsString()
-  // @MinLength(6)
-  // @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-  //   message: 'Senha muito fraca',
-  // })
-  // password: string;
+  @IsString()
+  @MinLength(6)
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'Senha muito fraca',
+  })
+  password?: string;
 
-  // @IsBoolean()
-  // active?: boolean;
+  @IsBoolean()
+  active?: boolean;
 
   @IsString()
   group_id: string;
+
+  @IsString()
+  company_id: string;
 }

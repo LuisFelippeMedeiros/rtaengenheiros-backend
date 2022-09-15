@@ -8,4 +8,6 @@ export class GetUserDto extends User {
   password: string;
   @Exclude()
   group_id: string;
+  @Exclude()
+  company_id: string;
 }
