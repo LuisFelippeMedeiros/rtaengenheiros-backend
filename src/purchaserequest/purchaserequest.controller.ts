@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Query,
   Put,
   Param,
   Req,
@@ -37,6 +38,20 @@ export class PurchaseRequestController {
   }
 
   @Get()
+  async findPagination(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+    @Query('status') status: string
+  ) {
+    return await this.purchaseRequestService.findPagination(page, active, status);
+  }
+
+  @Get('rowCount')
+  async countRows(@Query('active') active: boolean, @Query('status') status: string) {
+    return await this.purchaseRequestService.rowCount(active, status);
+  }
+
+  @Get('all')
   async findAll() {
     return await this.purchaseRequestService.findAll();
   }

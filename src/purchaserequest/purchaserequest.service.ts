@@ -49,6 +49,39 @@ export class PurchaseRequestService {
     return purchaseRequests;
   }
 
+  async rowCount(active = true, status_id: string) {
+    return await this.prisma.purchaseRequest.count({
+      where: { active, status_id },
+    });
+  }
+
+  async findPagination(page = 1, active: boolean, status: string = '') {
+    const purchaseRequest = await this.prisma.purchaseRequest.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      where: {
+        active,
+        status_id: status
+      },
+      include: {
+        Product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        Status: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      }
+    });
+
+    return purchaseRequest;
+  }
+
   async findById(id: string) {
     return await this.prisma.purchaseRequest.findUnique({
       where: {
