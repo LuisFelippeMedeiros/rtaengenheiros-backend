@@ -20,18 +20,17 @@ import { ApiTags } from '@nestjs/swagger';
   path: RouteVersion.route + 'supplier',
   version: RouteVersion.version,
 })
-@Controller('supplier')
 export class SupplierController {
   constructor(private readonly supplierService: SupplierService) {}
 
   @Post('create-supplier')
-  create(@Body() postSupplierDto: PostSupplierDto, @Req() req: any) {
-    return this.supplierService.create(postSupplierDto, req);
+  async create(@Body() postSupplierDto: PostSupplierDto, @Req() req: any) {
+    return await this.supplierService.create(postSupplierDto, req);
   }
 
   @Get()
   async findAll(@Query('page') page: number, @Query('active') active: boolean) {
-    return this.supplierService.findAll(page, active);
+    return await this.supplierService.findAll(page, active);
   }
 
   @Get('rowCount')
@@ -40,21 +39,21 @@ export class SupplierController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.supplierService.findById(id);
+  async findOne(@Param('id') id: string) {
+    return await this.supplierService.findById(id);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() putSupplierDto: PutSupplierDto,
     @Req() req: any,
   ) {
-    return this.supplierService.update(id, putSupplierDto, req);
+    return await this.supplierService.update(id, putSupplierDto, req);
   }
 
   @Delete('deactivate/:id')
-  deactivate(@Param('id') id: string, @Req() req: any) {
-    return this.supplierService.deactivate(id, req);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    return await this.supplierService.deactivate(id, req);
   }
 }

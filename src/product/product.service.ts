@@ -18,7 +18,7 @@ export class ProductService {
 
     if (productExists) {
       return {
-        status: true,
+        status: false,
         message:
           'Produto já cadastrado em nossa base de dados, favor verificar!',
       };
@@ -124,7 +124,7 @@ export class ProductService {
 
     if (updatedProduct.name == update.data.name && id !== updatedProduct.id) {
       return {
-        status: true,
+        status: false,
         message:
           'O nome do produto que está tentando alterar já se encontra cadastrado em nossa base de dados, favor verificar.',
       };

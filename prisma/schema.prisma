@@ -20,48 +20,49 @@ model User {
   updated_by String?
   deleted_at DateTime?
   deteled_by String?
-
-  group      Group    @relation(fields: [group_id], references: [id])
+  group      Group     @relation(fields: [group_id], references: [id])
   group_id   String
-  Company    Company? @relation(fields: [company_id], references: [id])
+  Company    Company?  @relation(fields: [company_id], references: [id])
   company_id String?
 
   @@map("users")
 }
 
 model Group {
-  id          String    @id @default(uuid())
-  name        String    @unique
+  id          String       @id @default(uuid())
+  name        String       @unique
   description String?
-  active      Boolean   @default(true)
-  created_at  DateTime  @default(now())
+  active      Boolean      @default(true)
+  created_at  DateTime     @default(now())
   created_by  String?
   updated_at  DateTime?
   updated_by  String?
   deleted_at  DateTime?
   deleted_by  String?
-
-  roles RolesGroup[]
-  User  User[]
+  roles       RolesGroup[]
+  User        User[]
+  Company     Company?     @relation(fields: [company_id], references: [id])
+  company_id  String?
 
   @@map("groups")
 }
 
 model Role {
-  id         String    @id @default(uuid())
-  name       String    @unique
-  active     Boolean   @default(true)
+  id         String       @id @default(uuid())
+  name       String       @unique
+  active     Boolean      @default(true)
   action     String?
   module     String?
   type       String?
-  created_at DateTime  @default(now())
+  created_at DateTime     @default(now())
   created_by String?
   updated_at DateTime?
   updated_by String?
   deleted_at DateTime?
   deleted_by String?
-
-  groups RolesGroup[]
+  groups     RolesGroup[]
+  Company    Company?     @relation(fields: [company_id], references: [id])
+  company_id String?
 
   @@map("roles")
 }
@@ -77,13 +78,12 @@ model RolesGroup {
 }
 
 model City {
-  id         Int       @id
+  id         Int      @id
   name       String
-  active     Boolean   @default(true)
-  created_at DateTime  @default(now())
-  State      State     @relation(fields: [state_id], references: [id])
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+  State      State    @relation(fields: [state_id], references: [id])
   state_id   Int
-  Company    Company[]
 
   @@map("cities")
 }
@@ -94,29 +94,30 @@ model State {
   initials   String   @unique
   active     Boolean  @default(true)
   created_at DateTime @default(now())
-
-  City    City[]
-  Company Company[]
+  City       City[]
 
   @@map("states")
 }
 
 model Company {
-  id         String    @id @default(uuid())
-  name       String
-  cnpj       String
-  created_at DateTime  @default(now())
-  created_by String?
-  updated_at DateTime?
-  updated_by String?
-  deleted_at DateTime?
-  deleted_by String?
-
-  User     User[]
-  State    State? @relation(fields: [state_id], references: [id])
-  state_id Int?
-  City     City?  @relation(fields: [city_id], references: [id])
-  city_id  Int?
+  id              String            @id @default(uuid())
+  name            String
+  cnpj            String
+  created_at      DateTime          @default(now())
+  created_by      String?
+  updated_at      DateTime?
+  updated_by      String?
+  deleted_at      DateTime?
+  deleted_by      String?
+  User            User[]
+  Billtopay       BillToPay[]
+  Group           Group[]
+  Role            Role[]
+  Supplier        Supplier[]
+  Product         Product[]
+  Category        Category[]
+  PurchaseRequest PurchaseRequest[]
+  Status          Status[]
 
   @@map("companies")
 }
@@ -146,6 +147,8 @@ model Supplier {
   deleted_by       String?
   purchaserequests PurchaseRequestBudget[]
   billstopay       BillToPay[]
+  Company          Company?                @relation(fields: [company_id], references: [id])
+  company_id       String?
 
   @@map("suppliers")
 }
@@ -163,6 +166,8 @@ model Product {
   purchaserequest PurchaseRequest[]
   Category        Category?         @relation(fields: [category_id], references: [id])
   category_id     String?
+  Company         Company?          @relation(fields: [company_id], references: [id])
+  company_id      String?
 
   @@map("products")
 }
@@ -178,12 +183,15 @@ model Category {
   deleted_at DateTime?
   deleted_by String?
   products   Product[]
+  Company    Company?  @relation(fields: [company_id], references: [id])
+  company_id String?
 
   @@map("categories")
 }
 
 model PurchaseRequest {
   id          String                  @id @default(uuid())
+  identifier  Int                     @default(autoincrement())
   reason      String
   active      Boolean                 @default(true)
   comment     String
@@ -202,13 +210,15 @@ model PurchaseRequest {
   product_id  String?
   Status      Status?                 @relation(fields: [status_id], references: [id])
   status_id   String?
+  Company     Company?                @relation(fields: [company_id], references: [id])
+  company_id  String?
 
   @@map("purchaserequests")
 }
 
 model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
-  quantity           String?
+  quantity           Int?
   budget             Decimal
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
@@ -219,40 +229,48 @@ model PurchaseRequestBudget {
 }
 
 model Status {
-  id         String    @id @default(uuid())
-  name       String    @unique
-  active     Boolean   @default(true)
-  created_at DateTime  @default(now())
-  created_by String?
-  updated_at DateTime?
-  updated_by String?
-  deleted_at DateTime?
-  deleted_by String?
-
+  id              String            @id @default(uuid())
+  name            String            @unique
+  active          Boolean           @default(true)
+  created_at      DateTime          @default(now())
+  created_by      String?
+  updated_at      DateTime?
+  updated_by      String?
+  deleted_at      DateTime?
+  deleted_by      String?
   PurchaseRequest PurchaseRequest[]
+  Company         Company?          @relation(fields: [company_id], references: [id])
+  company_id      String?
 
   @@map("status")
 }
 
 model BillToPay {
   id                 String    @id @default(uuid())
+  identifier         Int       @default(autoincrement())
   name               String
   payment_info       String
   authorized         String
   invoice            String
   due_date           DateTime
   scheduling         DateTime
+  reference_month    String
+  issue_date         DateTime?
+  comment            String?
   Supplier           Supplier? @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   dda                Boolean
   price              Decimal
-  invoice_attachment String
+  invoice_attachment String?
+  active             Boolean   @default(true)
   created_at         DateTime  @default(now())
   created_by         String?
   updated_at         DateTime?
   updated_by         String?
   deleted_at         DateTime?
   deleted_by         String?
+  Company            Company?  @relation(fields: [company_id], references: [id])
+  company_id         String?
 
   @@map("billstopay")
 }

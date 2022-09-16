@@ -11,13 +11,14 @@ export class CategoryService {
     const data = {
       name: postCategoryDto.name,
       created_by: req.user.id,
+      company_id: req.user.company_id,
     };
 
     const categoryExists = await this.findByName(data.name);
 
     if (categoryExists) {
       return {
-        status: true,
+        status: false,
         message:
           'Categoria já cadastrada em nossa base de dados, favor verificar!',
       };
@@ -26,7 +27,8 @@ export class CategoryService {
     await this.prisma.category.create({ data });
 
     return {
-      status: `A categoria ${postCategoryDto.name}, foi criada com sucesso.`,
+      status: true,
+      message: `A categoria ${postCategoryDto.name}, foi criada com sucesso.`,
     };
   }
 
@@ -99,7 +101,7 @@ export class CategoryService {
 
     if (updatedCategory.name == update.data.name && id !== updatedCategory.id) {
       return {
-        status: true,
+        status: false,
         message:
           'O nome da categoria que está tentando alterar já se encontra cadastrada em nossa base de dados, favor verificar.',
       };
@@ -127,7 +129,7 @@ export class CategoryService {
       };
     } else {
       category.active = false;
-      (category.deleted_at = new Date()), (category.deleted_by = req.body.id);
+      (category.deleted_at = new Date()), (category.deleted_by = req.user.id);
     }
 
     await this.prisma.category.update({

@@ -17,4 +17,7 @@ export class PostUserDto extends UserPost {
 
   @IsString()
   group_id: string;
+
+  @IsString()
+  company_id: string;
 }

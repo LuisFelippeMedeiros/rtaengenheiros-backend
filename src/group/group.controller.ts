@@ -27,12 +27,12 @@ export class GroupController {
     return await this.groupService.create(postGroupDto, req);
   }
 
-  @Get()
+  @Get('all')
   async findAll() {
     return await this.groupService.findAll();
   }
 
-  @Get('/byname/:name')
+  @Get('byname/:name')
   async findOne(@Param('name') name: string) {
     return await this.groupService.findByName(name);
   }
@@ -42,7 +42,7 @@ export class GroupController {
     return await this.groupService.findById(id);
   }
 
-  @Get('/rolesgroup/:id')
+  @Get('rolesgroup/:id')
   async findRolesByGroup(@Param('group_id') group_id: string) {
     return await this.groupService.findRolesById(group_id);
   }
@@ -57,7 +57,7 @@ export class GroupController {
   }
 
   @Delete('deactivate/:id')
-  async deactivate(@Param('id') id: string, @Req() req: any) {
+  async remove(@Param('id') id: string, @Req() req: any) {
     return await this.groupService.deactivate(id, req);
   }
 }

@@ -29,7 +29,6 @@ import { ApiTags } from '@nestjs/swagger';
 })
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @IsPublic()
   @Post('create-user')
   create(@Body() postUserDto: PostUserDto, @Req() req: any) {
     return this.userService.create(postUserDto, req);
@@ -41,7 +40,7 @@ export class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get()
+  @Get('all')
   async findAll(@Query('page') page: number, @Query('active') active: boolean) {
     return await this.userService.findAll(page, active);
   }
@@ -66,7 +65,7 @@ export class UserController {
   }
 
   @Delete('deactivate/:id')
-  deactivate(@Param('id') id: string, @Req() req: any) {
+  remove(@Param('id') id: string, @Req() req: any) {
     return this.userService.deactivate(id, req);
   }
 }

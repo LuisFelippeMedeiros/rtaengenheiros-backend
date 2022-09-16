@@ -30,7 +30,7 @@ export class SupplierService {
 
     if (supplierExists) {
       return {
-        status: true,
+        status: false,
         message:
           'Este fornecedor já se encontra cadastrado em nossa base de dados, favor verificar',
       };
@@ -121,7 +121,7 @@ export class SupplierService {
     if (!supplier) {
       return {
         status: false,
-        message: 'Este usuário não existe no sistema',
+        message: 'Este fornecedor não existe no sistema',
       };
     } else {
       supplier.active = false;

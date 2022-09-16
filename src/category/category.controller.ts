@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
   Req,
-  Query
+  Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { PostCategoryDto } from './dto/post-category.dto';
@@ -23,7 +23,7 @@ import { RouteVersion } from 'src/statics/route.version';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
+  @Post('create-category')
   async create(@Body() postCategoryDto: PostCategoryDto, @Req() req: any) {
     return await this.categoryService.create(postCategoryDto, req);
   }
@@ -34,7 +34,10 @@ export class CategoryController {
   }
 
   @Get()
-  async findPagination(@Query('page') page: number, @Query('active') active: boolean) {
+  async findPagination(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+  ) {
     return await this.categoryService.findPagination(page, active);
   }
 

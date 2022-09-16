@@ -11,7 +11,7 @@ import { CompanyService } from './company.service';
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.companyService.findAll();
   }

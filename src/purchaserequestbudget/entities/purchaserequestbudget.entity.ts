@@ -1,6 +1,6 @@
 export class PurchaseRequestBudget {
   id?: string;
-  quantity?: string;
+  quantity?: number;
   budget: number;
   supplier_id?: string;
   purchaserequest_id?: string;

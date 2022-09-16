@@ -5,12 +5,12 @@ export class User {
   name: string;
   email: string;
   active: boolean;
-
   @Exclude()
   password: string;
-
   @Exclude()
   group_id: string;
+  @Exclude()
+  company_id: string;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
@@ -23,4 +23,5 @@ export class UserPost {
   email: string;
   password: string;
   group_id: string;
+  company_id: string;
 }

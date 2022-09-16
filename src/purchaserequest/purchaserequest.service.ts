@@ -34,16 +34,16 @@ export class PurchaseRequestService {
         Product: {
           select: {
             id: true,
-            name: true
-          }
+            name: true,
+          },
         },
         Status: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     return purchaseRequests;
@@ -91,16 +91,49 @@ export class PurchaseRequestService {
         Product: {
           select: {
             id: true,
-            name: true
-          }
+            name: true,
+          },
         },
         Status: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findPagination(page = 1, active: boolean, status: string = '') {
+    const purchaseRequest = await this.prisma.purchaseRequest.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      where: {
+        active,
+        status_id: status
+      },
+      include: {
+        Product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        Status: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       }
+    });
+
+    return purchaseRequest;
+  }
+
+  async rowCount(active = true, status_id: string) {
+    return await this.prisma.purchaseRequest.count({
+      where: { active, status_id },
     });
   }
 
@@ -159,7 +192,7 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName}, foi rejeitado com sucesso.`,
+      message: `A solicitação de compra ${productName}, foi aprovado com sucesso.`,
     };
   }
 
@@ -188,35 +221,25 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName}, foi aprovado com sucesso.`,
+      message: `A solicitação de compra ${productName}, foi rejeitado com sucesso.`,
     };
   }
 
-  async deactivate(
-    id: string,
-    putPurchaseRequestDto: PutPurchaseRequestDto,
-    @Req() req: any,
-  ) {
+  async deactivate(id: string, @Req() req: any) {
     const deactivate = {
-      where: {
-        id: id,
-      },
+      where: { id },
       data: {
-        active: putPurchaseRequestDto.active,
+        active: false,
         deleted_by: req.user.id,
         deleted_at: new Date(),
       },
     };
 
-    const productName = await this.prisma.product.findFirst({
-      where: { id: putPurchaseRequestDto.product_id },
-    });
-
     await this.prisma.purchaseRequest.update(deactivate);
 
     return {
       status: true,
-      message: `O grupo ${productName}, foi desativado com sucesso.`,
+      message: `O pedido foi desativado com sucesso.`,
     };
   }
 }

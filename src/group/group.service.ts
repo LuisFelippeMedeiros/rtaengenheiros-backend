@@ -19,7 +19,7 @@ export class GroupService {
 
     if (groupExist) {
       return {
-        status: true,
+        status: false,
         message:
           'Grupo de função já cadastrado em nossa base de dados, favor verificar!',
       };
@@ -124,7 +124,7 @@ export class GroupService {
 
     if (updatedGroup.name == update.data.name && id !== updatedGroup.id) {
       return {
-        status: true,
+        status: false,
         message:
           'O nome do grupo que está tentando alterar já se encontra cadastrado em nossa base de dados, favor verificar!',
       };

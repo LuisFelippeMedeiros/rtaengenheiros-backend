@@ -13,12 +13,12 @@ import { ApiTags } from '@nestjs/swagger';
 export class RolesGroupController {
   constructor(private readonly rolesgroupService: RolesGroupService) {}
 
-  @Post()
+  @Post('create-roles-group')
   create(@Body() postRolesgroupDto: PostRolesGroupDto) {
     return this.rolesgroupService.create(postRolesgroupDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.rolesgroupService.findAll();
   }

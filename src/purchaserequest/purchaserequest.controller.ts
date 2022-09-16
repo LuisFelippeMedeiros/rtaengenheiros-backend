@@ -7,7 +7,9 @@ import {
   Put,
   Param,
   Req,
+  Delete,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { PurchaseRequestService } from './purchaserequest.service';
 import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
@@ -26,7 +28,7 @@ export class PurchaseRequestController {
     private readonly purchaseRequestService: PurchaseRequestService,
   ) {}
 
-  @Post('create-purchaserequest')
+  @Post('create-purchase-request')
   async create(
     @Body() postPurchaserequestDto: PostPurchaseRequestDto,
     @Req() req: any,
@@ -100,16 +102,8 @@ export class PurchaseRequestController {
     );
   }
 
-  @Put('deactivate/:id')
-  async deactivate(
-    @Param('id') id: string,
-    @Body() putPurchaseRequestDto: PutPurchaseRequestDto,
-    @Req() req: any,
-  ) {
-    return await this.purchaseRequestService.deactivate(
-      id,
-      putPurchaseRequestDto,
-      req,
-    );
+  @Delete('deactivate/:id')
+  async remove(@Param('id') id: string, @Req() req: any) {
+    return await this.purchaseRequestService.deactivate(id, req);
   }
 }
