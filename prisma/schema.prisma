@@ -154,20 +154,21 @@ model Supplier {
 }
 
 model Product {
-  id              String            @id @default(uuid())
-  name            String            @unique
-  active          Boolean           @default(true)
-  created_at      DateTime          @default(now())
-  created_by      String?
-  updated_at      DateTime?
-  updated_by      String?
-  deleted_at      DateTime?
-  deleted_by      String?
-  purchaserequest PurchaseRequest[]
-  Category        Category?         @relation(fields: [category_id], references: [id])
-  category_id     String?
-  Company         Company?          @relation(fields: [company_id], references: [id])
-  company_id      String?
+  id                     String                   @id @default(uuid())
+  name                   String                   @unique
+  active                 Boolean                  @default(true)
+  created_at             DateTime                 @default(now())
+  created_by             String?
+  updated_at             DateTime?
+  updated_by             String?
+  deleted_at             DateTime?
+  deleted_by             String?
+  purchaserequest        PurchaseRequest[]
+  Category               Category?                @relation(fields: [category_id], references: [id])
+  category_id            String?
+  Company                Company?                 @relation(fields: [company_id], references: [id])
+  company_id             String?
+  PurchaseRequestProduct PurchaseRequestProduct[]
 
   @@map("products")
 }
@@ -190,28 +191,29 @@ model Category {
 }
 
 model PurchaseRequest {
-  id          String                  @id @default(uuid())
-  identifier  Int                     @default(autoincrement())
-  reason      String
-  active      Boolean                 @default(true)
-  comment     String
-  created_at  DateTime                @default(now())
-  created_by  String?
-  updated_at  DateTime?
-  updated_by  String?
-  deleted_at  DateTime?
-  deleted_by  String?
-  rejected_at DateTime?
-  rejected_by String?
-  approved_at DateTime?
-  approved_by String?
-  supplier    PurchaseRequestBudget[]
-  Product     Product?                @relation(fields: [product_id], references: [id])
-  product_id  String?
-  Status      Status?                 @relation(fields: [status_id], references: [id])
-  status_id   String?
-  Company     Company?                @relation(fields: [company_id], references: [id])
-  company_id  String?
+  id                     String                   @id @default(uuid())
+  identifier             Int                      @default(autoincrement())
+  reason                 String
+  active                 Boolean                  @default(true)
+  comment                String
+  created_at             DateTime                 @default(now())
+  created_by             String?
+  updated_at             DateTime?
+  updated_by             String?
+  deleted_at             DateTime?
+  deleted_by             String?
+  rejected_at            DateTime?
+  rejected_by            String?
+  approved_at            DateTime?
+  approved_by            String?
+  supplier               PurchaseRequestBudget[]
+  Product                Product?                 @relation(fields: [product_id], references: [id])
+  product_id             String?
+  Status                 Status?                  @relation(fields: [status_id], references: [id])
+  status_id              String?
+  Company                Company?                 @relation(fields: [company_id], references: [id])
+  company_id             String?
+  PurchaseRequestProduct PurchaseRequestProduct[]
 
   @@map("purchaserequests")
 }
@@ -273,4 +275,14 @@ model BillToPay {
   company_id         String?
 
   @@map("billstopay")
+}
+
+model PurchaseRequestProduct {
+  id                 String           @id @default(uuid())
+  Product            Product?         @relation(fields: [product_id], references: [id])
+  product_id         String?
+  PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
+  purchaserequest_id String?
+
+  @@map("purchaserequestproducts")
 }

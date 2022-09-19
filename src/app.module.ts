@@ -16,6 +16,7 @@ import { CategoryModule } from './category/category.module';
 import { StatusModule } from './status/status.module';
 import { PurchaserequestbudgetModule } from './purchaserequestbudget/purchaserequestbudget.module';
 import { BillToPayModule } from './billtopay/billtopay.module';
+import { PurchaseRequestProductModule } from './purchaserequestproduct/purchaserequestproduct.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { BillToPayModule } from './billtopay/billtopay.module';
     StatusModule,
     PurchaserequestbudgetModule,
     BillToPayModule,
+    PurchaseRequestProductModule,
   ],
   controllers: [],
   providers: [
