@@ -5,6 +5,9 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
   reason: string;
 
   @IsString()
+  type: string;
+
+  @IsString()
   status: string;
 
   @IsBoolean()

@@ -6,6 +6,12 @@ export class PatchPurchaseRequestDto extends PartialType(
   PostPurchaseRequestDto,
 ) {
   @IsString()
+  reason: string;
+
+  @IsString()
+  type: string;
+
+  @IsString()
   status: string;
 
   @IsBoolean()
@@ -13,4 +19,7 @@ export class PatchPurchaseRequestDto extends PartialType(
 
   @IsString()
   comment: string;
+
+  @IsString()
+  product_id?: string;
 }

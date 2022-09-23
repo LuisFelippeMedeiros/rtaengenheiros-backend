@@ -10,6 +10,9 @@ export class PutBillToPayDto extends PartialType(PostBillToPayDto) {
   authorized: string;
 
   @IsString()
+  type?: string;
+
+  @IsString()
   invoice: string;
 
   @IsString()
