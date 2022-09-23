@@ -49,38 +49,38 @@ export class PurchaseRequestService {
     return purchaseRequests;
   }
 
-  // async rowCount(active = true, status_id: string) {
-  //   return await this.prisma.purchaseRequest.count({
-  //     where: { active, status_id },
-  //   });
-  // }
+   async rowCount(active = true, status_id: string) {
+     return await this.prisma.purchaseRequest.count({
+       where: { active, status_id },
+     });
+   }
 
-  // async findPagination(page = 1, active: boolean, status = '') {
-  //   const purchaseRequest = await this.prisma.purchaseRequest.findMany({
-  //     take: 5,
-  //     skip: 5 * (page - 1),
-  //     where: {
-  //       active,
-  //       status_id: status,
-  //     },
-  //     include: {
-  //       Product: {
-  //         select: {
-  //           id: true,
-  //           name: true,
-  //         },
-  //       },
-  //       Status: {
-  //         select: {
-  //           id: true,
-  //           name: true,
-  //         },
-  //       },
-  //     },
-  //   });
+   async findPagination(page = 1, active: boolean, status = '') {
+     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
+       take: 5,
+       skip: 5 * (page - 1),
+       where: {
+         active,
+         status_id: status,
+       },
+       include: {
+        Product: {
+          select: {
+             id: true,
+             name: true,
+           },
+         },
+         Status: {
+           select: {
+             id: true,
+            name: true,
+           },
+         },
+       },
+     });
 
-  //   return purchaseRequest;
-  // }
+     return purchaseRequest;
+   }
 
   async findById(id: string) {
     return await this.prisma.purchaseRequest.findUnique({
@@ -103,40 +103,6 @@ export class PurchaseRequestService {
       },
     });
   }
-
-  async findPagination(page = 1, active: boolean, status = '') {
-    const purchaseRequest = await this.prisma.purchaseRequest.findMany({
-      take: 5,
-      skip: 5 * (page - 1),
-      where: {
-        active,
-        status_id: status,
-      },
-      include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        Status: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    });
-
-    return purchaseRequest;
-  }
-
-  async rowCount(active = true, status_id: string) {
-    return await this.prisma.purchaseRequest.count({
-      where: { active, status_id },
-    });
-  }
-
   async update(
     id: string,
     putPurchaseRequestDto: PutPurchaseRequestDto,
