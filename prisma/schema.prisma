@@ -158,6 +158,7 @@ model Product {
   name                   String                   @unique
   active                 Boolean                  @default(true)
   created_at             DateTime                 @default(now())
+  type                   String?
   created_by             String?
   updated_at             DateTime?
   updated_by             String?
@@ -221,7 +222,7 @@ model PurchaseRequest {
 model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
   quantity           Int?
-  budget             Decimal
+  budget             Float?
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
@@ -250,19 +251,20 @@ model Status {
 model BillToPay {
   id                 String    @id @default(uuid())
   identifier         Int       @default(autoincrement())
+  type               String?
   name               String
-  payment_info       String
-  authorized         String
-  invoice            String
-  due_date           DateTime
-  scheduling         DateTime
-  reference_month    String
+  payment_info       String?
+  authorized         String?
+  invoice            String?
+  due_date           DateTime?
+  scheduling         DateTime?
+  reference_month    String?
   issue_date         DateTime?
   comment            String?
   Supplier           Supplier? @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
-  dda                Boolean
-  price              Decimal
+  dda                Boolean?
+  price              Decimal?
   invoice_attachment String?
   active             Boolean   @default(true)
   created_at         DateTime  @default(now())

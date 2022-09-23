@@ -9,7 +9,6 @@ import {
   Req,
   Delete,
   Patch,
-  Query,
 } from '@nestjs/common';
 import { PurchaseRequestService } from './purchaserequest.service';
 import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
@@ -43,13 +42,20 @@ export class PurchaseRequestController {
   async findPagination(
     @Query('page') page: number,
     @Query('active') active: boolean,
-    @Query('status') status: string
+    @Query('status') status: string,
   ) {
-    return await this.purchaseRequestService.findPagination(page, active, status);
+    return await this.purchaseRequestService.findPagination(
+      page,
+      active,
+      status,
+    );
   }
 
   @Get('rowCount')
-  async countRows(@Query('active') active: boolean, @Query('status') status: string) {
+  async countRows(
+    @Query('active') active: boolean,
+    @Query('status') status: string,
+  ) {
     return await this.purchaseRequestService.rowCount(active, status);
   }
 

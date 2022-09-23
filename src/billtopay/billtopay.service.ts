@@ -11,6 +11,7 @@ export class BillToPayService {
     const data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
+      type: postBillToPayDto.type,
       authorized: postBillToPayDto.authorized,
       invoice: postBillToPayDto.invoice,
       reference_month: postBillToPayDto.reference_month,

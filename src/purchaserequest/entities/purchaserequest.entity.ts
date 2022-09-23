@@ -1,6 +1,7 @@
 export class PurchaseRequest {
   id: string;
   identifier: number;
+  type: string;
   reason: string;
   status: string;
   active: boolean;
