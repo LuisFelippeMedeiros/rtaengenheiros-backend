@@ -24,6 +24,7 @@ model User {
   group_id   String
   Company    Company?  @relation(fields: [company_id], references: [id])
   company_id String?
+  avatar     String?
 
   @@map("users")
 }

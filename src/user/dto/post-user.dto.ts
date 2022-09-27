@@ -20,4 +20,7 @@ export class PostUserDto extends UserPost {
 
   @IsString()
   company_id: string;
+
+  @IsString()
+  avatar: string;
 }

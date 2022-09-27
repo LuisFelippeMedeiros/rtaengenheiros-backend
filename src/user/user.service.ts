@@ -3,6 +3,8 @@ import { PrismaService } from 'src/database/PrismaService';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
+import { S3 } from 'aws-sdk';
 
 const include = {
   group: {
@@ -127,6 +129,37 @@ export class UserService {
     return {
       status: true,
       message: `O usuário ${user.name} foi desativado com sucesso.`,
+    };
+  }
+
+  async uploadAvatar(id: string, dataBuffer: Buffer, filename: string) {
+    try {
+      const s3 = new S3();
+      const uploadResult = await s3
+        .upload({
+          Bucket: 'rtaengenheiros-backend',
+          Body: dataBuffer,
+          Key: `${uuidv4()}-${filename}`,
+        })
+        .promise();
+      const userAvatar = {
+        where: {
+          id,
+        },
+        data: {
+          avatar: uploadResult.Location,
+        },
+      };
+
+      await this.prisma.user.update(userAvatar);
+    } catch (err) {
+      console.log(err);
+      return { key: 'error', url: err.message };
+    }
+
+    return {
+      status: true,
+      message: `A foto de perfil do usuário foi atualizada com sucesso.`,
     };
   }
 }

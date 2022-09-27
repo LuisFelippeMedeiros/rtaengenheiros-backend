@@ -4,6 +4,7 @@ import { Exclude } from 'class-transformer';
 export class GetUserDto extends User {
   name: string;
   email: string;
+  avatar: string;
   @Exclude()
   password: string;
   @Exclude()
