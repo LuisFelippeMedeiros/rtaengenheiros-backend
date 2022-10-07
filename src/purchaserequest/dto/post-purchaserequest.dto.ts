@@ -15,7 +15,4 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
 
   @IsString()
   comment: string;
-
-  @IsString()
-  product_id?: string;
 }

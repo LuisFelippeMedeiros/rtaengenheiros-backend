@@ -165,7 +165,6 @@ model Product {
   updated_by             String?
   deleted_at             DateTime?
   deleted_by             String?
-  purchaserequest        PurchaseRequest[]
   Category               Category?                @relation(fields: [category_id], references: [id])
   category_id            String?
   Company                Company?                 @relation(fields: [company_id], references: [id])
@@ -209,8 +208,6 @@ model PurchaseRequest {
   approved_at            DateTime?
   approved_by            String?
   supplier               PurchaseRequestBudget[]
-  Product                Product?                 @relation(fields: [product_id], references: [id])
-  product_id             String?
   Status                 Status?                  @relation(fields: [status_id], references: [id])
   status_id              String?
   Company                Company?                 @relation(fields: [company_id], references: [id])
