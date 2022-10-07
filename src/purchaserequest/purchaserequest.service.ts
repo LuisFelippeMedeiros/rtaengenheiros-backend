@@ -13,7 +13,6 @@ export class PurchaseRequestService {
     @Req() req: any,
   ) {
     const data = {
-      product_id: postPurchaseRequestDto.product_id,
       reason: postPurchaseRequestDto.reason,
       status_id: postPurchaseRequestDto.status,
       comment: postPurchaseRequestDto.comment,
@@ -31,12 +30,6 @@ export class PurchaseRequestService {
   async findAll() {
     const purchaseRequests = await this.prisma.purchaseRequest.findMany({
       include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         Status: {
           select: {
             id: true,
@@ -88,12 +81,6 @@ export class PurchaseRequestService {
         id,
       },
       include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         Status: {
           select: {
             id: true,
@@ -113,12 +100,6 @@ export class PurchaseRequestService {
         status_id: status,
       },
       include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         Status: {
           select: {
             id: true,
@@ -155,15 +136,11 @@ export class PurchaseRequestService {
       },
     };
 
-    const productName = await this.prisma.product.findFirst({
-      where: { id: putPurchaseRequestDto.product_id },
-    });
-
     await this.prisma.purchaseRequest.update(update);
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName.name}, foi alterado com sucesso.`,
+      message: `A solicitação de compra, foi alterada com sucesso.`,
     };
   }
 
@@ -190,11 +167,21 @@ export class PurchaseRequestService {
       },
     });
 
-    const productName = await this.prisma.product.findFirst({
-      where: { id: patchPurchaseRequestDto.product_id },
+    const productName = await this.prisma.purchaseRequestProduct.findFirst({
+      where: {
+        id: req.query.id,
+      },
+      include: {
+        Product: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
+
     const data = {
-      name: productName.name,
+      name: productName.Product.name,
       type: req.params.type,
       supplier_id: findBudget.supplier_id,
       price: findBudget.budget,
@@ -208,7 +195,7 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName.name}, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
+      message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
     };
   }
 
@@ -229,15 +216,11 @@ export class PurchaseRequestService {
       },
     };
 
-    const productName = await this.prisma.product.findFirst({
-      where: { id: patchPurchaseRequestDto.product_id },
-    });
-
     await this.prisma.purchaseRequest.update(update);
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName.name}, foi rejeitado com sucesso.`,
+      message: `A solicitação de compra, foi rejeitada com sucesso.`,
     };
   }
 
@@ -255,7 +238,7 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `O pedido foi desativado com sucesso.`,
+      message: `O pedido de compra foi desativada com sucesso.`,
     };
   }
 }

@@ -6,7 +6,6 @@ export class PurchaseRequest {
   status: string;
   active: boolean;
   comment: string;
-  product_id?: string;
   created_at: Date;
   created_by?: string;
   updated_at?: Date;

@@ -153,7 +153,6 @@ export class UserService {
 
       await this.prisma.user.update(userAvatar);
     } catch (err) {
-      console.log(err);
       return { key: 'error', url: err.message };
     }
 

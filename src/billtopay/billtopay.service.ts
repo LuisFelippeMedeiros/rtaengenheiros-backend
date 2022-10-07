@@ -2,6 +2,8 @@ import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
 import { PutBillToPayDto } from './dto/put-billtopay.dto';
+import { v4 as uuidv4 } from 'uuid';
+import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class BillToPayService {
@@ -135,6 +137,36 @@ export class BillToPayService {
     return {
       status: true,
       message: `A conta ${billToPay.name}, foi desativada com sucesso.`,
+    };
+  }
+
+  async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
+    try {
+      const s3 = new S3();
+      const uploadResult = await s3
+        .upload({
+          Bucket: 'rtaengenheiros-backend',
+          Body: dataBuffer,
+          Key: `${uuidv4()}-${filename}`,
+        })
+        .promise();
+      const billAttachment = {
+        where: {
+          id,
+        },
+        data: {
+          invoice_attachment: uploadResult.Location,
+        },
+      };
+
+      await this.prisma.billToPay.update(billAttachment);
+    } catch (err) {
+      return { key: 'error', url: err.message };
+    }
+
+    return {
+      status: true,
+      message: `O cupom/nota fiscal foi inserida com sucesso.`,
     };
   }
 }

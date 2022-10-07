@@ -19,7 +19,4 @@ export class PatchPurchaseRequestDto extends PartialType(
 
   @IsString()
   comment: string;
-
-  @IsString()
-  product_id?: string;
 }
