@@ -4,27 +4,61 @@ import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
 import { PutPurchaseRequestDto } from './dto/put-purchaserequest.dto';
 import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 
+const statusPurchaseRequest = {
+  waiting: 'AGUARDANDO',
+  approved: 'APROVADO',
+  reject: 'REJEITADO'
+}
+
 @Injectable()
 export class PurchaseRequestService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(
-    postPurchaseRequestDto: PostPurchaseRequestDto,
-    @Req() req: any,
-  ) {
+  async create(postPurchaseRequestDto: PostPurchaseRequestDto, @Req() req: any) {
+    const sizeArrayProductId = postPurchaseRequestDto.product_id.length;
+
+    if (sizeArrayProductId === 0) {
+      return {
+        status: false,
+        message: `Não há nenhum produto nesta solicitação`,
+      };
+    }
+
     const data = {
       reason: postPurchaseRequestDto.reason,
-      status_id: postPurchaseRequestDto.status,
+      status_id: '',
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
     };
 
-    await this.prisma.purchaseRequest.create({ data });
+    try {
+      const statusWaiting = await this.prisma.status.findFirst({
+        where: { name: statusPurchaseRequest.waiting }
+      })
+      data.status_id = statusWaiting.id
 
-    return {
-      status: true,
-      message: `A Solicitação de compra foi criada com sucesso.`,
-    };
+      const result = await this.prisma.purchaseRequest.create({ data });
+
+      for (var i = 0; i < sizeArrayProductId; i++) {
+        await this.prisma.purchaseRequestProduct.create({
+          data: {
+            product_id: postPurchaseRequestDto.product_id[i],
+            purchaserequest_id: result.id
+          }
+        })
+      }
+
+      return {
+        status: true,
+        message: `A Solicitação de compra foi criada com sucesso`,
+      };
+    } catch (ex) {
+      return {
+        status: false,
+        message: `Não foi possível criar uma nova solicitação`,
+        warning: ex.message
+      };
+    }
   }
 
   async findAll() {
@@ -42,56 +76,42 @@ export class PurchaseRequestService {
     return purchaseRequests;
   }
 
-  // async rowCount(active = true, status_id: string) {
-  //   return await this.prisma.purchaseRequest.count({
-  //     where: { active, status_id },
-  //   });
-  // }
-
-  // async findPagination(page = 1, active: boolean, status = '') {
-  //   const purchaseRequest = await this.prisma.purchaseRequest.findMany({
-  //     take: 5,
-  //     skip: 5 * (page - 1),
-  //     where: {
-  //       active,
-  //       status_id: status,
-  //     },
-  //     include: {
-  //       Product: {
-  //         select: {
-  //           id: true,
-  //           name: true,
-  //         },
-  //       },
-  //       Status: {
-  //         select: {
-  //           id: true,
-  //           name: true,
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   return purchaseRequest;
-  // }
-
   async findById(id: string) {
-    return await this.prisma.purchaseRequest.findUnique({
-      where: {
-        id,
-      },
+    var purchase: any = await this.prisma.purchaseRequest.findUnique({
+      where: { id },
       include: {
         Status: {
           select: {
             id: true,
             name: true,
           },
-        },
+        }
       },
     });
+
+    var purchaseProduct = await this.prisma.purchaseRequestProduct.findMany({
+      where: {
+        purchaserequest_id: purchase.id
+      }
+    });
+
+    var products = [];
+
+    for (var i = 0; i < purchaseProduct.length; i++) {
+      const product = await this.prisma.product.findFirst({
+        where: {
+          id: purchaseProduct[i].product_id
+        }
+      })
+      products.push(product)
+    };
+
+    purchase.products = products;
+
+    return purchase;
   }
 
-  async findPagination(page = 1, active: boolean, status = '') {
+  async findPagination(page = 1, active: boolean = true, status = '') {
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 5,
       skip: 5 * (page - 1),

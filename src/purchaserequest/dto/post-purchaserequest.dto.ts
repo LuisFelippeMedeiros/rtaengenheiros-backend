@@ -1,14 +1,11 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsString, IsArray } from 'class-validator';
 import { PurchaseRequest } from '../entities/purchaserequest.entity';
 export class PostPurchaseRequestDto extends PurchaseRequest {
+  @IsArray()
+  product_id: Array<string>;
+
   @IsString()
   reason: string;
-
-  @IsString()
-  type: string;
-
-  @IsString()
-  status: string;
 
   @IsBoolean()
   active: boolean;
