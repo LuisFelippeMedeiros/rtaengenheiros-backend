@@ -24,6 +24,7 @@ export class SupplierService {
       number: postSupplierDto.number,
       complement: postSupplierDto.complement,
       created_by: req.user.id,
+      company_id: req.user.company_id,
     };
 
     const supplierExists = await this.findByCNPJ(data.cnpj);

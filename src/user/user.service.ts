@@ -25,8 +25,8 @@ export class UserService {
       email: postUserDto.email,
       password: await bcrypt.hash(postUserDto.password, 10),
       group_id: postUserDto.group_id,
-      company_id: postUserDto.company_id,
       created_by: req.body.id,
+      company_id: postUserDto.company_id,
     };
 
     const emailExists = await this.findByEmail(data.email);

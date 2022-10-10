@@ -7,14 +7,17 @@ import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 const statusPurchaseRequest = {
   waiting: 'AGUARDANDO',
   approved: 'APROVADO',
-  reject: 'REJEITADO'
-}
+  reject: 'REJEITADO',
+};
 
 @Injectable()
 export class PurchaseRequestService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(postPurchaseRequestDto: PostPurchaseRequestDto, @Req() req: any) {
+  async create(
+    postPurchaseRequestDto: PostPurchaseRequestDto,
+    @Req() req: any,
+  ) {
     const sizeArrayProductId = postPurchaseRequestDto.product_id.length;
 
     if (sizeArrayProductId === 0) {
@@ -29,23 +32,24 @@ export class PurchaseRequestService {
       status_id: '',
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
+      company_id: req.user.company_id,
     };
 
     try {
       const statusWaiting = await this.prisma.status.findFirst({
-        where: { name: statusPurchaseRequest.waiting }
-      })
-      data.status_id = statusWaiting.id
+        where: { name: statusPurchaseRequest.waiting },
+      });
+      data.status_id = statusWaiting.id;
 
       const result = await this.prisma.purchaseRequest.create({ data });
 
-      for (var i = 0; i < sizeArrayProductId; i++) {
+      for (let i = 0; i < sizeArrayProductId; i++) {
         await this.prisma.purchaseRequestProduct.create({
           data: {
             product_id: postPurchaseRequestDto.product_id[i],
-            purchaserequest_id: result.id
-          }
-        })
+            purchaserequest_id: result.id,
+          },
+        });
       }
 
       return {
@@ -56,7 +60,7 @@ export class PurchaseRequestService {
       return {
         status: false,
         message: `Não foi possível criar uma nova solicitação`,
-        warning: ex.message
+        warning: ex.message,
       };
     }
   }
@@ -77,7 +81,7 @@ export class PurchaseRequestService {
   }
 
   async findById(id: string) {
-    var purchase: any = await this.prisma.purchaseRequest.findUnique({
+    const purchase: any = await this.prisma.purchaseRequest.findUnique({
       where: { id },
       include: {
         Status: {
@@ -85,33 +89,33 @@ export class PurchaseRequestService {
             id: true,
             name: true,
           },
-        }
+        },
       },
     });
 
-    var purchaseProduct = await this.prisma.purchaseRequestProduct.findMany({
+    const purchaseProduct = await this.prisma.purchaseRequestProduct.findMany({
       where: {
-        purchaserequest_id: purchase.id
-      }
+        purchaserequest_id: purchase.id,
+      },
     });
 
-    var products = [];
+    const products = [];
 
-    for (var i = 0; i < purchaseProduct.length; i++) {
+    for (let i = 0; i < purchaseProduct.length; i++) {
       const product = await this.prisma.product.findFirst({
         where: {
-          id: purchaseProduct[i].product_id
-        }
-      })
-      products.push(product)
-    };
+          id: purchaseProduct[i].product_id,
+        },
+      });
+      products.push(product);
+    }
 
     purchase.products = products;
 
     return purchase;
   }
 
-  async findPagination(page = 1, active: boolean = true, status = '') {
+  async findPagination(page = 1, active = true, status = '') {
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 5,
       skip: 5 * (page - 1),

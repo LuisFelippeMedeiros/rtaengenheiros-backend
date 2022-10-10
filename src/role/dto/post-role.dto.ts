@@ -13,4 +13,7 @@ export class PostRoleDto extends Role {
 
   @IsString()
   module: string;
+
+  // @IsString()
+  // company_id?: string;
 }
