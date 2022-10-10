@@ -12,4 +12,7 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
 
   @IsString()
   comment: string;
+
+  // @IsString()
+  // company_id?: string;
 }

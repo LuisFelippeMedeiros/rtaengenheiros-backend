@@ -11,6 +11,7 @@ export class StatusService {
     const data = {
       name: postStatusDto.name,
       created_by: req.user.id,
+      company_id: req.user.company_id,
     };
 
     const statusExists = await this.findByName(data.name);

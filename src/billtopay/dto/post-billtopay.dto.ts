@@ -43,4 +43,7 @@ export class PostBillToPayDto extends BillToPay {
 
   @IsString()
   invoice_attachment?: string;
+
+  // @IsString()
+  // company_id?: string;
 }
