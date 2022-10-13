@@ -262,7 +262,8 @@ model BillToPay {
   Supplier           Supplier? @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   dda                Boolean?
-  price              Decimal?
+  price_approved     Decimal?
+  price_updated      Decimal?
   invoice_attachment String?
   active             Boolean   @default(true)
   created_at         DateTime  @default(now())
