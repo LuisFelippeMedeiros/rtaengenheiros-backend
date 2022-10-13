@@ -2,17 +2,19 @@ export class BillToPay {
   id: string;
   identifier: number;
   name: string;
-  payment_info: string;
-  authorized: string;
-  invoice: string;
-  reference_month: string;
+  type?: string;
+  payment_info?: string;
+  authorized?: string;
+  invoice?: string;
+  reference_month?: string;
   issue_date?: Date;
   comment?: string;
-  due_date: Date;
+  due_date?: Date;
   scheduling?: Date;
   supplier_id?: string;
-  dda: boolean;
-  price: number;
+  dda?: boolean;
+  price_approved?: number;
+  price_updated?: number;
   invoice_attachment?: string;
   active: boolean;
   created_at: Date;
@@ -21,5 +23,5 @@ export class BillToPay {
   updated_by?: string;
   deleted_at?: Date;
   deleted_by?: string;
-  company_id?: string;
+  // company_id?: string;
 }

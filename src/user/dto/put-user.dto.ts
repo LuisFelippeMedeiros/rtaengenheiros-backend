@@ -22,4 +22,7 @@ export class PutUserDto extends PartialType(PostUserDto) {
 
   @IsString()
   company_id: string;
+
+  @IsString()
+  avatar: string;
 }

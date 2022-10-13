@@ -8,7 +8,10 @@ import {
   Delete,
   Req,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { BillToPayService } from './billtopay.service';
@@ -68,5 +71,18 @@ export class BillToPayController {
   @Delete(':id')
   async remove(@Param('id') id: string, @Req() req: any) {
     return this.billtopayService.deactivate(id, req);
+  }
+  @Patch(':id/invoice')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateInvoice(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<any> {
+    const result = await this.billtopayService.uploadInvoice(
+      id,
+      file.buffer,
+      file.originalname,
+    );
+    return result;
   }
 }

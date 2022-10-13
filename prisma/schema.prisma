@@ -24,6 +24,7 @@ model User {
   group_id   String
   Company    Company?  @relation(fields: [company_id], references: [id])
   company_id String?
+  avatar     String?
 
   @@map("users")
 }
@@ -154,20 +155,21 @@ model Supplier {
 }
 
 model Product {
-  id              String            @id @default(uuid())
-  name            String            @unique
-  active          Boolean           @default(true)
-  created_at      DateTime          @default(now())
-  created_by      String?
-  updated_at      DateTime?
-  updated_by      String?
-  deleted_at      DateTime?
-  deleted_by      String?
-  purchaserequest PurchaseRequest[]
-  Category        Category?         @relation(fields: [category_id], references: [id])
-  category_id     String?
-  Company         Company?          @relation(fields: [company_id], references: [id])
-  company_id      String?
+  id                     String                   @id @default(uuid())
+  name                   String                   @unique
+  active                 Boolean                  @default(true)
+  created_at             DateTime                 @default(now())
+  type                   String?
+  created_by             String?
+  updated_at             DateTime?
+  updated_by             String?
+  deleted_at             DateTime?
+  deleted_by             String?
+  Category               Category?                @relation(fields: [category_id], references: [id])
+  category_id            String?
+  Company                Company?                 @relation(fields: [company_id], references: [id])
+  company_id             String?
+  PurchaseRequestProduct PurchaseRequestProduct[]
 
   @@map("products")
 }
@@ -190,28 +192,27 @@ model Category {
 }
 
 model PurchaseRequest {
-  id          String                  @id @default(uuid())
-  identifier  Int                     @default(autoincrement())
-  reason      String
-  active      Boolean                 @default(true)
-  comment     String
-  created_at  DateTime                @default(now())
-  created_by  String?
-  updated_at  DateTime?
-  updated_by  String?
-  deleted_at  DateTime?
-  deleted_by  String?
-  rejected_at DateTime?
-  rejected_by String?
-  approved_at DateTime?
-  approved_by String?
-  supplier    PurchaseRequestBudget[]
-  Product     Product?                @relation(fields: [product_id], references: [id])
-  product_id  String?
-  Status      Status?                 @relation(fields: [status_id], references: [id])
-  status_id   String?
-  Company     Company?                @relation(fields: [company_id], references: [id])
-  company_id  String?
+  id                     String                   @id @default(uuid())
+  identifier             Int                      @default(autoincrement())
+  reason                 String
+  active                 Boolean                  @default(true)
+  comment                String
+  created_at             DateTime                 @default(now())
+  created_by             String?
+  updated_at             DateTime?
+  updated_by             String?
+  deleted_at             DateTime?
+  deleted_by             String?
+  rejected_at            DateTime?
+  rejected_by            String?
+  approved_at            DateTime?
+  approved_by            String?
+  supplier               PurchaseRequestBudget[]
+  Status                 Status?                  @relation(fields: [status_id], references: [id])
+  status_id              String?
+  Company                Company?                 @relation(fields: [company_id], references: [id])
+  company_id             String?
+  PurchaseRequestProduct PurchaseRequestProduct[]
 
   @@map("purchaserequests")
 }
@@ -219,7 +220,7 @@ model PurchaseRequest {
 model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
   quantity           Int?
-  budget             Decimal
+  budget             Float?
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
@@ -248,19 +249,21 @@ model Status {
 model BillToPay {
   id                 String    @id @default(uuid())
   identifier         Int       @default(autoincrement())
+  type               String?
   name               String
-  payment_info       String
-  authorized         String
-  invoice            String
-  due_date           DateTime
-  scheduling         DateTime
-  reference_month    String
+  payment_info       String?
+  authorized         String?
+  invoice            String?
+  due_date           DateTime?
+  scheduling         DateTime?
+  reference_month    String?
   issue_date         DateTime?
   comment            String?
   Supplier           Supplier? @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
-  dda                Boolean
-  price              Decimal
+  dda                Boolean?
+  price_approved     Decimal?
+  price_updated      Decimal?
   invoice_attachment String?
   active             Boolean   @default(true)
   created_at         DateTime  @default(now())
@@ -273,4 +276,14 @@ model BillToPay {
   company_id         String?
 
   @@map("billstopay")
+}
+
+model PurchaseRequestProduct {
+  id                 String           @id @default(uuid())
+  Product            Product?         @relation(fields: [product_id], references: [id])
+  product_id         String?
+  PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
+  purchaserequest_id String?
+
+  @@map("purchaserequestproducts")
 }

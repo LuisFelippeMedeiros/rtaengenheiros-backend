@@ -6,16 +6,19 @@ export class PostBillToPayDto extends BillToPay {
   name: string;
 
   @IsString()
-  payment_info: string;
+  payment_info?: string;
 
   @IsString()
-  authorized: string;
+  type?: string;
 
   @IsString()
-  invoice: string;
+  authorized?: string;
 
   @IsString()
-  reference_month: string;
+  invoice?: string;
+
+  @IsString()
+  reference_month?: string;
 
   @IsDate()
   issue_date?: Date;
@@ -24,7 +27,7 @@ export class PostBillToPayDto extends BillToPay {
   comment?: string;
 
   @IsDate()
-  due_date: Date;
+  due_date?: Date;
 
   @IsDate()
   scheduling?: Date;
@@ -33,11 +36,17 @@ export class PostBillToPayDto extends BillToPay {
   supplier_id?: string;
 
   @IsBoolean()
-  dda: boolean;
+  dda?: boolean;
 
   @IsNumber()
-  price: number;
+  price_approved?: number;
+
+  @IsNumber()
+  price_updated?: number;
 
   @IsString()
   invoice_attachment?: string;
+
+  // @IsString()
+  // company_id?: string;
 }

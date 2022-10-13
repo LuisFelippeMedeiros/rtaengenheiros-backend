@@ -13,14 +13,16 @@ import {
   HttpException,
   HttpStatus,
   Delete,
+  Patch,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @Controller({
@@ -67,5 +69,19 @@ export class UserController {
   @Delete('deactivate/:id')
   remove(@Param('id') id: string, @Req() req: any) {
     return this.userService.deactivate(id, req);
+  }
+
+  @Patch(':id/avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateAvatar(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<any> {
+    const result = await this.userService.uploadAvatar(
+      id,
+      file.buffer,
+      file.originalname,
+    );
+    return result;
   }
 }

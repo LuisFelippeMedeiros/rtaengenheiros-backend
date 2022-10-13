@@ -4,6 +4,12 @@ import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
 import { PutPurchaseRequestDto } from './dto/put-purchaserequest.dto';
 import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 
+const statusPurchaseRequest = {
+  waiting: 'AGUARDANDO',
+  approved: 'APROVADO',
+  reject: 'REJEITADO',
+};
+
 @Injectable()
 export class PurchaseRequestService {
   constructor(private readonly prisma: PrismaService) {}
@@ -12,31 +18,56 @@ export class PurchaseRequestService {
     postPurchaseRequestDto: PostPurchaseRequestDto,
     @Req() req: any,
   ) {
+    const sizeArrayProductId = postPurchaseRequestDto.product_id.length;
+
+    if (sizeArrayProductId === 0) {
+      return {
+        status: false,
+        message: `Não há nenhum produto nesta solicitação`,
+      };
+    }
+
     const data = {
-      product_id: postPurchaseRequestDto.product_id,
       reason: postPurchaseRequestDto.reason,
-      status_id: postPurchaseRequestDto.status,
+      status_id: '',
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
+      company_id: req.user.company_id,
     };
 
-    await this.prisma.purchaseRequest.create({ data });
+    try {
+      const statusWaiting = await this.prisma.status.findFirst({
+        where: { name: statusPurchaseRequest.waiting },
+      });
+      data.status_id = statusWaiting.id;
 
-    return {
-      status: true,
-      message: `A Solicitação de compra foi criada com sucesso.`,
-    };
+      const result = await this.prisma.purchaseRequest.create({ data });
+
+      for (let i = 0; i < sizeArrayProductId; i++) {
+        await this.prisma.purchaseRequestProduct.create({
+          data: {
+            product_id: postPurchaseRequestDto.product_id[i],
+            purchaserequest_id: result.id,
+          },
+        });
+      }
+
+      return {
+        status: true,
+        message: `A Solicitação de compra foi criada com sucesso`,
+      };
+    } catch (ex) {
+      return {
+        status: false,
+        message: `Não foi possível criar uma nova solicitação`,
+        warning: ex.message,
+      };
+    }
   }
 
   async findAll() {
     const purchaseRequests = await this.prisma.purchaseRequest.findMany({
       include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         Status: {
           select: {
             id: true,
@@ -49,51 +80,10 @@ export class PurchaseRequestService {
     return purchaseRequests;
   }
 
-  async rowCount(active = true, status_id: string) {
-    return await this.prisma.purchaseRequest.count({
-      where: { active, status_id },
-    });
-  }
-
-  async findPagination(page = 1, active: boolean, status: string = '') {
-    const purchaseRequest = await this.prisma.purchaseRequest.findMany({
-      take: 5,
-      skip: 5 * (page - 1),
-      where: {
-        active,
-        status_id: status
-      },
-      include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        Status: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      }
-    });
-
-    return purchaseRequest;
-  }
-
   async findById(id: string) {
-    return await this.prisma.purchaseRequest.findUnique({
-      where: {
-        id,
-      },
+    const purchase: any = await this.prisma.purchaseRequest.findUnique({
+      where: { id },
       include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         Status: {
           select: {
             id: true,
@@ -102,30 +92,45 @@ export class PurchaseRequestService {
         },
       },
     });
+
+    const purchaseProduct = await this.prisma.purchaseRequestProduct.findMany({
+      where: {
+        purchaserequest_id: purchase.id,
+      },
+    });
+
+    const products = [];
+
+    for (let i = 0; i < purchaseProduct.length; i++) {
+      const product = await this.prisma.product.findFirst({
+        where: {
+          id: purchaseProduct[i].product_id,
+        },
+      });
+      products.push(product);
+    }
+
+    purchase.products = products;
+
+    return purchase;
   }
 
-  async findPagination(page = 1, active: boolean, status: string = '') {
+  async findPagination(page = 1, active = true, status = '') {
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 5,
       skip: 5 * (page - 1),
       where: {
         active,
-        status_id: status
+        status_id: status,
       },
       include: {
-        Product: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         Status: {
           select: {
             id: true,
             name: true,
           },
         },
-      }
+      },
     });
 
     return purchaseRequest;
@@ -142,29 +147,63 @@ export class PurchaseRequestService {
     putPurchaseRequestDto: PutPurchaseRequestDto,
     @Req() req: any,
   ) {
-    const update = {
-      where: {
-        id: id,
-      },
-      data: {
-        reason: putPurchaseRequestDto.reason,
-        status_id: putPurchaseRequestDto.status,
-        comment: putPurchaseRequestDto.comment,
-        updated_by: req.user.id,
-        updated_at: new Date(),
-      },
+    const sizeArrayProductId = putPurchaseRequestDto.product_id.length;
+
+    if (sizeArrayProductId === 0) {
+      return {
+        status: false,
+        message: `Não há nenhum produto, por favor, escolha ao menos um`,
+      };
+    }
+
+    const data = {
+      id,
+      reason: putPurchaseRequestDto.reason,
+      comment: putPurchaseRequestDto.comment,
+      updated_by: req.user.id,
+      updated_at: new Date(),
     };
 
-    const productName = await this.prisma.product.findFirst({
-      where: { id: putPurchaseRequestDto.product_id },
-    });
+    try {
+      await this.prisma.purchaseRequest.update({
+        where: { id },
+        data,
+      });
 
-    await this.prisma.purchaseRequest.update(update);
+      try {
+        await this.prisma.purchaseRequestProduct.deleteMany({
+          where: {
+            purchaserequest_id: id,
+          },
+        });
 
-    return {
-      status: true,
-      message: `A solicitação de compra ${productName}, foi alterado com sucesso.`,
-    };
+        for (let i = 0; i < sizeArrayProductId; i++) {
+          await this.prisma.purchaseRequestProduct.create({
+            data: {
+              product_id: putPurchaseRequestDto.product_id[i],
+              purchaserequest_id: id,
+            },
+          });
+        }
+      } catch (ex) {
+        return {
+          status: false,
+          message: `Não foi possível fazer a alteração`,
+          error: ex.message,
+        };
+      }
+
+      return {
+        status: true,
+        message: `A solicitação de compra foi alterada com sucesso`,
+      };
+    } catch (ex) {
+      return {
+        status: false,
+        message: `Não foi possível fazer a alteração`,
+        error: ex.message,
+      };
+    }
   }
 
   async approve(
@@ -184,15 +223,42 @@ export class PurchaseRequestService {
       },
     };
 
-    const productName = await this.prisma.product.findFirst({
-      where: { id: patchPurchaseRequestDto.product_id },
+    const findBudget = await this.prisma.purchaseRequestBudget.findFirst({
+      where: {
+        id: req.query.id,
+      },
     });
+
+    const productName = await this.prisma.purchaseRequestProduct.findFirst({
+      where: {
+        id: req.query.id,
+      },
+      include: {
+        Product: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    const data = {
+      name: productName.Product.name,
+      type: 'SC',
+      supplier_id: findBudget.supplier_id,
+      price_approved: findBudget.budget,
+      price_updated: findBudget.budget,
+      created_by: req.user.id,
+      company_id: req.user.company_id,
+    };
 
     await this.prisma.purchaseRequest.update(update);
 
+    await this.prisma.billToPay.create({ data });
+
     return {
       status: true,
-      message: `A solicitação de compra ${productName}, foi aprovado com sucesso.`,
+      message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
     };
   }
 
@@ -213,15 +279,11 @@ export class PurchaseRequestService {
       },
     };
 
-    const productName = await this.prisma.product.findFirst({
-      where: { id: patchPurchaseRequestDto.product_id },
-    });
-
     await this.prisma.purchaseRequest.update(update);
 
     return {
       status: true,
-      message: `A solicitação de compra ${productName}, foi rejeitado com sucesso.`,
+      message: `A solicitação de compra, foi rejeitada com sucesso.`,
     };
   }
 
@@ -239,7 +301,7 @@ export class PurchaseRequestService {
 
     return {
       status: true,
-      message: `O pedido foi desativado com sucesso.`,
+      message: `O pedido de compra foi desativada com sucesso.`,
     };
   }
 }
