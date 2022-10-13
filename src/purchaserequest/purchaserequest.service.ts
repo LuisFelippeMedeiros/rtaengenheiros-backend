@@ -142,30 +142,65 @@ export class PurchaseRequestService {
     });
   }
 
-  async update(
-    id: string,
-    putPurchaseRequestDto: PutPurchaseRequestDto,
-    @Req() req: any,
-  ) {
-    const update = {
-      where: {
-        id: id,
-      },
-      data: {
-        reason: putPurchaseRequestDto.reason,
-        status_id: putPurchaseRequestDto.status,
-        comment: putPurchaseRequestDto.comment,
-        updated_by: req.user.id,
-        updated_at: new Date(),
-      },
+  async update(id: string, putPurchaseRequestDto: PutPurchaseRequestDto, @Req() req: any) {
+
+    const sizeArrayProductId = putPurchaseRequestDto.product_id.length;
+
+    if (sizeArrayProductId === 0) {
+      return {
+        status: false,
+        message: `Não há nenhum produto, por favor, escolha ao menos um`,
+      };
+    }
+
+    const data = {
+      id,
+      reason: putPurchaseRequestDto.reason,
+      comment: putPurchaseRequestDto.comment,
+      updated_by: req.user.id,
+      updated_at: new Date()
     };
 
-    await this.prisma.purchaseRequest.update(update);
+    try {
+      await this.prisma.purchaseRequest.update({
+        where: { id },
+        data
+      });
 
-    return {
-      status: true,
-      message: `A solicitação de compra, foi alterada com sucesso.`,
-    };
+      try {
+        await this.prisma.purchaseRequestProduct.deleteMany({
+          where: {
+            purchaserequest_id: id
+          }
+        })
+
+        for (let i = 0; i < sizeArrayProductId; i++) {
+          await this.prisma.purchaseRequestProduct.create({
+            data: {
+              product_id: putPurchaseRequestDto.product_id[i],
+              purchaserequest_id: id
+            },
+          });
+        }
+      } catch (ex) {
+        return {
+          status: false,
+          message: `Não foi possível fazer a alteração`,
+          error: ex.message
+        };
+      }
+
+      return {
+        status: true,
+        message: `A solicitação de compra foi alterada com sucesso`,
+      };
+    } catch (ex) {
+      return {
+        status: false,
+        message: `Não foi possível fazer a alteração`,
+        error: ex.message
+      };
+    }
   }
 
   async approve(
