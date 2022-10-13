@@ -142,8 +142,11 @@ export class PurchaseRequestService {
     });
   }
 
-  async update(id: string, putPurchaseRequestDto: PutPurchaseRequestDto, @Req() req: any) {
-
+  async update(
+    id: string,
+    putPurchaseRequestDto: PutPurchaseRequestDto,
+    @Req() req: any,
+  ) {
     const sizeArrayProductId = putPurchaseRequestDto.product_id.length;
 
     if (sizeArrayProductId === 0) {
@@ -158,27 +161,27 @@ export class PurchaseRequestService {
       reason: putPurchaseRequestDto.reason,
       comment: putPurchaseRequestDto.comment,
       updated_by: req.user.id,
-      updated_at: new Date()
+      updated_at: new Date(),
     };
 
     try {
       await this.prisma.purchaseRequest.update({
         where: { id },
-        data
+        data,
       });
 
       try {
         await this.prisma.purchaseRequestProduct.deleteMany({
           where: {
-            purchaserequest_id: id
-          }
-        })
+            purchaserequest_id: id,
+          },
+        });
 
         for (let i = 0; i < sizeArrayProductId; i++) {
           await this.prisma.purchaseRequestProduct.create({
             data: {
               product_id: putPurchaseRequestDto.product_id[i],
-              purchaserequest_id: id
+              purchaserequest_id: id,
             },
           });
         }
@@ -186,7 +189,7 @@ export class PurchaseRequestService {
         return {
           status: false,
           message: `Não foi possível fazer a alteração`,
-          error: ex.message
+          error: ex.message,
         };
       }
 
@@ -198,7 +201,7 @@ export class PurchaseRequestService {
       return {
         status: false,
         message: `Não foi possível fazer a alteração`,
-        error: ex.message
+        error: ex.message,
       };
     }
   }
@@ -241,9 +244,10 @@ export class PurchaseRequestService {
 
     const data = {
       name: productName.Product.name,
-      type: req.params.type,
+      type: 'SC',
       supplier_id: findBudget.supplier_id,
-      price: findBudget.budget,
+      price_approved: findBudget.budget,
+      price_updated: findBudget.budget,
       created_by: req.user.id,
       company_id: req.user.company_id,
     };

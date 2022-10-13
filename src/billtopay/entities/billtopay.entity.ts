@@ -13,7 +13,8 @@ export class BillToPay {
   scheduling?: Date;
   supplier_id?: string;
   dda?: boolean;
-  price?: number;
+  price_approved?: number;
+  price_updated?: number;
   invoice_attachment?: string;
   active: boolean;
   created_at: Date;
