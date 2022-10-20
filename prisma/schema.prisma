@@ -205,8 +205,10 @@ model PurchaseRequest {
   deleted_by             String?
   rejected_at            DateTime?
   rejected_by            String?
-  approved_at            DateTime?
-  approved_by            String?
+  approvedgestor_at      DateTime?
+  approvedgestor_by      String?
+  approveddiretor_at     DateTime?
+  approveddiretor_by     String?
   supplier               PurchaseRequestBudget[]
   Status                 Status?                  @relation(fields: [status_id], references: [id])
   status_id              String?
