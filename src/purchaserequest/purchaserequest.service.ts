@@ -33,12 +33,12 @@ export class PurchaseRequestService {
       status_id: '',
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
-      company_id: req.user.company_id,
+      company_id: req.user.company_id
     };
 
     try {
       const statusWaiting = await this.prisma.status.findFirst({
-        where: { name: statusPurchaseRequest.waiting },
+        where: { name: statusPurchaseRequest.waiting }
       });
       data.status_id = statusWaiting.id;
 
@@ -48,20 +48,20 @@ export class PurchaseRequestService {
         await this.prisma.purchaseRequestProduct.create({
           data: {
             product_id: postPurchaseRequestDto.product_id[i],
-            purchaserequest_id: result.id,
-          },
+            purchaserequest_id: result.id
+          }
         });
       }
 
       return {
         status: true,
-        message: `A Solicitação de compra foi criada com sucesso`,
+        message: `A Solicitação de compra foi criada com sucesso`
       };
     } catch (ex) {
       return {
         status: false,
         message: `Não foi possível criar uma nova solicitação`,
-        warning: ex.message,
+        warning: ex.message
       };
     }
   }
@@ -72,9 +72,9 @@ export class PurchaseRequestService {
         Status: {
           select: {
             id: true,
-            name: true,
-          },
-        },
+            name: true
+          }
+        }
       },
     });
 
@@ -88,15 +88,15 @@ export class PurchaseRequestService {
         Status: {
           select: {
             id: true,
-            name: true,
-          },
-        },
-      },
+            name: true
+          }
+        }
+      }
     });
 
     const purchaseProduct = await this.prisma.purchaseRequestProduct.findMany({
       where: {
-        purchaserequest_id: purchase.id,
+        purchaserequest_id: purchase.id
       },
     });
 

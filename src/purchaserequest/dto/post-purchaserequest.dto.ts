@@ -5,9 +5,6 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
   product_id: Array<string>;
 
   @IsString()
-  status_id: string;
-
-  @IsString()
   reason: string;
 
   @IsBoolean()

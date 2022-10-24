@@ -59,6 +59,29 @@ export class SupplierService {
     return suppliers;
   }
 
+  async findFilter(filter: string = '') {
+    if (filter === '') {
+      return await this.prisma.supplier.findMany({
+        take: 10,
+        where: {
+          active: true
+        },
+        orderBy: {
+          name: 'asc'
+        }
+      })
+    }
+
+    return await this.prisma.supplier.findMany({
+      where: {
+        name: {
+          contains: filter.toUpperCase()
+        },
+        active: true
+      }
+    });
+  }
+
   async rowCount(active = true) {
     return await this.prisma.supplier.count({
       where: { active },
