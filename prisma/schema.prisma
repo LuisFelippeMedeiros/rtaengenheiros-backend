@@ -223,6 +223,8 @@ model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
   quantity           Int?
   budget             Float?
+  unit               String?
+  to_be_approved     Boolean?
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])

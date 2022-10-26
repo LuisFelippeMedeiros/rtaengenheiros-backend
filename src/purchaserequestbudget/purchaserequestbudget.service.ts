@@ -13,6 +13,8 @@ export class PurchaseRequestBudgetService {
       budget: postPurchaseRequestBudgetDto.budget,
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
+      unit: postPurchaseRequestBudgetDto.unit,
+      to_be_approved: postPurchaseRequestBudgetDto.to_be_approved,
     };
 
     await this.prisma.purchaseRequestBudget.create({ data });
@@ -49,6 +51,8 @@ export class PurchaseRequestBudgetService {
         budget: putPurchaseRequestBudgetDto.budget,
         purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
         supplier_id: putPurchaseRequestBudgetDto.supplier_id,
+        unit: putPurchaseRequestBudgetDto.unit,
+        to_be_approved: putPurchaseRequestBudgetDto.to_be_approved,
       },
     };
 

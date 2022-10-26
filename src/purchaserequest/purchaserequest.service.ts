@@ -4,12 +4,8 @@ import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
 import { PutPurchaseRequestDto } from './dto/put-purchaserequest.dto';
 import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dto';
-
-const statusPurchaseRequest = {
-  waiting: 'AGUARDANDO',
-  approved: 'APROVADO',
-  reject: 'REJEITADO',
-};
+import { EStatus } from '../common/enum/status.enum';
+import { ERole } from '../common/enum/role.enum';
 
 @Injectable()
 export class PurchaseRequestService {
@@ -33,12 +29,12 @@ export class PurchaseRequestService {
       status_id: '',
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
-      company_id: req.user.company_id
+      company_id: req.user.company_id,
     };
 
     try {
       const statusWaiting = await this.prisma.status.findFirst({
-        where: { name: statusPurchaseRequest.waiting }
+        where: { name: EStatus.waiting },
       });
       data.status_id = statusWaiting.id;
 
@@ -48,20 +44,20 @@ export class PurchaseRequestService {
         await this.prisma.purchaseRequestProduct.create({
           data: {
             product_id: postPurchaseRequestDto.product_id[i],
-            purchaserequest_id: result.id
-          }
+            purchaserequest_id: result.id,
+          },
         });
       }
 
       return {
         status: true,
-        message: `A Solicitação de compra foi criada com sucesso`
+        message: `A Solicitação de compra foi criada com sucesso`,
       };
     } catch (ex) {
       return {
         status: false,
         message: `Não foi possível criar uma nova solicitação`,
-        warning: ex.message
+        warning: ex.message,
       };
     }
   }
@@ -72,9 +68,9 @@ export class PurchaseRequestService {
         Status: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
     });
 
@@ -88,15 +84,15 @@ export class PurchaseRequestService {
         Status: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     const purchaseProduct = await this.prisma.purchaseRequestProduct.findMany({
       where: {
-        purchaserequest_id: purchase.id
+        purchaserequest_id: purchase.id,
       },
     });
 
@@ -171,7 +167,7 @@ export class PurchaseRequestService {
         },
       });
 
-    if (purchaseRequestApproved.Status.name === 'APROVADO') {
+    if (purchaseRequestApproved.Status.name === EStatus.approved) {
       return {
         status: false,
         message: `Essa solicitação de compra se encontra com o status de APROVADA, não podendo ser alterada`,
@@ -247,7 +243,7 @@ export class PurchaseRequestService {
       },
     });
 
-    if (user.group.name === 'GESTOR') {
+    if (user.group.name === ERole.gestor) {
       const update = {
         where: {
           id: id,
@@ -267,7 +263,7 @@ export class PurchaseRequestService {
       };
     }
 
-    if (user.group.name === 'DIRETOR') {
+    if (user.group.name === ERole.diretor) {
       const update = {
         where: {
           id: id,
