@@ -5,7 +5,11 @@ import { AppModule } from './app.module';
 import { config } from 'aws-sdk';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: '*',
+    },
+  });
 
   //Swagger
   const configu = new DocumentBuilder()
