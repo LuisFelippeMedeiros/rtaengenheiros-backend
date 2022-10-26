@@ -36,6 +36,20 @@ export class PurchaseRequestBudgetService {
     });
   }
 
+  async findById(id: string) {
+    return this.prisma.purchaseRequestBudget.findFirst({
+      where: { id },
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
   async update(
     id: string,
     putPurchaseRequestBudgetDto: PutPurchaseRequestBudgetDto,
@@ -52,6 +66,17 @@ export class PurchaseRequestBudgetService {
       },
     };
 
-    await this.prisma.purchaseRequestBudget.update(update);
+    try {
+      await this.prisma.purchaseRequestBudget.update(update);
+      return {
+        status: false,
+        message: `Orçamento alterado com sucesso`
+      }
+    } catch (ex) {
+      return {
+        status: false,
+        message: `Não foi possível fazer a alteração do orçamento`
+      }
+    }
   }
 }

@@ -30,6 +30,11 @@ export class PurchaserequestbudgetController {
   //   return this.purchaseRequestBudgetService.findAll();
   // }
 
+  @Get('byid/:id')
+  async findById(@Param('id') id: string) {
+    return this.purchaseRequestBudgetService.findById(id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.purchaseRequestBudgetService.findOne(id);
