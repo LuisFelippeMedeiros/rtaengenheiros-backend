@@ -3,14 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { config } from 'aws-sdk';
-import cors from 'cors';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    cors: {
-      origin: '*',
-    },
-  });
+  const app = await NestFactory.create(AppModule);
 
   //Swagger
   const configu = new DocumentBuilder()
@@ -38,13 +33,13 @@ async function bootstrap() {
     region: process.env.AWS_REGION,
   });
 
-  app.use(
-    cors({
-      origin: '*',
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-      optionsSuccessStatus: 200,
-    }),
-  );
+  app.enableCors();
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    next();
+  });
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
