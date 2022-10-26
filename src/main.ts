@@ -33,12 +33,9 @@ async function bootstrap() {
     region: process.env.AWS_REGION,
   });
 
-  app.enableCors();
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
-    next();
+  app.enableCors({
+    origin: ['https://sistema.rta.eng.br', 'http://sistema.rta.eng.br'],
+    methods: ['POST', 'PUT', 'DELETE', 'GET'],
   });
   await app.listen(process.env.PORT || 3000);
 }
