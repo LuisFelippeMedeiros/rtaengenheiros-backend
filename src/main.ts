@@ -34,8 +34,18 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: ['https://sistema.rta.eng.br', 'http://sistema.rta.eng.br'],
-    methods: ['POST', 'PUT', 'DELETE', 'GET'],
+    origin: '*',
+    methods: ['POST', 'PUT', 'DELETE', 'GET', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'X-Auth-Token', 'Origin', 'Authorization'],
+    exposedHeaders: [
+      'Cache-Control',
+      'Content-Language',
+      'Content-Type',
+      'Expires',
+      'Last-Modified',
+      'Pragma',
+    ],
+    credentials: false,
   });
   await app.listen(process.env.PORT || 3000);
 }
