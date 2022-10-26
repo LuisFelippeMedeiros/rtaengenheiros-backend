@@ -6,7 +6,9 @@ import { config } from 'aws-sdk';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    origin: /^(https:\/\/([^\.]*\.)?rta\.eng\.br)$/i,
+  });
 
   //Swagger
   const configu = new DocumentBuilder()
