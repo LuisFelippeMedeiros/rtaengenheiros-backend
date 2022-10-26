@@ -32,13 +32,11 @@ async function bootstrap() {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION,
   });
-
-  app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
+  const corsOptions = {
+    origin: 'https://sistema.rta.eng.br',
+    optionsSucessStatus: 200,
+  };
+  app.enableCors(corsOptions);
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

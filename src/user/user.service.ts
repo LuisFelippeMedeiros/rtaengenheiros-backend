@@ -137,7 +137,7 @@ export class UserService {
       const s3 = new S3();
       const uploadResult = await s3
         .upload({
-          Bucket: 'rtaengenheiros-backend',
+          Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
           Body: dataBuffer,
           Key: `${uuidv4()}-${filename}`,
         })
