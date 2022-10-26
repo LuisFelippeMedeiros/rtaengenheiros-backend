@@ -5,13 +5,7 @@ import { AppModule } from './app.module';
 import { config } from 'aws-sdk';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Accept',
-    credentials: true,
-  });
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   //Swagger
   const configu = new DocumentBuilder()
@@ -39,6 +33,7 @@ async function bootstrap() {
     region: process.env.AWS_REGION,
   });
 
+  // app.enableCors();
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
