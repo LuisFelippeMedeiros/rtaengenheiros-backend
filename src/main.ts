@@ -3,9 +3,10 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { config } from 'aws-sdk';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   //Swagger
   const configu = new DocumentBuilder()
@@ -33,7 +34,17 @@ async function bootstrap() {
     region: process.env.AWS_REGION,
   });
 
-  app.enableCors();
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    next();
+  });
+
+  app.enableCors({
+    allowedHeaders: '*',
+    origin: '*',
+  });
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
