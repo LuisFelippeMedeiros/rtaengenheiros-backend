@@ -14,4 +14,7 @@ export class PutPurchaseRequestDto extends PartialType(PostPurchaseRequestDto) {
 
   @IsString()
   comment: string;
+
+  @IsString()
+  status_id?: string;
 }

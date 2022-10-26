@@ -3,12 +3,9 @@ import { PrismaService } from 'src/database/PrismaService';
 import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
 import { PutPurchaseRequestDto } from './dto/put-purchaserequest.dto';
 import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
-
-const statusPurchaseRequest = {
-  waiting: 'AGUARDANDO',
-  approved: 'APROVADO',
-  reject: 'REJEITADO',
-};
+import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dto';
+import { EStatus } from '../common/enum/status.enum';
+import { ERole } from '../common/enum/role.enum';
 
 @Injectable()
 export class PurchaseRequestService {
@@ -37,7 +34,7 @@ export class PurchaseRequestService {
 
     try {
       const statusWaiting = await this.prisma.status.findFirst({
-        where: { name: statusPurchaseRequest.waiting },
+        where: { name: EStatus.waiting },
       });
       data.status_id = statusWaiting.id;
 
@@ -156,10 +153,32 @@ export class PurchaseRequestService {
       };
     }
 
+    const purchaseRequestApproved =
+      await this.prisma.purchaseRequest.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          Status: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+
+    if (purchaseRequestApproved.Status.name === EStatus.approved) {
+      return {
+        status: false,
+        message: `Essa solicitação de compra se encontra com o status de APROVADA, não podendo ser alterada`,
+      };
+    }
+
     const data = {
       id,
       reason: putPurchaseRequestDto.reason,
       comment: putPurchaseRequestDto.comment,
+      statud_id: putPurchaseRequestDto.status_id,
       updated_by: req.user.id,
       updated_at: new Date(),
     };
@@ -211,30 +230,12 @@ export class PurchaseRequestService {
     patchPurchaseRequestDto: PatchPurchaseRequestDto,
     @Req() req: any,
   ) {
-    const update = {
+    const user = await this.prisma.user.findFirst({
       where: {
-        id: id,
-      },
-      data: {
-        status_id: patchPurchaseRequestDto.status,
-        comment: patchPurchaseRequestDto.comment,
-        approved_by: req.user.id,
-        approved_at: new Date(),
-      },
-    };
-
-    const findBudget = await this.prisma.purchaseRequestBudget.findFirst({
-      where: {
-        id: req.query.id,
-      },
-    });
-
-    const productName = await this.prisma.purchaseRequestProduct.findFirst({
-      where: {
-        id: req.query.id,
+        id: req.user.id,
       },
       include: {
-        Product: {
+        group: {
           select: {
             name: true,
           },
@@ -242,24 +243,75 @@ export class PurchaseRequestService {
       },
     });
 
-    const data = {
-      name: productName.Product.name,
-      type: 'SC',
-      supplier_id: findBudget.supplier_id,
-      price_approved: findBudget.budget,
-      price_updated: findBudget.budget,
-      created_by: req.user.id,
-      company_id: req.user.company_id,
-    };
+    if (user.group.name === ERole.gestor) {
+      const update = {
+        where: {
+          id: id,
+        },
+        data: {
+          status_id: patchPurchaseRequestDto.status,
+          comment: patchPurchaseRequestDto.comment,
+          approveddiretor_at: new Date(),
+          approveddiretor_by: req.user.id,
+        },
+      };
+      await this.prisma.purchaseRequest.update(update);
 
-    await this.prisma.purchaseRequest.update(update);
+      return {
+        status: true,
+        message: `A solicitação de compra foi aprovado pelo Gestor com sucesso, agora precisa da aprovação do Diretor.`,
+      };
+    }
 
-    await this.prisma.billToPay.create({ data });
+    if (user.group.name === ERole.diretor) {
+      const update = {
+        where: {
+          id: id,
+        },
+        data: {
+          status_id: patchPurchaseRequestDto.status,
+          comment: patchPurchaseRequestDto.comment,
+          approveddiretor_at: new Date(),
+          approveddiretor_by: req.user.id,
+        },
+      };
+      await this.prisma.purchaseRequest.update(update);
+      const findBudget = await this.prisma.purchaseRequestBudget.findFirst({
+        where: {
+          id: req.query.id,
+        },
+      });
 
-    return {
-      status: true,
-      message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
-    };
+      const productName = await this.prisma.purchaseRequestProduct.findFirst({
+        where: {
+          id: req.query.id,
+        },
+        include: {
+          Product: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+
+      const data = {
+        name: productName.Product.name,
+        type: 'SC',
+        supplier_id: findBudget.supplier_id,
+        price_approved: findBudget.budget,
+        price_updated: findBudget.budget,
+        created_by: req.user.id,
+        company_id: req.user.company_id,
+      };
+
+      await this.prisma.billToPay.create({ data });
+
+      return {
+        status: true,
+        message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
+      };
+    }
   }
 
   async reject(
@@ -303,5 +355,43 @@ export class PurchaseRequestService {
       status: true,
       message: `O pedido de compra foi desativada com sucesso.`,
     };
+  }
+
+  async filtered(filterDto: GetPurchaseRequestFilterDto) {
+    const { id, initial_date, final_date, created_by, company_id } = filterDto;
+    console.log(initial_date, final_date);
+    let purchases = await this.prisma.purchaseRequest.findMany({
+      include: {
+        Status: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (id) {
+      purchases = purchases.filter((purchase) => purchase.id === id);
+    }
+    if (created_by) {
+      purchases = purchases.filter(
+        (purchase) => purchase.created_by === created_by,
+      );
+    }
+    if (initial_date && final_date) {
+      purchases = purchases.filter(
+        (purchase) =>
+          purchase.created_at.toISOString <= initial_date.toISOString &&
+          purchase.created_at.toISOString >= final_date.toISOString,
+      );
+    }
+    if (company_id) {
+      purchases = purchases.filter(
+        (purchase) => purchase.company_id === company_id,
+      );
+    }
+
+    return purchases;
   }
 }

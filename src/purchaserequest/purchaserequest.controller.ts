@@ -16,6 +16,7 @@ import { PutPurchaseRequestDto } from './dto/put-purchaserequest.dto';
 import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
+import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dto';
 
 @ApiTags('PurchaseRequest')
 @Controller({
@@ -59,17 +60,22 @@ export class PurchaseRequestController {
     return await this.purchaseRequestService.rowCount(active, status);
   }
 
-  @Get('all')
-  async findAll() {
-    return await this.purchaseRequestService.findAll();
-  }
+  // @Get('all')
+  // async findAll() {
+  //   return await this.purchaseRequestService.findAll();
+  // }
 
-  @Get(':id')
+  @Get('byid/:id')
   async findById(@Param('id') id: string) {
     return await this.purchaseRequestService.findById(id);
   }
 
-  @Put(':id')
+  @Get('all')
+  async findFilter(@Query() filterDto: GetPurchaseRequestFilterDto) {
+    return await this.purchaseRequestService.filtered(filterDto);
+  }
+
+  @Put('update/:id')
   async update(
     @Param('id') id: string,
     @Body() putPurchaseRequestDto: PutPurchaseRequestDto,

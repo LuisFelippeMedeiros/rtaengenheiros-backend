@@ -24,9 +24,15 @@ export class PurchaserequestbudgetController {
     );
   }
 
-  @Get('all')
-  async findAll() {
-    return this.purchaseRequestBudgetService.findAll();
+  // Não poderá ter essa rota, devido a ser retornado somente quando possui um orçamento vínculado
+  // @Get('all')
+  // async findAll() {
+  //   return this.purchaseRequestBudgetService.findAll();
+  // }
+
+  @Get('byid/:id')
+  async findById(@Param('id') id: string) {
+    return this.purchaseRequestBudgetService.findById(id);
   }
 
   @Get(':id')
