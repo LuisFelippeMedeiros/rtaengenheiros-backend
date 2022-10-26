@@ -38,7 +38,7 @@ import { MulterExtendedModule } from 'nestjs-multer-extended';
     PurchaserequestbudgetModule,
     BillToPayModule,
     PurchaseRequestProductModule,
-    // ConfigModule.forRoot(),
+    ConfigModule.forRoot(),
     // MulterExtendedModule.register({
     //   awsConfig: {
     //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
