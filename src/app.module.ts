@@ -38,17 +38,17 @@ import { MulterExtendedModule } from 'nestjs-multer-extended';
     PurchaserequestbudgetModule,
     BillToPayModule,
     PurchaseRequestProductModule,
-    ConfigModule.forRoot(),
-    MulterExtendedModule.register({
-      awsConfig: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: process.env.AWS_REGION,
-      },
-      bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
-      basePath: 's3://rtaengenheiros-backend/avatar/',
-      // fileSize: 1 * 1024 * 1024,
-    }),
+    // ConfigModule.forRoot(),
+    // MulterExtendedModule.register({
+    //   awsConfig: {
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //     region: process.env.AWS_REGION,
+    //   },
+    //   bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+    //   basePath: 's3://rtaengenheiros-backend/avatar/',
+    //   // fileSize: 1 * 1024 * 1024,
+    // }),
   ],
   controllers: [],
   providers: [
