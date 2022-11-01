@@ -19,6 +19,7 @@ import { BillToPayModule } from './billtopay/billtopay.module';
 import { PurchaseRequestProductModule } from './purchaserequestproduct/purchaserequestproduct.module';
 import { ConfigModule } from '@nestjs/config';
 import { MulterExtendedModule } from 'nestjs-multer-extended';
+import { UnitModule } from './unit/unit.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { MulterExtendedModule } from 'nestjs-multer-extended';
       basePath: 's3://rtaengenheiros-backend/avatar/',
       // fileSize: 1 * 1024 * 1024,
     }),
+    UnitModule,
   ],
   controllers: [],
   providers: [

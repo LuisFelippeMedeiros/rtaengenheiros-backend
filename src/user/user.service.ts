@@ -118,7 +118,7 @@ export class UserService {
       };
     } else {
       user.active = false;
-      (user.deteled_by = req.body.id), (user.deleted_at = new Date());
+      (user.deleted_by = req.body.id), (user.deleted_at = new Date());
     }
 
     await this.prisma.user.update({

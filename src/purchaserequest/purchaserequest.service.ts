@@ -246,10 +246,10 @@ export class PurchaseRequestService {
     const statusApproved = await this.prisma.status.findFirst({
       where: {
         name: {
-          equals: 'APROVADO'
-        }
-      }
-    })
+          equals: 'APROVADO',
+        },
+      },
+    });
 
     if (user.group.name === ERole.gestor) {
       const update = {
@@ -320,14 +320,18 @@ export class PurchaseRequestService {
     }
   }
 
-  async reject(id: string, patchPurchaseRequestDto: PatchPurchaseRequestDto, @Req() req: any) {
+  async reject(
+    id: string,
+    patchPurchaseRequestDto: PatchPurchaseRequestDto,
+    @Req() req: any,
+  ) {
     const statusApproved = await this.prisma.status.findFirst({
       where: {
         name: {
-          equals: 'REJEITADO'
-        }
-      }
-    })
+          equals: 'REJEITADO',
+        },
+      },
+    });
     const update = {
       where: { id },
       data: {
