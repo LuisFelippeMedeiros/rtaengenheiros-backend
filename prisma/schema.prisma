@@ -224,12 +224,13 @@ model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
   quantity           Int?
   budget             Float?
-  unit               String?
   to_be_approved     Boolean?
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
+  Unit               Unit             @relation(fields: [unit_id], references: [id])
+  unit_id            String
 
   @@map("purchaserequestbudgets")
 }
@@ -294,16 +295,17 @@ model PurchaseRequestProduct {
 }
 
 model Unit {
-  id          String    @id @default(uuid())
-  initials    String    @unique
-  description String
-  active      Boolean   @default(true)
-  created_at  DateTime  @default(now())
-  created_by  String?
-  updated_at  DateTime?
-  updated_by  String?
-  deleted_at  DateTime?
-  deleted_by  String?
+  id                    String                  @id @default(uuid())
+  initials              String                  @unique
+  description           String
+  active                Boolean                 @default(true)
+  created_at            DateTime                @default(now())
+  created_by            String?
+  updated_at            DateTime?
+  updated_by            String?
+  deleted_at            DateTime?
+  deleted_by            String?
+  PurchaseRequestBudget PurchaseRequestBudget[]
 
   @@map("units")
 }
