@@ -13,7 +13,7 @@ export class PurchaseRequestBudgetService {
       budget: postPurchaseRequestBudgetDto.budget,
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
-      unit: postPurchaseRequestBudgetDto.unit,
+      unit_id: postPurchaseRequestBudgetDto.unit_id,
       to_be_approved: postPurchaseRequestBudgetDto.to_be_approved,
     };
 
@@ -65,7 +65,7 @@ export class PurchaseRequestBudgetService {
         budget: putPurchaseRequestBudgetDto.budget,
         purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
         supplier_id: putPurchaseRequestBudgetDto.supplier_id,
-        unit: putPurchaseRequestBudgetDto.unit,
+        unit_id: putPurchaseRequestBudgetDto.unit_id,
         to_be_approved: putPurchaseRequestBudgetDto.to_be_approved,
       },
     };
@@ -74,13 +74,13 @@ export class PurchaseRequestBudgetService {
       await this.prisma.purchaseRequestBudget.update(update);
       return {
         status: false,
-        message: `Orçamento alterado com sucesso`
-      }
+        message: `Orçamento alterado com sucesso`,
+      };
     } catch (ex) {
       return {
         status: false,
-        message: `Não foi possível fazer a alteração do orçamento`
-      }
+        message: `Não foi possível fazer a alteração do orçamento`,
+      };
     }
   }
 }

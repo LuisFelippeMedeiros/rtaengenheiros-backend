@@ -243,13 +243,21 @@ export class PurchaseRequestService {
       },
     });
 
+    const statusApproved = await this.prisma.status.findFirst({
+      where: {
+        name: {
+          equals: 'APROVADO',
+        },
+      },
+    });
+
     if (user.group.name === ERole.gestor) {
       const update = {
         where: {
           id: id,
         },
         data: {
-          status_id: patchPurchaseRequestDto.status,
+          status_id: statusApproved.id,
           comment: patchPurchaseRequestDto.comment,
           approveddiretor_at: new Date(),
           approveddiretor_by: req.user.id,
@@ -265,11 +273,9 @@ export class PurchaseRequestService {
 
     if (user.group.name === ERole.diretor) {
       const update = {
-        where: {
-          id: id,
-        },
+        where: { id },
         data: {
-          status_id: patchPurchaseRequestDto.status,
+          status_id: statusApproved.id,
           comment: patchPurchaseRequestDto.comment,
           approveddiretor_at: new Date(),
           approveddiretor_by: req.user.id,
@@ -319,12 +325,17 @@ export class PurchaseRequestService {
     patchPurchaseRequestDto: PatchPurchaseRequestDto,
     @Req() req: any,
   ) {
-    const update = {
+    const statusApproved = await this.prisma.status.findFirst({
       where: {
-        id: id,
+        name: {
+          equals: 'REJEITADO',
+        },
       },
+    });
+    const update = {
+      where: { id },
       data: {
-        status_id: patchPurchaseRequestDto.status,
+        status_id: statusApproved.id,
         comment: patchPurchaseRequestDto.comment,
         rejected_by: req.user.id,
         rejected_at: new Date(),

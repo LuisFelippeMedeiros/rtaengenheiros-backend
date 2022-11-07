@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -19,7 +20,7 @@ model User {
   updated_at DateTime?
   updated_by String?
   deleted_at DateTime?
-  deteled_by String?
+  deleted_by String?
   group      Group     @relation(fields: [group_id], references: [id])
   group_id   String
   Company    Company?  @relation(fields: [company_id], references: [id])
@@ -223,12 +224,13 @@ model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
   quantity           Int?
   budget             Float?
-  unit               String?
   to_be_approved     Boolean?
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
+  Unit               Unit             @relation(fields: [unit_id], references: [id])
+  unit_id            String
 
   @@map("purchaserequestbudgets")
 }
@@ -290,4 +292,20 @@ model PurchaseRequestProduct {
   purchaserequest_id String?
 
   @@map("purchaserequestproducts")
+}
+
+model Unit {
+  id                    String                  @id @default(uuid())
+  initials              String                  @unique
+  description           String
+  active                Boolean                 @default(true)
+  created_at            DateTime                @default(now())
+  created_by            String?
+  updated_at            DateTime?
+  updated_by            String?
+  deleted_at            DateTime?
+  deleted_by            String?
+  PurchaseRequestBudget PurchaseRequestBudget[]
+
+  @@map("units")
 }

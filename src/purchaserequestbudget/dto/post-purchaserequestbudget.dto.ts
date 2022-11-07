@@ -15,7 +15,7 @@ export class PostPurchaseRequestBudgetDto extends PurchaseRequestBudget {
   purchaserequest_id: string;
 
   @IsString()
-  unit: string;
+  unit_id?: string;
 
   @IsBoolean()
   to_be_approved?: boolean;
