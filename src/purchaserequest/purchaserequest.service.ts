@@ -27,10 +27,13 @@ export class PurchaseRequestService {
     const data = {
       reason: postPurchaseRequestDto.reason,
       status_id: '',
+      active: postPurchaseRequestDto.active,
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
       company_id: req.user.company_id,
     };
+
+    console.log(data)
 
     try {
       const statusWaiting = await this.prisma.status.findFirst({

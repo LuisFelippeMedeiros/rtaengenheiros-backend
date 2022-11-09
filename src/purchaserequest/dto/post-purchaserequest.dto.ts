@@ -5,16 +5,13 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
   product_id: Array<string>;
 
   @IsString()
-  status_id: string;
-
-  @IsString()
   reason: string;
 
   @IsBoolean()
-  active: boolean;
+  active: boolean = true;
 
   @IsString()
-  comment: string;
+  comment: string = '';
 
   // @IsString()
   // company_id?: string;
