@@ -2,9 +2,9 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "yarn",
+			"type": "npm",
 			"script": "start:debug",
-			"group": "rebuild",
+			"group": "build",
 			"problemMatcher": [],
 			"label": "npm: start:debug",
 			"detail": "nest start --debug --watch"
