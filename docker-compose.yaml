@@ -1,0 +1,23 @@
+version: '2.0'
+
+services:
+
+  api:
+    container_name: rtaengenheiros_api
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/home/rtaengenheiros_api
+      - /home/rtaengenheiros_api/node_modules
+
+
+  database:
+    container_name: rtaengenheiros_bd
+    image: postgres:13
+    environment:
+      POSTGRES_DB: rtaengenheiros_1
+      POSTGRES_USER: rtaengenheiros_user
+      POSTGRES_PASSWORD: rtaengenheiros_pass
+    ports:
+      - "5433:5432"

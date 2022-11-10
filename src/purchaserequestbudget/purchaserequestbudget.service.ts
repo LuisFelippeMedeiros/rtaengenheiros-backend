@@ -14,7 +14,7 @@ export class PurchaseRequestBudgetService {
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
       unit_id: postPurchaseRequestBudgetDto.unit_id,
-      to_be_approved: postPurchaseRequestBudgetDto.to_be_approved,
+      to_be_approved: null, // postPurchaseRequestBudgetDto.to_be_approved,
     };
 
     await this.prisma.purchaseRequestBudget.create({ data });
@@ -34,6 +34,13 @@ export class PurchaseRequestBudgetService {
             name: true,
           },
         },
+        Unit: {
+          select: {
+            id: true,
+            initials: true,
+            description: true,
+          },
+        },
       },
     });
   }
@@ -48,8 +55,38 @@ export class PurchaseRequestBudgetService {
             name: true,
           },
         },
+        Unit: {
+          select: {
+            id: true,
+            initials: true,
+            description: true,
+          },
+        },
       },
     });
+  }
+
+  async approvalReproval(id: string, action: boolean) {
+    try {
+      await this.prisma.purchaseRequestBudget.update({
+        where: { id },
+        data: {
+          to_be_approved: action,
+        },
+      });
+      const message = action ? 'aprovado' : 'reprovado';
+
+      return {
+        status: true,
+        message: `Orçamento ${message} com sucesso`,
+      };
+    } catch (ex) {
+      return {
+        status: false,
+        message: `Não foi possível fazer a alteração do orçamento`,
+        inner: ex,
+      };
+    }
   }
 
   async update(
@@ -80,6 +117,7 @@ export class PurchaseRequestBudgetService {
       return {
         status: false,
         message: `Não foi possível fazer a alteração do orçamento`,
+        inner: ex,
       };
     }
   }
