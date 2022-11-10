@@ -66,42 +66,25 @@ export class PurchaseRequestBudgetService {
     });
   }
 
-  async approval (id: string, action: boolean) {
-    let data = await this.findById(id)
+  async approvalReproval (id: string, action: boolean) {
+    try {
+      await this.prisma.purchaseRequestBudget.update({
+        where: { id },
+        data: {
+          to_be_approved: action
+        }
+      })
+      let message = action ? 'aprovado' : 'desaprovado'
 
-    console.log(action)
-
-    if (data) {
-      try {
-        data.to_be_approved = action
-        await this.prisma.purchaseRequestBudget.update({
-          where: { id },
-          data: {
-            to_be_approved: data.to_be_approved,
-            id: data.id,
-            quantity: data.quantity,
-            supplier_id: data.supplier_id,
-            unit_id: data.unit_id,
-            budget: data.budget
-          }
-        })
-        let message = action ? 'aprovado' : 'desaprovado'
-
-        return {
-          status: true,
-          message: `Orçamento ${message} com sucesso`,
-        };
-      } catch (ex) {
-        return {
-          status: false,
-          message: `Não foi possível fazer a alteração do orçamento`,
-          inner: ex
-        };
-      }
-    } else {
+      return {
+        status: true,
+        message: `Orçamento ${message} com sucesso`,
+      };
+    } catch (ex) {
       return {
         status: false,
-        message: `Orçamento não encontrado`
+        message: `Não foi possível fazer a alteração do orçamento`,
+        inner: ex
       };
     }
   }

@@ -41,8 +41,13 @@ export class PurchaserequestbudgetController {
   }
 
   @Put('approval/:id')
-  async approval(@Param('id') id: string, @Query('action') action: boolean) {
-    return this.purchaseRequestBudgetService.approval(id, action)
+  async approval(@Param('id') id: string) {
+    return this.purchaseRequestBudgetService.approvalReproval(id, true)
+  }
+
+  @Put('reproval/:id')
+  async reproval(@Param('id') id: string) {
+    return this.purchaseRequestBudgetService.approvalReproval(id, false)
   }
 
   @Put(':id')
