@@ -47,11 +47,10 @@ import { UnitModule } from './unit/unit.module';
         region: process.env.AWS_REGION,
       },
       bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
-      basePath: 's3://rtaengenheiros-backend/avatar/',
-      // fileSize: 1 * 1024 * 1024,
+      basePath: process.env.basePath,
+      fileSize: 1 * 1024 * 1024,
     }),
     UnitModule,
-
   ],
   controllers: [],
   providers: [
