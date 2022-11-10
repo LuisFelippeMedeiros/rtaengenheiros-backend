@@ -14,7 +14,7 @@ export class PurchaseRequestBudgetService {
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
       unit_id: postPurchaseRequestBudgetDto.unit_id,
-      to_be_approved: postPurchaseRequestBudgetDto.to_be_approved,
+      to_be_approved: null // postPurchaseRequestBudgetDto.to_be_approved,
     };
 
     await this.prisma.purchaseRequestBudget.create({ data });
@@ -34,6 +34,13 @@ export class PurchaseRequestBudgetService {
             name: true,
           },
         },
+        Unit: {
+          select: {
+            id: true,
+            initials: true,
+            description: true
+          }
+        }
       },
     });
   }
@@ -48,8 +55,55 @@ export class PurchaseRequestBudgetService {
             name: true,
           },
         },
+        Unit: {
+          select: {
+            id: true,
+            initials: true,
+            description: true
+          }
+        }
       },
     });
+  }
+
+  async approval (id: string, action: boolean) {
+    let data = await this.findById(id)
+
+    console.log(action)
+
+    if (data) {
+      try {
+        data.to_be_approved = action
+        await this.prisma.purchaseRequestBudget.update({
+          where: { id },
+          data: {
+            to_be_approved: data.to_be_approved,
+            id: data.id,
+            quantity: data.quantity,
+            supplier_id: data.supplier_id,
+            unit_id: data.unit_id,
+            budget: data.budget
+          }
+        })
+        let message = action ? 'aprovado' : 'desaprovado'
+
+        return {
+          status: true,
+          message: `Orçamento ${message} com sucesso`,
+        };
+      } catch (ex) {
+        return {
+          status: false,
+          message: `Não foi possível fazer a alteração do orçamento`,
+          inner: ex
+        };
+      }
+    } else {
+      return {
+        status: false,
+        message: `Orçamento não encontrado`
+      };
+    }
   }
 
   async update(
@@ -80,6 +134,7 @@ export class PurchaseRequestBudgetService {
       return {
         status: false,
         message: `Não foi possível fazer a alteração do orçamento`,
+        inner: ex
       };
     }
   }
