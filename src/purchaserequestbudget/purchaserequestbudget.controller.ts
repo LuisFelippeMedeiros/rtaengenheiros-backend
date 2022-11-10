@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Query } from '@nestjs/common';
 import { PurchaseRequestBudgetService } from './purchaserequestbudget.service';
 import { PostPurchaseRequestBudgetDto } from './dto/post-purchaserequestbudget.dto';
 import { PutPurchaseRequestBudgetDto } from './dto/put-purchaserequestbudget.dto';
@@ -38,6 +38,16 @@ export class PurchaserequestbudgetController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.purchaseRequestBudgetService.findOne(id);
+  }
+
+  @Put('approval/:id')
+  async approval(@Param('id') id: string) {
+    return this.purchaseRequestBudgetService.approvalReproval(id, true);
+  }
+
+  @Put('reproval/:id')
+  async reproval(@Param('id') id: string) {
+    return this.purchaseRequestBudgetService.approvalReproval(id, false);
   }
 
   @Put(':id')
