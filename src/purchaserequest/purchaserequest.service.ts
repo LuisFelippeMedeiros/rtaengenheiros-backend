@@ -33,8 +33,6 @@ export class PurchaseRequestService {
       company_id: req.user.company_id,
     };
 
-    console.log(data)
-
     try {
       const statusWaiting = await this.prisma.status.findFirst({
         where: { name: EStatus.waiting },
@@ -373,7 +371,6 @@ export class PurchaseRequestService {
 
   async filtered(filterDto: GetPurchaseRequestFilterDto) {
     const { id, initial_date, final_date, created_by, company_id } = filterDto;
-    console.log(initial_date, final_date);
     let purchases = await this.prisma.purchaseRequest.findMany({
       include: {
         Status: {
