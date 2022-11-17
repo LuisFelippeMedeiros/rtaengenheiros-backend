@@ -388,7 +388,6 @@ export class PurchaseRequestService {
 
   async filtered(filterDto: GetPurchaseRequestFilterDto) {
     const { id, initial_date, final_date, created_by, company_id } = filterDto;
-
     let purchases = await this.prisma.purchaseRequest.findMany({
       include: {
         Status: {
