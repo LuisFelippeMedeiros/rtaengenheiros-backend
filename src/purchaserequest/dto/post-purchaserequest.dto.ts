@@ -8,11 +8,11 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
   reason: string;
 
   @IsBoolean()
-  active: boolean = true;
+  active = true;
 
   @IsString()
-  comment: string = '';
+  comment = '';
 
-  // @IsString()
-  // company_id?: string;
+  @IsString()
+  company_id?: string;
 }
