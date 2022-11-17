@@ -18,6 +18,8 @@ export class PurchaseRequest {
   approvedgestor_by?: string;
   approveddiretor_at?: Date;
   approveddiretor_by?: string;
+  is_approved_gestor?: boolean;
+  is_approved_diretor?: boolean;
 }
 
 export class PurchaseRequestFilter {
@@ -26,4 +28,6 @@ export class PurchaseRequestFilter {
   final_date?: Date;
   created_by?: string;
   company_id?: string;
+  is_approved_gestor?: boolean;
+  is_approved_diretor?: boolean;
 }
