@@ -14,7 +14,7 @@ COPY prisma ./prisma/
 COPY yarn.lock .
 
 # COPY ENV variable
-# COPY .env ./
+COPY .env ./
 
 # COPY tsconfig.json file
 COPY tsconfig.json ./

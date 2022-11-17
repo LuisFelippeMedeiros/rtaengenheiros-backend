@@ -6,6 +6,7 @@ import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dto';
 import { EStatus } from '../common/enum/status.enum';
 import { ERole } from '../common/enum/role.enum';
+import { EGroupType } from '../common/enum/grouptype.enum';
 
 @Injectable()
 export class PurchaseRequestService {
@@ -239,20 +240,31 @@ export class PurchaseRequestService {
         group: {
           select: {
             name: true,
+            type: true,
           },
         },
       },
     });
 
-    const statusApproved = await this.prisma.status.findFirst({
+    const purchaseRequest = await this.prisma.purchaseRequest.findUnique({
       where: {
-        name: {
-          equals: 'APROVADO',
-        },
+        id,
       },
     });
+    const statusApproved = await this.prisma.status.findFirst({
+      where: { id: purchaseRequest.status_id },
+    });
 
-    if (user.group.name === ERole.gestor) {
+    if (statusApproved.name === EStatus.approved) {
+      return {
+        status: false,
+        message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,
+      };
+    }
+    if (
+      user.group.name === ERole.gestor &&
+      user.group.type === EGroupType.all
+    ) {
       const update = {
         where: {
           id: id,
@@ -260,8 +272,9 @@ export class PurchaseRequestService {
         data: {
           status_id: statusApproved.id,
           comment: patchPurchaseRequestDto.comment,
-          approveddiretor_at: new Date(),
-          approveddiretor_by: req.user.id,
+          approvedgestor_at: new Date(),
+          approved_by: req.user.id,
+          is_approved_gestor: patchPurchaseRequestDto.is_approved_gestor,
         },
       };
       await this.prisma.purchaseRequest.update(update);
@@ -272,7 +285,10 @@ export class PurchaseRequestService {
       };
     }
 
-    if (user.group.name === ERole.diretor) {
+    if (
+      user.group.name === ERole.diretor &&
+      user.group.type === EGroupType.all
+    ) {
       const update = {
         where: { id },
         data: {
@@ -280,6 +296,7 @@ export class PurchaseRequestService {
           comment: patchPurchaseRequestDto.comment,
           approveddiretor_at: new Date(),
           approveddiretor_by: req.user.id,
+          is_approved_diretor: patchPurchaseRequestDto.is_approved_diretor,
         },
       };
       await this.prisma.purchaseRequest.update(update);

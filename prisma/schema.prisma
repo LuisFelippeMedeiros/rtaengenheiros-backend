@@ -34,6 +34,7 @@ model Group {
   id          String       @id @default(uuid())
   name        String       @unique
   description String?
+  type        String?
   active      Boolean      @default(true)
   created_at  DateTime     @default(now())
   created_by  String?
@@ -210,6 +211,8 @@ model PurchaseRequest {
   approvedgestor_by      String?
   approveddiretor_at     DateTime?
   approveddiretor_by     String?
+  is_approved_gestor     Boolean?
+  is_approved_diretor    Boolean?
   supplier               PurchaseRequestBudget[]
   Status                 Status?                  @relation(fields: [status_id], references: [id])
   status_id              String?
