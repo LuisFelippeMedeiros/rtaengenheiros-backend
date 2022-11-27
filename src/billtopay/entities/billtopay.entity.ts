@@ -24,4 +24,5 @@ export class BillToPay {
   deleted_at?: Date;
   deleted_by?: string;
   // company_id?: string;
+  bill_status?: string;
 }

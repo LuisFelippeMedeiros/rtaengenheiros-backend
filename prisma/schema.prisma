@@ -232,8 +232,8 @@ model PurchaseRequestBudget {
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
-  Unit               Unit             @relation(fields: [unit_id], references: [id])
-  unit_id            String
+  Unit               Unit?            @relation(fields: [unit_id], references: [id])
+  unit_id            String?
 
   @@map("purchaserequestbudgets")
 }
@@ -283,6 +283,7 @@ model BillToPay {
   deleted_by         String?
   Company            Company?  @relation(fields: [company_id], references: [id])
   company_id         String?
+  bill_status        String?
 
   @@map("billstopay")
 }

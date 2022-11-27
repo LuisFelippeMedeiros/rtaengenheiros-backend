@@ -49,4 +49,7 @@ export class PostBillToPayDto extends BillToPay {
 
   // @IsString()
   // company_id?: string;
+
+  @IsString()
+  bill_status?: string;
 }

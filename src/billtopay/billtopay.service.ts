@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
 import { PutBillToPayDto } from './dto/put-billtopay.dto';
+import { EBillStatus } from '../common/enum/billstatus.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
 
@@ -10,7 +11,7 @@ export class BillToPayService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postBillToPayDto: PostBillToPayDto, @Req() req: any) {
-    const data = {
+    let data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
       type: 'CP',
@@ -28,7 +29,15 @@ export class BillToPayService {
       invoice_attachment: postBillToPayDto.invoice_attachment,
       company_id: req.user.company_id,
       created_by: req.user.id,
+      bill_status: postBillToPayDto.bill_status,
     };
+
+    if (postBillToPayDto.dda == true) {
+      data = {
+        ...data,
+        bill_status: 'FECHADA',
+      };
+    }
 
     await this.prisma.billToPay.create({ data });
 
@@ -102,8 +111,26 @@ export class BillToPayService {
         invoice_attachment: putBillToPayDto.invoice_attachment,
         updated_by: req.user.id,
         updated_at: new Date(),
+        bill_status: putBillToPayDto.bill_status,
       },
     };
+
+    const billToPay = await this.prisma.billToPay.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (
+      billToPay.bill_status === EBillStatus.fechada ||
+      billToPay.bill_status === EBillStatus.cancelada
+    ) {
+      return {
+        status: false,
+        message:
+          'Esta conta a pagar se encontra fechada/cancelada, sendo impossibilitada de ser desativada.',
+      };
+    }
 
     await this.prisma.billToPay.update(update);
 
@@ -119,6 +146,17 @@ export class BillToPayService {
         id,
       },
     });
+
+    if (
+      billToPay.bill_status === EBillStatus.fechada ||
+      billToPay.bill_status === EBillStatus.cancelada
+    ) {
+      return {
+        status: false,
+        message:
+          'Esta conta a pagar se encontra fechada/cancelada, sendo impossibilitada de ser desativada.',
+      };
+    }
 
     if (!billToPay) {
       return {

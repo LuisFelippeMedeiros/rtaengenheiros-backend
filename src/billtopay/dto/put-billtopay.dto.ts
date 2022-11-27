@@ -44,4 +44,7 @@ export class PutBillToPayDto extends PartialType(PostBillToPayDto) {
 
   @IsString()
   invoice_attachment?: string;
+
+  @IsString()
+  bill_status?: string;
 }
