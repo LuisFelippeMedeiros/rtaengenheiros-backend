@@ -15,27 +15,26 @@ export class BillToPayService {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
       type: 'CP',
-      authorized: postBillToPayDto.authorized,
+      dda: postBillToPayDto.dda,
       invoice: postBillToPayDto.invoice,
       reference_month: postBillToPayDto.reference_month,
       issue_date: postBillToPayDto.issue_date,
-      comment: postBillToPayDto.comment,
       due_date: postBillToPayDto.due_date,
       scheduling: postBillToPayDto.scheduling,
       supplier_id: postBillToPayDto.supplier_id,
-      dda: postBillToPayDto.dda,
       price_approved: postBillToPayDto.price_approved,
-      price_updated: postBillToPayDto.price_updated,
+      price_updated: 0,
       invoice_attachment: postBillToPayDto.invoice_attachment,
+      comment: postBillToPayDto.comment,
       company_id: req.user.company_id,
       created_by: req.user.id,
-      bill_status: postBillToPayDto.bill_status,
+      bill_status: 'A'
     };
 
-    if (postBillToPayDto.dda == true) {
+    if (postBillToPayDto.dda) {
       data = {
         ...data,
-        bill_status: 'FECHADA',
+        bill_status: EBillStatus.fechada,
       };
     }
 
@@ -49,6 +48,14 @@ export class BillToPayService {
 
   async findAll() {
     return await this.prisma.billToPay.findMany({
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      },
       orderBy: {
         name: 'asc',
       },
@@ -76,6 +83,14 @@ export class BillToPayService {
 
   async findById(id: string) {
     return await this.prisma.billToPay.findUnique({
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      },
       where: {
         id,
       },
@@ -166,6 +181,7 @@ export class BillToPayService {
       };
     } else {
       billToPay.active = false;
+      billToPay.bill_status = EBillStatus.fechada,
       (billToPay.deleted_at = new Date()), (billToPay.deleted_by = req.user.id);
     }
 

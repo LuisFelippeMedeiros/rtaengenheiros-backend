@@ -1,5 +1,5 @@
 export enum EBillStatus {
-  aberta = 'ABERTA',
-  fechada = 'FECHADA',
-  cancelada = 'CANCELADA',
+  aberta = 'A', // Aberta
+  fechada = 'F', // Fechada
+  cancelada = 'C' // Cancelada
 }
