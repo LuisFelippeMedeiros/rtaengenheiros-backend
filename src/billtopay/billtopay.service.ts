@@ -16,7 +16,6 @@ export class BillToPayService {
       payment_info: postBillToPayDto.payment_info,
       type: 'CP',
       dda: postBillToPayDto.dda,
-      invoice: postBillToPayDto.invoice,
       reference_month: postBillToPayDto.reference_month,
       issue_date: postBillToPayDto.issue_date,
       due_date: postBillToPayDto.due_date,
@@ -28,7 +27,7 @@ export class BillToPayService {
       comment: postBillToPayDto.comment,
       company_id: req.user.company_id,
       created_by: req.user.id,
-      bill_status: 'A'
+      bill_status: 'A',
     };
 
     if (postBillToPayDto.dda) {
@@ -52,9 +51,9 @@ export class BillToPayService {
         Supplier: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       orderBy: {
         name: 'asc',
@@ -87,9 +86,9 @@ export class BillToPayService {
         Supplier: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       where: {
         id,
@@ -113,7 +112,6 @@ export class BillToPayService {
       data: {
         payment_info: putBillToPayDto.payment_info,
         authorized: putBillToPayDto.authorized,
-        invoice: putBillToPayDto.invoice,
         reference_month: putBillToPayDto.reference_month,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
@@ -181,8 +179,9 @@ export class BillToPayService {
       };
     } else {
       billToPay.active = false;
-      billToPay.bill_status = EBillStatus.fechada,
-      (billToPay.deleted_at = new Date()), (billToPay.deleted_by = req.user.id);
+      (billToPay.bill_status = EBillStatus.fechada),
+        (billToPay.deleted_at = new Date()),
+        (billToPay.deleted_by = req.user.id);
     }
 
     await this.prisma.billToPay.update({
