@@ -7,13 +7,7 @@ export class PutBillToPayDto extends PartialType(PostBillToPayDto) {
   payment_info: string;
 
   @IsString()
-  authorized: string;
-
-  @IsString()
   type?: string;
-
-  @IsString()
-  invoice: string;
 
   @IsString()
   reference_month: string;
@@ -32,9 +26,6 @@ export class PutBillToPayDto extends PartialType(PostBillToPayDto) {
 
   @IsString()
   supplier_id?: string;
-
-  @IsBoolean()
-  dda: boolean;
 
   @IsNumber()
   price_approved?: number;
