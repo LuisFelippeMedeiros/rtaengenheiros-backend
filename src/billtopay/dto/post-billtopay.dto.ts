@@ -32,6 +32,9 @@ export class PostBillToPayDto extends BillToPay {
   @IsNumber()
   price_approved?: number;
 
+  @IsNumber()
+  price_updated?: number = 0;
+
   @IsString()
   invoice_attachment?: string;
 
