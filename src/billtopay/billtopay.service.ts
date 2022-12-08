@@ -15,7 +15,6 @@ export class BillToPayService {
       payment_info: postBillToPayDto.payment_info,
       type: 'CP',
       dda: postBillToPayDto.dda,
-      invoice: postBillToPayDto.invoice,
       reference_month: postBillToPayDto.reference_month,
       issue_date: postBillToPayDto.issue_date,
       due_date: postBillToPayDto.due_date,
@@ -44,9 +43,9 @@ export class BillToPayService {
         Supplier: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       orderBy: {
         identifier: 'desc',
@@ -79,9 +78,9 @@ export class BillToPayService {
         Supplier: {
           select: {
             id: true,
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
       where: {
         id,
@@ -123,7 +122,7 @@ export class BillToPayService {
       data: {
         id: id,
         payment_info: putBillToPayDto.payment_info,
-        invoice: putBillToPayDto.invoice,
+        reference_month: putBillToPayDto.reference_month,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
         due_date: putBillToPayDto.due_date,
@@ -165,6 +164,11 @@ export class BillToPayService {
         message:
           'Esta conta a pagar se encontra fechada/cancelada, sendo impossibilitada de ser desativada.',
       };
+    } else {
+      billToPay.active = false;
+      (billToPay.bill_status = EBillStatus.fechada),
+        (billToPay.deleted_at = new Date()),
+        (billToPay.deleted_by = req.user.id);
     }
 
     billToPay.active = false;
