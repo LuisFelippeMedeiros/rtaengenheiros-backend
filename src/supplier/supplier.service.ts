@@ -82,6 +82,18 @@ export class SupplierService {
     });
   }
 
+  async getAll() {
+    return await this.prisma.supplier.findMany({
+      where: {
+        active: true
+      },
+      select: {
+        id: true,
+        name: true
+      }
+    });
+  }
+
   async rowCount(active = true) {
     return await this.prisma.supplier.count({
       where: { active },

@@ -26,4 +26,4 @@ RUN yarn
 COPY . .
 
 # Execute command to start application
-CMD yarn start:dev
+CMD ["yarn", "start:dev"]

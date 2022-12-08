@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   Param,
+  Put,
   Delete,
   Req,
   Query,
@@ -16,7 +17,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { BillToPayService } from './billtopay.service';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
-import { PutBillToPayDto } from './dto/put-billtopay.dto';
 
 @ApiTags('BillToPay')
 @Controller({
@@ -59,10 +59,10 @@ export class BillToPayController {
     return this.billtopayService.findByName(name);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() putBillToPayDto: PutBillToPayDto,
+    @Body() putBillToPayDto: PostBillToPayDto,
     @Req() req: any,
   ) {
     return this.billtopayService.update(id, putBillToPayDto, req);
