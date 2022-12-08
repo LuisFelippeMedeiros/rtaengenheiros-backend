@@ -1,7 +1,6 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
-import { PutBillToPayDto } from './dto/put-billtopay.dto';
 import { EBillStatus } from '../common/enum/billstatus.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
@@ -23,20 +22,13 @@ export class BillToPayService {
       scheduling: postBillToPayDto.scheduling,
       supplier_id: postBillToPayDto.supplier_id,
       price_approved: postBillToPayDto.price_approved,
-      price_updated: 0,
+      price_updated: postBillToPayDto.price_approved,
       invoice_attachment: postBillToPayDto.invoice_attachment,
       comment: postBillToPayDto.comment,
       company_id: req.user.company_id,
       created_by: req.user.id,
-      bill_status: 'A'
+      bill_status: postBillToPayDto.dda ? EBillStatus.fechada : EBillStatus.aberta
     };
-
-    if (postBillToPayDto.dda) {
-      data = {
-        ...data,
-        bill_status: EBillStatus.fechada,
-      };
-    }
 
     await this.prisma.billToPay.create({ data });
 
@@ -57,7 +49,7 @@ export class BillToPayService {
         }
       },
       orderBy: {
-        name: 'asc',
+        identifier: 'desc',
       },
     });
   }
@@ -105,47 +97,43 @@ export class BillToPayService {
     });
   }
 
-  async update(id: string, putBillToPayDto: PutBillToPayDto, @Req() req: any) {
+  async update(id: string, putBillToPayDto: PostBillToPayDto, @Req() req: any) {
+    const billToPay = await this.prisma.billToPay.findFirst({
+      where: { id },
+    });
+
+    console.log(id)
+
+    if (!billToPay) {
+      return {
+        status: false,
+        message: `Conta não encontrada`,
+      };
+    }
+
+    if (billToPay.bill_status !== EBillStatus.aberta) {
+      return {
+        status: false,
+        message: `Não será possível alterar contas que estejam Fechadas/Canceladas`,
+      };
+    }
+
     const update = {
-      where: {
-        id,
-      },
+      where: { id },
       data: {
+        id: id,
         payment_info: putBillToPayDto.payment_info,
-        authorized: putBillToPayDto.authorized,
         invoice: putBillToPayDto.invoice,
-        reference_month: putBillToPayDto.reference_month,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
         due_date: putBillToPayDto.due_date,
         scheduling: putBillToPayDto.scheduling,
-        supplier_id: putBillToPayDto.supplier_id,
-        dda: putBillToPayDto.dda,
-        price_approved: putBillToPayDto.price_approved,
         price_updated: putBillToPayDto.price_updated,
         invoice_attachment: putBillToPayDto.invoice_attachment,
         updated_by: req.user.id,
-        updated_at: new Date(),
-        bill_status: putBillToPayDto.bill_status,
+        updated_at: new Date()
       },
     };
-
-    const billToPay = await this.prisma.billToPay.findFirst({
-      where: {
-        id,
-      },
-    });
-
-    if (
-      billToPay.bill_status === EBillStatus.fechada ||
-      billToPay.bill_status === EBillStatus.cancelada
-    ) {
-      return {
-        status: false,
-        message:
-          'Esta conta a pagar se encontra fechada/cancelada, sendo impossibilitada de ser desativada.',
-      };
-    }
 
     await this.prisma.billToPay.update(update);
 
@@ -157,10 +145,16 @@ export class BillToPayService {
 
   async deactivate(id: string, @Req() req: any) {
     const billToPay = await this.prisma.billToPay.findFirst({
-      where: {
-        id,
-      },
+      where: { id },
     });
+
+    if (!billToPay) {
+      return {
+        status: false,
+        message:
+          'Esta conta a pagar não existe em nossa base de dados, favor verificar',
+      };
+    }
 
     if (
       billToPay.bill_status === EBillStatus.fechada ||
@@ -173,17 +167,10 @@ export class BillToPayService {
       };
     }
 
-    if (!billToPay) {
-      return {
-        status: false,
-        message:
-          'Esta conta a pagar não existe em nossa base de dados, favor verificar',
-      };
-    } else {
-      billToPay.active = false;
-      billToPay.bill_status = EBillStatus.fechada,
-      (billToPay.deleted_at = new Date()), (billToPay.deleted_by = req.user.id);
-    }
+    billToPay.active = false;
+    billToPay.bill_status = EBillStatus.cancelada;
+    (billToPay.deleted_at = new Date());
+    (billToPay.deleted_by = req.user.id);
 
     await this.prisma.billToPay.update({
       where: { id },
