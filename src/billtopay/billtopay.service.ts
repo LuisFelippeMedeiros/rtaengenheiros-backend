@@ -53,23 +53,43 @@ export class BillToPayService {
     });
   }
 
-  async findPagination(page = 1, active: boolean) {
-    const categories = await this.prisma.billToPay.findMany({
+  async findPagination(page = 1, filters: IFilter_bill_to_pay) {
+    let supplier;
+
+    if (filters.supplier_id_filter) {
+      supplier = await this.prisma.supplier.findFirst({
+        where: {
+          id: filters.supplier_id_filter
+        }
+      })
+
+      if (!supplier) {
+        return {
+          status: false,
+          message: 'Fornecedor não encontrado',
+        }
+      }
+    }
+
+    return await this.prisma.billToPay.findMany({
       take: 5,
       skip: 5 * (page - 1),
-      where: { active },
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
       orderBy: {
         name: 'asc',
       },
     });
-
-    return categories;
   }
 
-  async rowCount(active = true) {
-    return await this.prisma.billToPay.count({
-      where: { active },
-    });
+  async rowCount() {
+    return await this.prisma.billToPay.count();
   }
 
   async findById(id: string) {
