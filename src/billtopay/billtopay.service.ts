@@ -1,7 +1,7 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
-import { PutBillToPayDto } from './dto/put-billtopay.dto';
+import { EBillStatus } from '../common/enum/billstatus.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
 
@@ -10,24 +10,23 @@ export class BillToPayService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postBillToPayDto: PostBillToPayDto, @Req() req: any) {
-    const data = {
+    let data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
       type: 'CP',
-      authorized: postBillToPayDto.authorized,
-      invoice: postBillToPayDto.invoice,
+      dda: postBillToPayDto.dda,
       reference_month: postBillToPayDto.reference_month,
       issue_date: postBillToPayDto.issue_date,
-      comment: postBillToPayDto.comment,
       due_date: postBillToPayDto.due_date,
       scheduling: postBillToPayDto.scheduling,
       supplier_id: postBillToPayDto.supplier_id,
-      dda: postBillToPayDto.dda,
       price_approved: postBillToPayDto.price_approved,
-      price_updated: postBillToPayDto.price_updated,
+      price_updated: postBillToPayDto.price_approved,
       invoice_attachment: postBillToPayDto.invoice_attachment,
+      comment: postBillToPayDto.comment,
       company_id: req.user.company_id,
       created_by: req.user.id,
+      bill_status: postBillToPayDto.dda ? EBillStatus.fechada : EBillStatus.aberta
     };
 
     await this.prisma.billToPay.create({ data });
@@ -40,33 +39,102 @@ export class BillToPayService {
 
   async findAll() {
     return await this.prisma.billToPay.findMany({
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
       orderBy: {
-        name: 'asc',
+        identifier: 'desc',
       },
     });
   }
 
-  async findPagination(page = 1, active: boolean) {
-    const categories = await this.prisma.billToPay.findMany({
+  async findPagination(filters: IFilter_bill_to_pay, onlyRowCount: boolean = false) {
+    const filtersParameters = JSON.parse(String(filters));
+    let where: any = {}
+    let supplier = null;
+    let datesFilter = null;
+
+    if (filtersParameters.supplier_id_filter) {
+      supplier = await this.prisma.supplier.findFirst({
+        where: {
+          id: filtersParameters.supplier_id_filter
+        }
+      })
+
+      if (!supplier) {
+        return {
+          status: false,
+          message: 'Fornecedor não encontrado',
+        }
+      }
+      where.supplier_id = supplier ? supplier.id : undefined
+    }
+
+    if (filtersParameters.date_filter && filtersParameters.date_filter.length > 0) {
+      datesFilter = filtersParameters.date_filter
+      datesFilter[0] = datesFilter[0] ? new Date(datesFilter[0]) : undefined
+      datesFilter[1] = datesFilter[1] ? new Date(datesFilter[1]) : undefined
+
+      if (filtersParameters.type_date_filter === 'dueDate') {
+        where.due_date = {
+          gte: datesFilter[0],
+          lte: datesFilter[1]
+        }
+      }
+
+      if (filtersParameters.type_date_filter === 'issueDate') {
+        where.issue_date = {
+          gte: datesFilter[0],
+          lte: datesFilter[1]
+        }
+      }
+    }
+
+    if (filtersParameters.status) {
+      where.bill_status = filtersParameters.status
+    }
+
+    if (onlyRowCount) {
+      return await this.prisma.billToPay.count({ where })
+    }
+
+    return await this.prisma.billToPay.findMany({
       take: 5,
-      skip: 5 * (page - 1),
-      where: { active },
-      orderBy: {
-        name: 'asc',
+      skip: 5 * (filtersParameters.page - 1),
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
+      orderBy: {
+        due_date: 'desc',
+      },
+      where
     });
-
-    return categories;
   }
 
-  async rowCount(active = true) {
-    return await this.prisma.billToPay.count({
-      where: { active },
-    });
+  async rowCount() {
+    return await this.prisma.billToPay.count();
   }
 
   async findById(id: string) {
     return await this.prisma.billToPay.findUnique({
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
       where: {
         id,
       },
@@ -81,27 +149,41 @@ export class BillToPayService {
     });
   }
 
-  async update(id: string, putBillToPayDto: PutBillToPayDto, @Req() req: any) {
+  async update(id: string, putBillToPayDto: PostBillToPayDto, @Req() req: any) {
+    const billToPay = await this.prisma.billToPay.findFirst({
+      where: { id },
+    });
+
+    console.log(id)
+
+    if (!billToPay) {
+      return {
+        status: false,
+        message: `Conta não encontrada`,
+      };
+    }
+
+    if (billToPay.bill_status !== EBillStatus.aberta) {
+      return {
+        status: false,
+        message: `Não será possível alterar contas que estejam Fechadas/Canceladas`,
+      };
+    }
+
     const update = {
-      where: {
-        id,
-      },
+      where: { id },
       data: {
+        id: id,
         payment_info: putBillToPayDto.payment_info,
-        authorized: putBillToPayDto.authorized,
         invoice: putBillToPayDto.invoice,
-        reference_month: putBillToPayDto.reference_month,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
         due_date: putBillToPayDto.due_date,
         scheduling: putBillToPayDto.scheduling,
-        supplier_id: putBillToPayDto.supplier_id,
-        dda: putBillToPayDto.dda,
-        price_approved: putBillToPayDto.price_approved,
         price_updated: putBillToPayDto.price_updated,
         invoice_attachment: putBillToPayDto.invoice_attachment,
         updated_by: req.user.id,
-        updated_at: new Date(),
+        updated_at: new Date()
       },
     };
 
@@ -115,9 +197,7 @@ export class BillToPayService {
 
   async deactivate(id: string, @Req() req: any) {
     const billToPay = await this.prisma.billToPay.findFirst({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!billToPay) {
@@ -126,10 +206,23 @@ export class BillToPayService {
         message:
           'Esta conta a pagar não existe em nossa base de dados, favor verificar',
       };
-    } else {
-      billToPay.active = false;
-      (billToPay.deleted_at = new Date()), (billToPay.deleted_by = req.user.id);
     }
+
+    if (
+      billToPay.bill_status === EBillStatus.fechada ||
+      billToPay.bill_status === EBillStatus.cancelada
+    ) {
+      return {
+        status: false,
+        message:
+          'Esta conta a pagar se encontra fechada/cancelada, sendo impossibilitada de ser desativada.',
+      };
+    }
+
+    billToPay.active = false;
+    billToPay.bill_status = EBillStatus.cancelada;
+    (billToPay.deleted_at = new Date());
+    (billToPay.deleted_by = req.user.id);
 
     await this.prisma.billToPay.update({
       where: { id },

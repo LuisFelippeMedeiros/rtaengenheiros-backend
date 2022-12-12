@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   Param,
+  Put,
   Delete,
   Req,
   Query,
@@ -16,7 +17,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { BillToPayService } from './billtopay.service';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
-import { PutBillToPayDto } from './dto/put-billtopay.dto';
 
 @ApiTags('BillToPay')
 @Controller({
@@ -38,15 +38,15 @@ export class BillToPayController {
 
   @Get()
   async findPagination(
-    @Query('page') page: number,
-    @Query('active') active: boolean,
+    @Query('filters') filters: IFilter_bill_to_pay,
+    @Query('onlyRowCount') onlyRowCount: boolean
   ) {
-    return await this.billtopayService.findPagination(page, active);
+    return await this.billtopayService.findPagination(filters, onlyRowCount);
   }
 
   @Get('rowCount')
-  async countRows(@Query('active') active: boolean) {
-    return await this.billtopayService.rowCount(active);
+  async countRows() {
+    return await this.billtopayService.rowCount();
   }
 
   @Get(':id')
@@ -59,10 +59,10 @@ export class BillToPayController {
     return this.billtopayService.findByName(name);
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() putBillToPayDto: PutBillToPayDto,
+    @Body() putBillToPayDto: PostBillToPayDto,
     @Req() req: any,
   ) {
     return this.billtopayService.update(id, putBillToPayDto, req);
@@ -72,6 +72,7 @@ export class BillToPayController {
   async remove(@Param('id') id: string, @Req() req: any) {
     return this.billtopayService.deactivate(id, req);
   }
+
   @Patch(':id/invoice')
   @UseInterceptors(FileInterceptor('file'))
   async updateInvoice(

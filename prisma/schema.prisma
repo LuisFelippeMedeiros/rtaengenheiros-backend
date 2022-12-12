@@ -10,53 +10,53 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(uuid())
-  name       String
-  email      String    @unique
-  password   String
-  active     Boolean   @default(true)
-  created_at DateTime  @default(now())
-  created_by String?
-  updated_at DateTime?
-  updated_by String?
-  deleted_at DateTime?
-  deleted_by String?
+  id         String    @id @default(uuid()) // Identificador único do Usuário
+  name       String // Nome do Usuário
+  email      String    @unique // E-mail do Usuário
+  password   String // Senha do usuário
+  active     Boolean   @default(true) // Usuário ativo ou não
+  created_at DateTime  @default(now()) // Usuário criado em
+  created_by String? // Usuário criado por
+  updated_at DateTime? // Usuário alterado em
+  updated_by String? // Usuário alterado por
+  deleted_at DateTime? // Usuário excluído em
+  deleted_by String? // Usuário excluído por
   group      Group     @relation(fields: [group_id], references: [id])
-  group_id   String
+  group_id   String // Identificador do grupo do Usuário
   Company    Company?  @relation(fields: [company_id], references: [id])
-  company_id String?
-  avatar     String?
+  company_id String? // Identificador da Empresa do Usuário
+  avatar     String? // Foto de Perfil do Usuário
 
   @@map("users")
 }
 
 model Group {
-  id          String       @id @default(uuid())
-  name        String       @unique
-  description String?
-  type        String?
-  active      Boolean      @default(true)
-  created_at  DateTime     @default(now())
-  created_by  String?
-  updated_at  DateTime?
-  updated_by  String?
-  deleted_at  DateTime?
-  deleted_by  String?
-  roles       RolesGroup[]
-  User        User[]
+  id          String       @id @default(uuid()) // Identificador único do Grupo
+  name        String       @unique // Nome do Grupo
+  description String? // Descrição do Grupo
+  type        String? // Tipo do Grupo
+  active      Boolean      @default(true) // Grupo Ativo ou não
+  created_at  DateTime     @default(now()) // Grupo criado em
+  created_by  String? // Grupo criado por
+  updated_at  DateTime? // Grupo alterado em
+  updated_by  String? // Grupo alteado por
+  deleted_at  DateTime? // Grupo excluído em
+  deleted_by  String? // Grupo excluído por
+  roles       RolesGroup[] // Array de regras do Grupo
+  User        User[] // Array de Usuários relacionados ao Grupo
   Company     Company?     @relation(fields: [company_id], references: [id])
-  company_id  String?
+  company_id  String? // Identificador da empresa que cadastrou o Grupo
 
   @@map("groups")
 }
 
 model Role {
-  id         String       @id @default(uuid())
-  name       String       @unique
-  active     Boolean      @default(true)
-  action     String?
-  module     String?
-  type       String?
+  id         String       @id @default(uuid()) // Identificador único da Regra
+  name       String       @unique // Nome da Regra
+  active     Boolean      @default(true) // Regra ativa ou não
+  action     String? // Ação que a Regra pode ter no sistema
+  module     String? // Módulo que a regra pode realizar ações
+  type       String? //
   created_at DateTime     @default(now())
   created_by String?
   updated_at DateTime?
@@ -232,8 +232,8 @@ model PurchaseRequestBudget {
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
-  Unit               Unit             @relation(fields: [unit_id], references: [id])
-  unit_id            String
+  Unit               Unit?            @relation(fields: [unit_id], references: [id])
+  unit_id            String?
 
   @@map("purchaserequestbudgets")
 }
@@ -261,8 +261,6 @@ model BillToPay {
   type               String?
   name               String
   payment_info       String?
-  authorized         String?
-  invoice            String?
   due_date           DateTime?
   scheduling         DateTime?
   reference_month    String?
@@ -283,6 +281,7 @@ model BillToPay {
   deleted_by         String?
   Company            Company?  @relation(fields: [company_id], references: [id])
   company_id         String?
+  bill_status        String?
 
   @@map("billstopay")
 }
