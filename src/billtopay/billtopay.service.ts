@@ -53,23 +53,76 @@ export class BillToPayService {
     });
   }
 
-  async findPagination(page = 1, active: boolean) {
-    const categories = await this.prisma.billToPay.findMany({
-      take: 5,
-      skip: 5 * (page - 1),
-      where: { active },
-      orderBy: {
-        name: 'asc',
-      },
-    });
+  async findPagination(filters: IFilter_bill_to_pay, onlyRowCount: boolean = false) {
+    const filtersParameters = JSON.parse(String(filters));
+    let where: any = {}
+    let supplier = null;
+    let datesFilter = null;
 
-    return categories;
+    if (filtersParameters.supplier_id_filter) {
+      supplier = await this.prisma.supplier.findFirst({
+        where: {
+          id: filtersParameters.supplier_id_filter
+        }
+      })
+
+      if (!supplier) {
+        return {
+          status: false,
+          message: 'Fornecedor não encontrado',
+        }
+      }
+      where.supplier_id = supplier ? supplier.id : undefined
+    }
+
+    if (filtersParameters.date_filter && filtersParameters.date_filter.length > 0) {
+      datesFilter = filtersParameters.date_filter
+      datesFilter[0] = datesFilter[0] ? new Date(datesFilter[0]) : undefined
+      datesFilter[1] = datesFilter[1] ? new Date(datesFilter[1]) : undefined
+
+      if (filtersParameters.type_date_filter === 'dueDate') {
+        where.due_date = {
+          gte: datesFilter[0],
+          lte: datesFilter[1]
+        }
+      }
+
+      if (filtersParameters.type_date_filter === 'issueDate') {
+        where.issue_date = {
+          gte: datesFilter[0],
+          lte: datesFilter[1]
+        }
+      }
+    }
+
+    if (filtersParameters.status) {
+      where.bill_status = filtersParameters.status
+    }
+
+    if (onlyRowCount) {
+      return await this.prisma.billToPay.count({ where })
+    }
+
+    return await this.prisma.billToPay.findMany({
+      take: 5,
+      skip: 5 * (filtersParameters.page - 1),
+      include: {
+        Supplier: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        due_date: 'desc',
+      },
+      where
+    });
   }
 
-  async rowCount(active = true) {
-    return await this.prisma.billToPay.count({
-      where: { active },
-    });
+  async rowCount() {
+    return await this.prisma.billToPay.count();
   }
 
   async findById(id: string) {
@@ -122,7 +175,7 @@ export class BillToPayService {
       data: {
         id: id,
         payment_info: putBillToPayDto.payment_info,
-        reference_month: putBillToPayDto.reference_month,
+        invoice: putBillToPayDto.invoice,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
         due_date: putBillToPayDto.due_date,
@@ -164,11 +217,6 @@ export class BillToPayService {
         message:
           'Esta conta a pagar se encontra fechada/cancelada, sendo impossibilitada de ser desativada.',
       };
-    } else {
-      billToPay.active = false;
-      (billToPay.bill_status = EBillStatus.fechada),
-        (billToPay.deleted_at = new Date()),
-        (billToPay.deleted_by = req.user.id);
     }
 
     billToPay.active = false;

@@ -38,15 +38,15 @@ export class BillToPayController {
 
   @Get()
   async findPagination(
-    @Query('page') page: number,
-    @Query('active') active: boolean,
+    @Query('filters') filters: IFilter_bill_to_pay,
+    @Query('onlyRowCount') onlyRowCount: boolean
   ) {
-    return await this.billtopayService.findPagination(page, active);
+    return await this.billtopayService.findPagination(filters, onlyRowCount);
   }
 
   @Get('rowCount')
-  async countRows(@Query('active') active: boolean) {
-    return await this.billtopayService.rowCount(active);
+  async countRows() {
+    return await this.billtopayService.rowCount();
   }
 
   @Get(':id')
@@ -72,6 +72,7 @@ export class BillToPayController {
   async remove(@Param('id') id: string, @Req() req: any) {
     return this.billtopayService.deactivate(id, req);
   }
+
   @Patch(':id/invoice')
   @UseInterceptors(FileInterceptor('file'))
   async updateInvoice(
