@@ -38,10 +38,10 @@ export class BillToPayController {
 
   @Get()
   async findPagination(
-    @Query('page') page: number,
-    @Query('filters') filters: IFilter_bill_to_pay
+    @Query('filters') filters: IFilter_bill_to_pay,
+    @Query('onlyRowCount') onlyRowCount: boolean
   ) {
-    return await this.billtopayService.findPagination(page, filters);
+    return await this.billtopayService.findPagination(filters, onlyRowCount);
   }
 
   @Get('rowCount')

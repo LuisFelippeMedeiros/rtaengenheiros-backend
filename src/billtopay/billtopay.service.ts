@@ -53,13 +53,16 @@ export class BillToPayService {
     });
   }
 
-  async findPagination(page = 1, filters: IFilter_bill_to_pay) {
-    let supplier;
+  async findPagination(filters: IFilter_bill_to_pay, onlyRowCount: boolean = false) {
+    const filtersParameters = JSON.parse(String(filters));
+    let where: any = {}
+    let supplier = null;
+    let datesFilter = null;
 
-    if (filters.supplier_id_filter) {
+    if (filtersParameters.supplier_id_filter) {
       supplier = await this.prisma.supplier.findFirst({
         where: {
-          id: filters.supplier_id_filter
+          id: filtersParameters.supplier_id_filter
         }
       })
 
@@ -69,11 +72,40 @@ export class BillToPayService {
           message: 'Fornecedor não encontrado',
         }
       }
+      where.supplier_id = supplier ? supplier.id : undefined
+    }
+
+    if (filtersParameters.date_filter && filtersParameters.date_filter.length > 0) {
+      datesFilter = filtersParameters.date_filter
+      datesFilter[0] = datesFilter[0] ? new Date(datesFilter[0]) : undefined
+      datesFilter[1] = datesFilter[1] ? new Date(datesFilter[1]) : undefined
+
+      if (filtersParameters.type_date_filter === 'dueDate') {
+        where.due_date = {
+          gte: datesFilter[0],
+          lte: datesFilter[1]
+        }
+      }
+
+      if (filtersParameters.type_date_filter === 'issueDate') {
+        where.issue_date = {
+          gte: datesFilter[0],
+          lte: datesFilter[1]
+        }
+      }
+    }
+
+    if (filtersParameters.status) {
+      where.bill_status = filtersParameters.status
+    }
+
+    if (onlyRowCount) {
+      return await this.prisma.billToPay.count({ where })
     }
 
     return await this.prisma.billToPay.findMany({
       take: 5,
-      skip: 5 * (page - 1),
+      skip: 5 * (filtersParameters.page - 1),
       include: {
         Supplier: {
           select: {
@@ -83,8 +115,9 @@ export class BillToPayService {
         },
       },
       orderBy: {
-        name: 'asc',
+        due_date: 'desc',
       },
+      where
     });
   }
 
