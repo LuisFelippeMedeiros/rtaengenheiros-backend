@@ -13,7 +13,7 @@ export class PurchaseRequest {
   rejected_by?: string;
   deleted_at?: Date;
   deleted_by?: string;
-  company_id?: string;
+  // company_id?: string;
   approvedgestor_at?: Date;
   approvedgestor_by?: string;
   approveddiretor_at?: Date;
@@ -27,7 +27,7 @@ export class PurchaseRequestFilter {
   initial_date?: Date;
   final_date?: Date;
   created_by?: string;
-  company_id?: string;
+  // company_id?: string;
   is_approved_gestor?: boolean;
   is_approved_diretor?: boolean;
 }
