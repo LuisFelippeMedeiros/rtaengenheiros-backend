@@ -8,6 +8,6 @@ export class GetPurchaseRequestFilterDto extends PartialType(
   initial_date?: Date;
   final_date?: Date;
   created_by?: string;
-  company_id?: string;
+  // company_id?: string;
   status_id?: string;
 }

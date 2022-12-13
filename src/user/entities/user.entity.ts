@@ -9,8 +9,8 @@ export class User {
   password: string;
   @Exclude()
   group_id: string;
-  @Exclude()
-  company_id?: string;
+  // @Exclude()
+  // company_id?: string;
   avatar?: string;
 
   constructor(partial: Partial<User>) {
@@ -24,6 +24,6 @@ export class UserPost {
   email: string;
   password: string;
   group_id: string;
-  company_id?: string;
+  // company_id?: string;
   avatar?: string;
 }

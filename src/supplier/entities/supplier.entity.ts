@@ -17,5 +17,5 @@ export class Supplier {
   created_by: string;
   updated_by: string;
   deleted_by: string;
-  company_id?: string;
+  // company_id?: string;
 }
