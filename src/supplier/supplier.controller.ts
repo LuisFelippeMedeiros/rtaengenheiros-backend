@@ -38,6 +38,11 @@ export class SupplierController {
     return await this.supplierService.findAll(page, active);
   }
 
+  @Get('all')
+  async getAll() {
+    return await this.supplierService.getAll();
+  }
+
   @Get('rowCount')
   async countRows(@Query('active') active: boolean) {
     return await this.supplierService.rowCount(active);

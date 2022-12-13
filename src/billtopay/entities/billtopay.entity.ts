@@ -4,8 +4,6 @@ export class BillToPay {
   name: string;
   type?: string;
   payment_info?: string;
-  authorized?: string;
-  invoice?: string;
   reference_month?: string;
   issue_date?: Date;
   comment?: string;
@@ -24,4 +22,5 @@ export class BillToPay {
   deleted_at?: Date;
   deleted_by?: string;
   // company_id?: string;
+  bill_status?: string;
 }

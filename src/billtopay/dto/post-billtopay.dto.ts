@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsNumber, IsString } from 'class-validator';
 import { BillToPay } from '../entities/billtopay.entity';
 
 export class PostBillToPayDto extends BillToPay {
@@ -9,27 +9,18 @@ export class PostBillToPayDto extends BillToPay {
   payment_info?: string;
 
   @IsString()
-  type?: string;
-
-  @IsString()
-  authorized?: string;
-
-  @IsString()
   invoice?: string;
 
   @IsString()
   reference_month?: string;
 
-  @IsDate()
+  @IsDateString()
   issue_date?: Date;
 
-  @IsString()
-  comment?: string;
-
-  @IsDate()
+  @IsDateString()
   due_date?: Date;
 
-  @IsDate()
+  @IsDateString()
   scheduling?: Date;
 
   @IsString()
@@ -42,10 +33,13 @@ export class PostBillToPayDto extends BillToPay {
   price_approved?: number;
 
   @IsNumber()
-  price_updated?: number;
+  price_updated?: number = 0;
 
   @IsString()
   invoice_attachment?: string;
+
+  @IsString()
+  comment?: string;
 
   // @IsString()
   // company_id?: string;

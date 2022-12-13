@@ -24,7 +24,7 @@ export class SupplierService {
       number: postSupplierDto.number,
       complement: postSupplierDto.complement,
       created_by: req.user.id,
-      company_id: req.user.company_id,
+      // company_id: req.user.company_id,
     };
 
     const supplierExists = await this.findByCNPJ(data.cnpj);
@@ -59,26 +59,38 @@ export class SupplierService {
     return suppliers;
   }
 
-  async findFilter(filter: string = '') {
+  async findFilter(filter = '') {
     if (filter === '') {
       return await this.prisma.supplier.findMany({
         take: 10,
         where: {
-          active: true
+          active: true,
         },
         orderBy: {
-          name: 'asc'
-        }
-      })
+          name: 'asc',
+        },
+      });
     }
 
     return await this.prisma.supplier.findMany({
       where: {
         name: {
-          contains: filter.toUpperCase()
+          contains: filter.toUpperCase(),
         },
-        active: true
-      }
+        active: true,
+      },
+    });
+  }
+
+  async getAll() {
+    return await this.prisma.supplier.findMany({
+      where: {
+        active: true,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
     });
   }
 
