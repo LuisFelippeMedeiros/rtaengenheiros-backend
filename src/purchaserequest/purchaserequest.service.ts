@@ -326,7 +326,7 @@ export class PurchaseRequestService {
         price_approved: findBudget.budget,
         price_updated: findBudget.budget,
         created_by: req.user.id,
-        company_id: req.user.company_id,
+        // company_id: req.user.company_id,
       };
 
       await this.prisma.billToPay.create({ data });
@@ -387,7 +387,7 @@ export class PurchaseRequestService {
   }
 
   async filtered(filterDto: GetPurchaseRequestFilterDto) {
-    const { id, initial_date, final_date, created_by, company_id } = filterDto;
+    const { id, initial_date, final_date, created_by } = filterDto;
     let purchases = await this.prisma.purchaseRequest.findMany({
       include: {
         Status: {
@@ -414,11 +414,11 @@ export class PurchaseRequestService {
           purchase.created_at.toISOString >= final_date.toISOString,
       );
     }
-    if (company_id) {
-      purchases = purchases.filter(
-        (purchase) => purchase.company_id === company_id,
-      );
-    }
+    // if (company_id) {
+    //   purchases = purchases.filter(
+    //     (purchase) => purchase.company_id === company_id,
+    //   );
+    // }
 
     return purchases;
   }
