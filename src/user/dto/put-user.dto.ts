@@ -21,8 +21,5 @@ export class PutUserDto extends PartialType(PostUserDto) {
   group_id: string;
 
   @IsString()
-  company_id: string;
-
-  @IsString()
   avatar: string;
 }

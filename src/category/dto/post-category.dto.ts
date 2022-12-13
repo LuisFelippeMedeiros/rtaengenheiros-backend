@@ -8,6 +8,6 @@ export class PostCategoryDto extends Category {
   @IsBoolean()
   active: boolean;
 
-  @IsString()
-  company_id?: string;
+  // @IsString()
+  // company_id?: string;
 }
