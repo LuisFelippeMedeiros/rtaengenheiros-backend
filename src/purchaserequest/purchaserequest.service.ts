@@ -31,7 +31,7 @@ export class PurchaseRequestService {
       active: postPurchaseRequestDto.active,
       comment: postPurchaseRequestDto.comment,
       created_by: req.user.id,
-      company_id: req.user.company_id,
+      // company_id: req.user.company_id,
     };
 
     try {

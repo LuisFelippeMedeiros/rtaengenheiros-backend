@@ -10,7 +10,7 @@ export class BillToPayService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postBillToPayDto: PostBillToPayDto, @Req() req: any) {
-    let data = {
+    const data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
       type: 'CP',
@@ -24,9 +24,11 @@ export class BillToPayService {
       price_updated: postBillToPayDto.price_approved,
       invoice_attachment: postBillToPayDto.invoice_attachment,
       comment: postBillToPayDto.comment,
-      company_id: req.user.company_id,
+      // company_id: req.user.company_id,
       created_by: req.user.id,
-      bill_status: postBillToPayDto.dda ? EBillStatus.fechada : EBillStatus.aberta
+      bill_status: postBillToPayDto.dda
+        ? EBillStatus.fechada
+        : EBillStatus.aberta,
     };
 
     await this.prisma.billToPay.create({ data });
@@ -53,54 +55,57 @@ export class BillToPayService {
     });
   }
 
-  async findPagination(filters: IFilter_bill_to_pay, onlyRowCount: boolean = false) {
+  async findPagination(filters: IFilter_bill_to_pay, onlyRowCount = false) {
     const filtersParameters = JSON.parse(String(filters));
-    let where: any = {}
+    const where: any = {};
     let supplier = null;
     let datesFilter = null;
 
     if (filtersParameters.supplier_id_filter) {
       supplier = await this.prisma.supplier.findFirst({
         where: {
-          id: filtersParameters.supplier_id_filter
-        }
-      })
+          id: filtersParameters.supplier_id_filter,
+        },
+      });
 
       if (!supplier) {
         return {
           status: false,
           message: 'Fornecedor não encontrado',
-        }
+        };
       }
-      where.supplier_id = supplier ? supplier.id : undefined
+      where.supplier_id = supplier ? supplier.id : undefined;
     }
 
-    if (filtersParameters.date_filter && filtersParameters.date_filter.length > 0) {
-      datesFilter = filtersParameters.date_filter
-      datesFilter[0] = datesFilter[0] ? new Date(datesFilter[0]) : undefined
-      datesFilter[1] = datesFilter[1] ? new Date(datesFilter[1]) : undefined
+    if (
+      filtersParameters.date_filter &&
+      filtersParameters.date_filter.length > 0
+    ) {
+      datesFilter = filtersParameters.date_filter;
+      datesFilter[0] = datesFilter[0] ? new Date(datesFilter[0]) : undefined;
+      datesFilter[1] = datesFilter[1] ? new Date(datesFilter[1]) : undefined;
 
       if (filtersParameters.type_date_filter === 'dueDate') {
         where.due_date = {
           gte: datesFilter[0],
-          lte: datesFilter[1]
-        }
+          lte: datesFilter[1],
+        };
       }
 
       if (filtersParameters.type_date_filter === 'issueDate') {
         where.issue_date = {
           gte: datesFilter[0],
-          lte: datesFilter[1]
-        }
+          lte: datesFilter[1],
+        };
       }
     }
 
     if (filtersParameters.status) {
-      where.bill_status = filtersParameters.status
+      where.bill_status = filtersParameters.status;
     }
 
     if (onlyRowCount) {
-      return await this.prisma.billToPay.count({ where })
+      return await this.prisma.billToPay.count({ where });
     }
 
     return await this.prisma.billToPay.findMany({
@@ -117,7 +122,7 @@ export class BillToPayService {
       orderBy: {
         due_date: 'desc',
       },
-      where
+      where,
     });
   }
 
@@ -154,7 +159,7 @@ export class BillToPayService {
       where: { id },
     });
 
-    console.log(id)
+    console.log(id);
 
     if (!billToPay) {
       return {
@@ -183,7 +188,7 @@ export class BillToPayService {
         price_updated: putBillToPayDto.price_updated,
         invoice_attachment: putBillToPayDto.invoice_attachment,
         updated_by: req.user.id,
-        updated_at: new Date()
+        updated_at: new Date(),
       },
     };
 
@@ -221,8 +226,8 @@ export class BillToPayService {
 
     billToPay.active = false;
     billToPay.bill_status = EBillStatus.cancelada;
-    (billToPay.deleted_at = new Date());
-    (billToPay.deleted_by = req.user.id);
+    billToPay.deleted_at = new Date();
+    billToPay.deleted_by = req.user.id;
 
     await this.prisma.billToPay.update({
       where: { id },
