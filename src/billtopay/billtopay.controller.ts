@@ -39,7 +39,7 @@ export class BillToPayController {
   @Get()
   async findPagination(
     @Query('filters') filters: IFilter_bill_to_pay,
-    @Query('onlyRowCount') onlyRowCount: boolean
+    @Query('onlyRowCount') onlyRowCount: boolean,
   ) {
     return await this.billtopayService.findPagination(filters, onlyRowCount);
   }

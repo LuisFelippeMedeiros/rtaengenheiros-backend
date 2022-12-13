@@ -17,19 +17,19 @@ services:
       - postgres
     restart: unless-stopped
 
-  # api:
-  #   container_name: rtaengenheiros-api
-  #   build: .
-  #   command: yarn start`:dev
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - postgres
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - .:/home/rtaengenheiros_api
-  #     - /home/rtaengenheiros_api/node_modules
+  api:
+    container_name: rtaengenheiros-api
+    build: .
+    command: yarn start`:dev
+    ports:
+      - "3000:3000"
+    networks:
+      - postgres
+    depends_on:
+      - db
+    volumes:
+      - .:/home/rtaengenheiros_api
+      - /home/rtaengenheiros_api/node_modules
 
   pgadmin:
     container_name: pgadmin_container
@@ -51,6 +51,6 @@ networks:
   postgres:
     driver: bridge
 
-# volumes:
-#     postgres:
-#     pgadmin:
+volumes:
+    postgres:
+    pgadmin:
