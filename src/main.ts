@@ -1,4 +1,4 @@
-import { Options, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -8,15 +8,17 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   //Swagger
-  const configu = new DocumentBuilder()
-    .setTitle('RTA Engenheiros API')
-    .setDescription(
-      'RTA Engenheiros, é uma API do sistema de gerenciamento empresarial',
-    )
-    .setVersion('1.0')
-    .build();
-  const document = SwaggerModule.createDocument(app, configu);
-  SwaggerModule.setup('api', app, document);
+  if (process.env.NODE_ENV !== 'production') {
+    const configu = new DocumentBuilder()
+      .setTitle('RTA Engenheiros API')
+      .setDescription(
+        'RTA Engenheiros, é uma API do sistema de gerenciamento empresarial',
+      )
+      .setVersion('1.0')
+      .build();
+    const document = SwaggerModule.createDocument(app, configu);
+    SwaggerModule.setup('api', app, document);
+  }
 
   //Pipes
   app.useGlobalPipes(
