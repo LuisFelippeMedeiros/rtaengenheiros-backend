@@ -13,7 +13,7 @@ export class GroupService {
       name: postGroupDto.name,
       description: postGroupDto.description,
       created_by: req.user.id,
-      company_id: req.user.company_id,
+      // company_id: req.user.company_id,
     };
 
     const groupExist = await this.findByName(data.name);
