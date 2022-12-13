@@ -11,7 +11,7 @@ export class CategoryService {
     const data = {
       name: postCategoryDto.name,
       created_by: req.user.id,
-      company_id: req.user.company_id,
+      // company_id: req.user.company_id,
     };
 
     const categoryExists = await this.findByName(data.name);

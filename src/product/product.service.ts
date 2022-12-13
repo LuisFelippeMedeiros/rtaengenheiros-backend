@@ -12,7 +12,7 @@ export class ProductService {
       name: postProductDto.name,
       category_id: postProductDto.category_id,
       created_by: req.user.id,
-      company_id: req.user.company_id,
+      // company_id: req.user.company_id,
     };
 
     const productExists = await this.findByName(data.name);
