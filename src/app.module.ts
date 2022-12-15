@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { StateModule } from './state/state.module';
 import { CityModule } from './city/city.module';
 import { RoleModule } from './role/role.module';
@@ -20,6 +20,9 @@ import { PurchaseRequestProductModule } from './purchaserequestproduct/purchaser
 import { ConfigModule } from '@nestjs/config';
 import { MulterExtendedModule } from 'nestjs-multer-extended';
 import { UnitModule } from './unit/unit.module';
+import { LoggerInterceptor } from './interceptors/logger.interceptor';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from './configs/winston.config';
 
 @Module({
   imports: [
@@ -40,6 +43,7 @@ import { UnitModule } from './unit/unit.module';
     BillToPayModule,
     PurchaseRequestProductModule,
     ConfigModule.forRoot(),
+    WinstonModule.forRoot(winstonConfig),
     MulterExtendedModule.register({
       awsConfig: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -57,6 +61,10 @@ import { UnitModule } from './unit/unit.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggerInterceptor,
     },
   ],
 })
