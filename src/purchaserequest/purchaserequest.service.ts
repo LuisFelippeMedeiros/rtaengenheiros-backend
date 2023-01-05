@@ -7,10 +7,14 @@ import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dt
 import { EStatus } from '../common/enum/status.enum';
 import { ERole } from '../common/enum/role.enum';
 import { EGroupType } from '../common/enum/grouptype.enum';
+import { SendGridService } from '@anchan828/nest-sendgrid';
 
 @Injectable()
 export class PurchaseRequestService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly sendGrid: SendGridService,
+  ) {}
 
   async create(
     postPurchaseRequestDto: PostPurchaseRequestDto,
@@ -34,6 +38,12 @@ export class PurchaseRequestService {
       // company_id: req.user.company_id,
     };
 
+    const userCreateReq = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
     try {
       const statusWaiting = await this.prisma.status.findFirst({
         where: { name: EStatus.waiting },
@@ -50,6 +60,15 @@ export class PurchaseRequestService {
           },
         });
       }
+
+      await this.sendGrid.send({
+        to: 'lfelippemedeiros@gmail.com',
+        from: process.env.FROM_EMAIL,
+        subject: `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
+        text: `Olá Senhor Acácio, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação.`,
+        html: `<strong>Olá Senhor Acácio, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação.</strong><br><br><br><br>
+        Obs: Favor não responder à este e-mail`,
+      });
 
       return {
         status: true,
@@ -227,7 +246,7 @@ export class PurchaseRequestService {
     }
   }
 
-  async approve(
+  async approveGestor(
     id: string,
     patchPurchaseRequestDto: PatchPurchaseRequestDto,
     @Req() req: any,
@@ -284,10 +303,48 @@ export class PurchaseRequestService {
         message: `A solicitação de compra foi aprovado pelo Gestor com sucesso, agora precisa da aprovação do Diretor.`,
       };
     }
+  }
+
+  async approveDiretor(
+    id: string,
+    patchPurchaseRequestDto: PatchPurchaseRequestDto,
+    @Req() req: any,
+  ) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: req.user.id,
+      },
+      include: {
+        group: {
+          select: {
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
+
+    const purchaseRequest = await this.prisma.purchaseRequest.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    const statusApproved = await this.prisma.status.findFirst({
+      where: { id: purchaseRequest.status_id },
+    });
+
+    if (statusApproved.name === EStatus.approved) {
+      return {
+        status: false,
+        message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,
+      };
+    }
 
     if (
       user.group.name === ERole.diretor &&
-      user.group.type === EGroupType.all
+      user.group.type === EGroupType.all &&
+      purchaseRequest.is_approved_gestor === true
     ) {
       const update = {
         where: { id },
@@ -421,5 +478,16 @@ export class PurchaseRequestService {
     // }
 
     return purchases;
+  }
+
+  async sendEmail(email: string): Promise<void> {
+    await this.sendGrid.send({
+      to: email,
+      from: process.env.FROM_EMAIL,
+      subject: `Nova Solicitação de compra para aprovação ()`,
+      text: `Olá senhor Acácio, há uma nova solicitação de compra criada pelo(a) , aguardando aprovação.`,
+      html: `<strong>Olá senhor Luís, há uma nova solicitação de compra criada pelo(a) , aguardando aprovação.</strong><br><br><br><br>
+        Obs: Favor não responder à este e-mail`,
+    });
   }
 }

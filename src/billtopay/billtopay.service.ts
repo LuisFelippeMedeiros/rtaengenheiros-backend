@@ -159,8 +159,6 @@ export class BillToPayService {
       where: { id },
     });
 
-    console.log(id);
-
     if (!billToPay) {
       return {
         status: false,
@@ -238,6 +236,48 @@ export class BillToPayService {
       status: true,
       message: `A conta ${billToPay.name}, foi desativada com sucesso.`,
     };
+  }
+
+  async paid(id: string, putBillToPayDto: PostBillToPayDto) {
+    const billToPay = await this.prisma.billToPay.findFirst({
+      where: { id },
+    });
+
+    if (!billToPay) {
+      return {
+        status: false,
+        message:
+          'Esta conta a pagar não existe em nossa base de dados, favor verificar',
+      };
+    }
+
+    if (billToPay.active === false) {
+      return {
+        status: false,
+        message:
+          'Esta conta a pagar se encontra inativa, sendo impossibilitada de ser paga.',
+      };
+    }
+
+    if (
+      billToPay.bill_status === EBillStatus.fechada ||
+      billToPay.bill_status === EBillStatus.cancelada
+    ) {
+      return {
+        status: false,
+        message:
+          'Esta conta a pagar se encontra fechada/cancelada, sendo impossibilitada de ser paga.',
+      };
+    }
+
+    const update = {
+      where: { id },
+      data: {
+        bill_status: putBillToPayDto.bill_status,
+      },
+    };
+
+    await this.prisma.billToPay.update(update);
   }
 
   async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {

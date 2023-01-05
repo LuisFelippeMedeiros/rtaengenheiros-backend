@@ -24,6 +24,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@anchan828/nest-sendgrid": "^0.6.25",
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.2.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.2.0",
@@ -43,6 +45,7 @@
     "multer-s3": "^3.0.1",
     "nest-winston": "^1.8.0",
     "nestjs-multer-extended": "^1.4.2",
+    "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

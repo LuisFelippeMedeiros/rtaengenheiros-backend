@@ -23,6 +23,7 @@ import { UnitModule } from './unit/unit.module';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './configs/winston.config';
+import { SendGridModule } from '@anchan828/nest-sendgrid';
 
 @Module({
   imports: [
@@ -55,6 +56,9 @@ import { winstonConfig } from './configs/winston.config';
       fileSize: 1 * 1024 * 1024,
     }),
     UnitModule,
+    SendGridModule.forRoot({
+      apikey: process.env.SEND_GRID_ACCESS_KEY,
+    }),
   ],
   controllers: [],
   providers: [
