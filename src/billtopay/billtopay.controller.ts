@@ -73,6 +73,14 @@ export class BillToPayController {
     return this.billtopayService.deactivate(id, req);
   }
 
+  @Patch(':id/paid')
+  async paid(
+    @Param('id') id: string,
+    @Body() putBillToPayDto: PostBillToPayDto,
+  ) {
+    return this.billtopayService.paid(id, putBillToPayDto);
+  }
+
   @Patch(':id/invoice')
   @UseInterceptors(FileInterceptor('file'))
   async updateInvoice(
