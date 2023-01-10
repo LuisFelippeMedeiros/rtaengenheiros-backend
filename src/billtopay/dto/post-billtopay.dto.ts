@@ -9,9 +9,6 @@ export class PostBillToPayDto extends BillToPay {
   payment_info?: string;
 
   @IsString()
-  invoice?: string;
-
-  @IsString()
   reference_month?: string;
 
   @IsDateString()

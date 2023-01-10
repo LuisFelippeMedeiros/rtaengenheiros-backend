@@ -143,6 +143,7 @@ export class SupplierService {
       },
     };
 
+    console.log(update);
     await this.prisma.supplier.update(update);
 
     return {

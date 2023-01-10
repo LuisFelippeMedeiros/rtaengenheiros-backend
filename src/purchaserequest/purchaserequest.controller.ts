@@ -17,6 +17,7 @@ import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dto';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @ApiTags('PurchaseRequest')
 @Controller({
@@ -88,13 +89,25 @@ export class PurchaseRequestController {
     );
   }
 
-  @Patch('approve/:id')
-  async approve(
+  @Patch('approvegestor/:id')
+  async approveGestor(
     @Param('id') id: string,
     @Body() patchPurchaseRequestDto: PatchPurchaseRequestDto,
     @Req() req: any,
   ) {
-    return await this.purchaseRequestService.approve(
+    return await this.purchaseRequestService.approveGestor(
+      id,
+      patchPurchaseRequestDto,
+      req,
+    );
+  }
+  @Patch('approvediretor/:id')
+  async approveDiretor(
+    @Param('id') id: string,
+    @Body() patchPurchaseRequestDto: PatchPurchaseRequestDto,
+    @Req() req: any,
+  ) {
+    return await this.purchaseRequestService.approveDiretor(
       id,
       patchPurchaseRequestDto,
       req,
@@ -117,5 +130,11 @@ export class PurchaseRequestController {
   @Delete('deactivate/:id')
   async remove(@Param('id') id: string, @Req() req: any) {
     return await this.purchaseRequestService.deactivate(id, req);
+  }
+
+  @IsPublic()
+  @Post('send-email/:email')
+  async sendEmail(@Param('email') email: string): Promise<void> {
+    await this.purchaseRequestService.sendEmail(email);
   }
 }
