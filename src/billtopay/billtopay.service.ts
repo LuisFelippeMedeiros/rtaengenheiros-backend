@@ -178,7 +178,6 @@ export class BillToPayService {
       data: {
         id: id,
         payment_info: putBillToPayDto.payment_info,
-        invoice: putBillToPayDto.invoice,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
         due_date: putBillToPayDto.due_date,
