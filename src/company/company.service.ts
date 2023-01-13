@@ -15,19 +15,12 @@ export class CompanyService {
       city_id: postCompanyDto.city_id,
     };
 
-    const city = await this.prisma.city.findFirst({
-      where: {
-        id: data.city_id,
-      },
-    });
-
     const companyExists = await this.findByCnpj(data.cnpj);
 
     if (companyExists) {
       return {
         status: false,
-        message:
-          'Empresa já cadastrada em nossa base de dados, favor verificar!',
+        message: `Este local de trabalho já se encontra cadastrado em nossa base de dados, favor verificar!`,
       };
     }
 
@@ -35,7 +28,7 @@ export class CompanyService {
 
     return {
       status: true,
-      message: `A empresa com sede em ${city.name}, foi criada com sucesso.`,
+      message: `Local de trabalho criado com sucesso.`,
     };
   }
 
@@ -53,12 +46,6 @@ export class CompanyService {
       },
     };
 
-    const city = await this.prisma.city.findFirst({
-      where: {
-        id: update.data.city_id,
-      },
-    });
-
     const updatedCompany = await this.findByIe(update.data.ie);
 
     if (updatedCompany == undefined || updatedCompany == null) {
@@ -66,7 +53,7 @@ export class CompanyService {
 
       return {
         status: true,
-        message: `A empresa com sede em ${city}, foi alterada com sucesso.`,
+        message: `Local de trabalho alterado com sucesso.`,
       };
     }
 
@@ -74,7 +61,7 @@ export class CompanyService {
 
     return {
       status: true,
-      message: `A empresa com sede em ${city}, foi alterada com sucesso.`,
+      message: `Local de trabalho alterado com sucesso.`,
     };
   }
 
@@ -85,16 +72,10 @@ export class CompanyService {
       },
     });
 
-    const city = await this.prisma.city.findFirst({
-      where: {
-        id: company.city_id,
-      },
-    });
-
     if (!company) {
       return {
         status: false,
-        message: 'Esta empresa não existe em nossa base de dados.',
+        message: `Este local de trabalho não existe em nossa base de dados.`,
       };
     } else {
       company.active = false;
@@ -108,7 +89,7 @@ export class CompanyService {
 
     return {
       status: true,
-      message: `A empresa com sede em ${city}, foi desativada com sucesso.`,
+      message: `Local de trabalho desativado com sucesso.`,
     };
   }
 
