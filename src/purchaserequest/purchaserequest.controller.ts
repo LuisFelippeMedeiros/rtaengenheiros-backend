@@ -131,10 +131,4 @@ export class PurchaseRequestController {
   async remove(@Param('id') id: string, @Req() req: any) {
     return await this.purchaseRequestService.deactivate(id, req);
   }
-
-  @IsPublic()
-  @Post('send-email/:email')
-  async sendEmail(@Param('email') email: string): Promise<void> {
-    await this.purchaseRequestService.sendEmail(email);
-  }
 }
