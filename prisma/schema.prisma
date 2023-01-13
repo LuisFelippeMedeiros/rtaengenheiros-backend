@@ -81,12 +81,13 @@ model RolesGroup {
 }
 
 model City {
-  id         Int      @id
+  id         Int       @id
   name       String
-  active     Boolean  @default(true)
-  created_at DateTime @default(now())
-  State      State    @relation(fields: [state_id], references: [id])
+  active     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  State      State     @relation(fields: [state_id], references: [id])
   state_id   Int
+  Company    Company[]
 
   @@map("cities")
 }
@@ -104,8 +105,9 @@ model State {
 
 model Company {
   id              String            @id @default(uuid())
-  name            String
-  cnpj            String
+  cnpj            String            @unique()
+  ie              String
+  active          Boolean           @default(true)
   created_at      DateTime          @default(now())
   created_by      String?
   updated_at      DateTime?
@@ -121,6 +123,8 @@ model Company {
   Category        Category[]
   PurchaseRequest PurchaseRequest[]
   Status          Status[]
+  City            City              @relation(fields: [city_id], references: [id])
+  city_id         Int
 
   @@map("companies")
 }
