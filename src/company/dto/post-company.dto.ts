@@ -3,6 +3,9 @@ import { Company } from '../entities/company.entity';
 
 export class PostCompanyDto extends Company {
   @IsString()
+  name: string;
+
+  @IsString()
   cnpj: string;
 
   @IsString()

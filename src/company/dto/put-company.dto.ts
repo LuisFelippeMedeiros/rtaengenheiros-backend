@@ -6,6 +6,9 @@ export class PutCompanyDto extends PartialType(PostCompanyDto) {
   @IsString()
   ie: string;
 
+  @IsString()
+  name: string;
+
   @IsBoolean()
   active: boolean;
 
