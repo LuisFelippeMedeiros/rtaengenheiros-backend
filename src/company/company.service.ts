@@ -9,6 +9,7 @@ export class CompanyService {
 
   async create(postCompanyDto: PostCompanyDto, @Req() req: any) {
     const data = {
+      name: postCompanyDto.name,
       cnpj: postCompanyDto.cnpj,
       ie: postCompanyDto.ie,
       created_by: req.user.id,
@@ -38,6 +39,7 @@ export class CompanyService {
         id: id,
       },
       data: {
+        name: putCompanyDto.name,
         ie: putCompanyDto.ie,
         active: putCompanyDto.active,
         city_id: putCompanyDto.city_id,

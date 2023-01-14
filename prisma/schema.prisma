@@ -105,6 +105,7 @@ model State {
 
 model Company {
   id              String            @id @default(uuid())
+  name            String?
   cnpj            String            @unique()
   ie              String
   active          Boolean           @default(true)
