@@ -156,6 +156,21 @@ export class CompanyService {
       where: {
         id,
       },
+      include: {
+        City: {
+          select: {
+            id: true,
+            name: true,
+            State: {
+              select: {
+                id: true,
+                name: true,
+                initials: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 }
