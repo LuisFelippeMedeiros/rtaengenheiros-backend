@@ -98,9 +98,29 @@ export class CompanyService {
       take: 5,
       skip: 5 * (page - 1),
       where: { active },
+      include: {
+        City: {
+          select: {
+            id: true,
+            name: true,
+            State: {
+              select: {
+                id: true,
+                name: true,
+                initials: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    return companies;
+    const rowCount = await this.rowCount(active);
+
+    return {
+      rowCount: rowCount,
+      companies: companies,
+    };
   }
 
   async rowCount(active = true) {
