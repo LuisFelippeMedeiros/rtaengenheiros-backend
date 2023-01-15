@@ -5,7 +5,6 @@ export class Group {
   description?: string;
   active: boolean;
   delete_at: Date;
-  // company_id?: string;
 }
 
 export class GroupExclude {
