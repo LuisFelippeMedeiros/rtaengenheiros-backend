@@ -12,8 +12,9 @@ export class GroupService {
     const data = {
       name: postGroupDto.name,
       description: postGroupDto.description,
+      type: postGroupDto.type,
       created_by: req.user.id,
-      // company_id: req.user.company_id,
+      created_at: new Date(),
     };
 
     const groupExist = await this.findByName(data.name);
@@ -100,12 +101,10 @@ export class GroupService {
 
   async update(id: string, putGroupDto: PutGroupDto, @Req() req: any) {
     const update = {
-      where: {
-        id: id,
-      },
+      where: { id },
       data: {
         name: putGroupDto.name,
-        active: putGroupDto.active,
+        type: putGroupDto.type,
         description: putGroupDto.description,
         updated_by: req.user.id,
         updated_at: new Date(),
@@ -113,17 +112,7 @@ export class GroupService {
     };
 
     const updatedGroup = await this.findByName(update.data.name);
-
-    if (updatedGroup == undefined || updatedGroup == null) {
-      await this.prisma.group.update(update);
-
-      return {
-        status: true,
-        message: `O grupo ${putGroupDto.name} foi alterado com sucesso.`,
-      };
-    }
-
-    if (updatedGroup.name == update.data.name && id !== updatedGroup.id) {
+    if (updatedGroup.name === update.data.name && id !== updatedGroup.id) {
       return {
         status: false,
         message:
@@ -132,10 +121,9 @@ export class GroupService {
     }
 
     await this.prisma.group.update(update);
-
     return {
       status: true,
-      message: `O grupo ${putGroupDto.name} foi alterado com sucesso.`,
+      message: `O grupo foi alterado com sucesso.`,
     };
   }
 
