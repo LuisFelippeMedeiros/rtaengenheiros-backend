@@ -535,13 +535,22 @@ export class PurchaseRequestService {
     return purchase;
   }
 
-  async findPagination(page = 1, active = true, status = '') {
+  async findPagination(page = 1, active = true, statusName = '') {
+    const status = await this.prisma.status.findFirst({
+      where: {
+        name: statusName,
+      },
+      select: {
+        id: true,
+      },
+    });
+
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 5,
       skip: 5 * (page - 1),
       where: {
         active,
-        status_id: status,
+        status_id: status.id,
       },
       include: {
         Status: {
@@ -556,9 +565,18 @@ export class PurchaseRequestService {
     return purchaseRequest;
   }
 
-  async rowCount(active = true, status_id: string) {
+  async rowCount(active = true, statusName: string) {
+    const status = await this.prisma.status.findFirst({
+      where: {
+        name: statusName,
+      },
+      select: {
+        id: true,
+      },
+    });
+
     return await this.prisma.purchaseRequest.count({
-      where: { active, status_id },
+      where: { active, status_id: status.id },
     });
   }
 }

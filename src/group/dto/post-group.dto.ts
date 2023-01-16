@@ -10,4 +10,7 @@ export class PostGroupDto extends Group {
 
   @IsArray()
   roles: Array<string>;
+
+  @IsString()
+  type: string;
 }
