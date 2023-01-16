@@ -25,5 +25,5 @@ export class UserPost {
   password: string;
   group_id: string;
   // company_id?: string;
-  avatar?: string;
+  // avatar?: string;
 }
