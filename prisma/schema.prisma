@@ -44,8 +44,6 @@ model Group {
   deleted_by  String? // Grupo excluído por
   roles       RolesGroup[] // Array de regras do Grupo
   User        User[] // Array de Usuários relacionados ao Grupo
-  Company     Company?     @relation(fields: [company_id], references: [id])
-  company_id  String? // Identificador da empresa que cadastrou o Grupo
 
   @@map("groups")
 }
@@ -64,8 +62,6 @@ model Role {
   deleted_at DateTime?
   deleted_by String?
   groups     RolesGroup[]
-  Company    Company?     @relation(fields: [company_id], references: [id])
-  company_id String?
 
   @@map("roles")
 }
@@ -117,8 +113,6 @@ model Company {
   deleted_by      String?
   User            User[]
   Billtopay       BillToPay[]
-  Group           Group[]
-  Role            Role[]
   Supplier        Supplier[]
   Product         Product[]
   Category        Category[]
