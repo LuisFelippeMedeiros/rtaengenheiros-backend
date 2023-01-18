@@ -10,7 +10,7 @@ export class User {
   @Exclude()
   group_id: string;
   // @Exclude()
-  // company_id?: string;
+  company_id?: string;
   avatar?: string;
 
   constructor(partial: Partial<User>) {
