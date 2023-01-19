@@ -34,8 +34,9 @@ export class PurchaseRequestService {
       status_id: '',
       active: postPurchaseRequestDto.active,
       comment: postPurchaseRequestDto.comment,
+      company_id: postPurchaseRequestDto.company_id,
+      created_at: new Date(),
       created_by: req.user.id,
-      // company_id: req.user.company_id,
     };
 
     const userCreateReq = await this.prisma.user.findUnique({
@@ -125,6 +126,7 @@ export class PurchaseRequestService {
       reason: putPurchaseRequestDto.reason,
       comment: putPurchaseRequestDto.comment,
       statud_id: putPurchaseRequestDto.status_id,
+      company_id: putPurchaseRequestDto.company_id,
       updated_by: req.user.id,
       updated_at: new Date(),
     };
@@ -494,6 +496,15 @@ export class PurchaseRequestService {
             name: true,
           },
         },
+        Company: {
+          select: {
+            id: true,
+            name: true,
+            cnpj: true,
+            ie: true,
+            active: true,
+          },
+        },
       },
     });
 
@@ -508,6 +519,15 @@ export class PurchaseRequestService {
           select: {
             id: true,
             name: true,
+          },
+        },
+        Company: {
+          select: {
+            id: true,
+            name: true,
+            cnpj: true,
+            ie: true,
+            active: true,
           },
         },
       },
@@ -557,6 +577,15 @@ export class PurchaseRequestService {
           select: {
             id: true,
             name: true,
+          },
+        },
+        Company: {
+          select: {
+            id: true,
+            name: true,
+            cnpj: true,
+            ie: true,
+            active: true,
           },
         },
       },
