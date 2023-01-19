@@ -25,6 +25,7 @@ export class AuthService {
     const jwtToken = this.jwtService.sign(payload);
 
     return {
+      company_id: user.company_id,
       access_token: jwtToken,
       group: new GroupExclude(group),
     };

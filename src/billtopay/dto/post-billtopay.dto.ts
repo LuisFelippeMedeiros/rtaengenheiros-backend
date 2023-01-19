@@ -38,6 +38,6 @@ export class PostBillToPayDto extends BillToPay {
   @IsString()
   comment?: string;
 
-  // @IsString()
-  // company_id?: string;
+  @IsString()
+  company_id?: string;
 }

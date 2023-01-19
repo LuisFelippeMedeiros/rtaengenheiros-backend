@@ -13,6 +13,6 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
   @IsString()
   comment = '';
 
-  // @IsString()
-  // company_id?: string;
+  @IsString()
+  company_id?: string;
 }
