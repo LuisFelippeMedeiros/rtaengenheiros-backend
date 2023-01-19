@@ -19,14 +19,17 @@ export class AuthService {
   async login(user: User) {
     const payload: UserPayload = {
       sub: user.id,
+      company_id: user.company_id,
     };
 
     const group = await this.groupService.findById(user.group_id);
     const jwtToken = this.jwtService.sign(payload);
+    const company_id = payload.company_id;
 
     return {
       company_id: user.company_id,
       access_token: jwtToken,
+      company: company_id,
       group: new GroupExclude(group),
     };
   }
