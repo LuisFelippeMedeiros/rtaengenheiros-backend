@@ -10,7 +10,4 @@ export class PostProductDto extends Product {
 
   @IsString()
   category_id: string;
-
-  // @IsString()
-  // company_id?: string;
 }
