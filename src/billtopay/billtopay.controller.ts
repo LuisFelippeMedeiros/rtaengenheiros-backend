@@ -77,8 +77,9 @@ export class BillToPayController {
   async paid(
     @Param('id') id: string,
     @Body() putBillToPayDto: PostBillToPayDto,
+    @Req() req: any,
   ) {
-    return this.billtopayService.paid(id, putBillToPayDto);
+    return this.billtopayService.paid(id, putBillToPayDto, req);
   }
 
   @Patch(':id/invoice')
