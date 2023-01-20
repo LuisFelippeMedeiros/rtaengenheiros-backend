@@ -6,8 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "engines": {
-    "node": "16.15.1",
-    "yarn": "1.22.18"
+    "node": "16.15.1"
   },
   "prisma": {
     "seed": "node --loader ts-node/esm prisma/seed.ts"
