@@ -13,6 +13,15 @@ const include = {
       name: true,
     },
   },
+  Company: {
+    select: {
+      id: true,
+      name: true,
+      cnpj: true,
+      ie: true,
+      active: true,
+    },
+  },
 };
 
 @Injectable()
@@ -25,8 +34,9 @@ export class UserService {
       email: postUserDto.email,
       password: await bcrypt.hash(postUserDto.password, 10),
       group_id: postUserDto.group_id,
-      // company_id: req.user.company_id,
+      company_id: postUserDto.company_id,
       created_by: req.user.id,
+      created_at: new Date(),
     };
 
     const emailExists = await this.findByEmail(data.email);
@@ -56,6 +66,7 @@ export class UserService {
     const users = await this.prisma.user.findMany({
       take: 5,
       skip: 5 * (page - 1),
+      // include,
       include,
       where: {
         active: active,
@@ -89,12 +100,11 @@ export class UserService {
 
   async update(id: string, putUserDto: PutUserDto, @Req() req: any) {
     const update = {
-      where: {
-        id: id,
-      },
+      where: { id },
       data: {
         name: putUserDto.name,
         group_id: putUserDto.group_id,
+        company_id: putUserDto.company_id,
         updated_by: req.user.id,
         updated_at: new Date(),
       },

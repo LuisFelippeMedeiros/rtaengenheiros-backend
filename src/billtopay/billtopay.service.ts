@@ -24,7 +24,7 @@ export class BillToPayService {
       price_updated: postBillToPayDto.price_approved,
       invoice_attachment: postBillToPayDto.invoice_attachment,
       comment: postBillToPayDto.comment,
-      // company_id: req.user.company_id,
+      company_id: postBillToPayDto.company_id,
       created_by: req.user.id,
       bill_status: postBillToPayDto.dda
         ? EBillStatus.fechada
@@ -118,6 +118,15 @@ export class BillToPayService {
             name: true,
           },
         },
+        Company: {
+          select: {
+            id: true,
+            name: true,
+            cnpj: true,
+            ie: true,
+            active: true,
+          },
+        },
       },
       orderBy: {
         due_date: 'desc',
@@ -137,6 +146,15 @@ export class BillToPayService {
           select: {
             id: true,
             name: true,
+          },
+        },
+        Company: {
+          select: {
+            id: true,
+            name: true,
+            cnpj: true,
+            ie: true,
+            active: true,
           },
         },
       },
