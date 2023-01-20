@@ -114,10 +114,7 @@ model Company {
   User            User[]
   Billtopay       BillToPay[]
   Supplier        Supplier[]
-  Product         Product[]
-  Category        Category[]
   PurchaseRequest PurchaseRequest[]
-  Status          Status[]
   City            City              @relation(fields: [city_id], references: [id])
   city_id         Int
 
@@ -168,8 +165,6 @@ model Product {
   deleted_by             String?
   Category               Category?                @relation(fields: [category_id], references: [id])
   category_id            String?
-  Company                Company?                 @relation(fields: [company_id], references: [id])
-  company_id             String?
   PurchaseRequestProduct PurchaseRequestProduct[]
 
   @@map("products")
@@ -186,8 +181,6 @@ model Category {
   deleted_at DateTime?
   deleted_by String?
   products   Product[]
-  Company    Company?  @relation(fields: [company_id], references: [id])
-  company_id String?
 
   @@map("categories")
 }
@@ -248,8 +241,6 @@ model Status {
   deleted_at      DateTime?
   deleted_by      String?
   PurchaseRequest PurchaseRequest[]
-  Company         Company?          @relation(fields: [company_id], references: [id])
-  company_id      String?
 
   @@map("status")
 }
