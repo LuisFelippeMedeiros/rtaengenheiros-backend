@@ -62,15 +62,28 @@ export class PurchaseRequestService {
         });
       }
 
+      const gestorGroup = await this.prisma.group.findFirst({
+        where: {
+          name: ERole.gestor,
+        },
+      });
+
+      const userGestor = await this.prisma.user.findFirst({
+        where: {
+          group_id: gestorGroup.id,
+          company_id: userCreateReq.company_id,
+        },
+      });
+
       if (process.env.NODE_ENV === 'production') {
-        await this.sendGrid.send({
-          to: 'acacio@rta.eng.br',
-          from: process.env.FROM_EMAIL,
-          subject: `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
-          text: `Olá Acácio, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação.`,
-          html: `<strong>Olá Acácio, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação.</strong><br><br><br><br>
-        Obs: Favor não responder este e-mail`,
-        });
+        await this.sendEmail(
+          userGestor.email,
+          process.env.FROM_EMAIL,
+          `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
+          `Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br`,
+          `<strong>Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+          Obs: Favor não responder este e-mail`,
+        );
       }
 
       return {
@@ -240,16 +253,28 @@ export class PurchaseRequestService {
         },
       });
 
+      const diretorGroup = await this.prisma.group.findFirst({
+        where: {
+          name: ERole.diretor,
+        },
+      });
+
+      const userDiretor = await this.prisma.user.findFirst({
+        where: {
+          group_id: diretorGroup.id,
+        },
+      });
+
       if (process.env.NODE_ENV === 'production') {
         if (status.name === EStatus.approvedgestor) {
-          await this.sendGrid.send({
-            to: 'vilsonaraujo@rta.eng.br',
-            from: process.env.FROM_EMAIL,
-            subject: `Nova Solicitação de compra para aprovação! (${status.name})`,
-            text: `Olá Vilson, há uma nova solicitação de compra já aprovada pelo ${gestor.name}, aguardando aprovação.`,
-            html: `<strong>Olá Vilson, há uma nova solicitação de compra criada pelo(a) ${gestor.name}, aguardando aprovação.</strong><br><br><br><br>
-          Obs: Favor não responder este e-mail`,
-          });
+          await this.sendEmail(
+            userDiretor.email,
+            process.env.FROM_EMAIL,
+            `Nova Solicitação de compra para aprovação (${status.name})`,
+            `Olá ${userDiretor.name}, há uma nova solicitação de compra aprovada pelo(a) ${gestor.name}, aguardando aprovação do diretor. Para visualizar acesse: https://sistema.rta.eng.br`,
+            `<strong>Olá ${userDiretor.name}, há uma nova solicitação de compra aprovada pelo(a) ${gestor.name}, aguardando aprovação do diretor. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+            Obs: Favor não responder este e-mail`,
+          );
         }
       }
 
@@ -311,18 +336,31 @@ export class PurchaseRequestService {
         where: { name: update.data.status_id },
       });
 
+      const administrativoGroup = await this.prisma.group.findFirst({
+        where: {
+          name: ERole.administrativo,
+        },
+      });
+
+      const userAdministrativo = await this.prisma.user.findFirst({
+        where: {
+          group_id: administrativoGroup.id,
+          company_id: purchaseRequest.company_id,
+        },
+      });
+
       await this.prisma.purchaseRequest.update(update);
 
       if (process.env.NODE_ENV === 'production') {
         if (status.name === EStatus.approved) {
-          await this.sendGrid.send({
-            to: 'financeiromt@rta.eng.br',
-            from: process.env.FROM_EMAIL,
-            subject: `Nova Solicitação de compra para aprovação (${status.name})`,
-            text: `Olá Raphael, há uma nova solicitação de compra já aprovada pelo ${diretor.name}, aguardando aprovação.`,
-            html: `<strong>Olá Raphael, há uma nova solicitação de compra criada pelo(a) ${diretor.name}, aguardando aprovação.</strong><br><br><br><br>
-        Obs: Favor não responder este e-mail`,
-          });
+          await this.sendEmail(
+            userAdministrativo.email,
+            process.env.FROM_EMAIL,
+            `Nova Solicitação de compra para aprovação (${status.name})`,
+            `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
+            `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+            Obs: Favor não responder este e-mail`,
+          );
         }
       }
 
@@ -386,6 +424,12 @@ export class PurchaseRequestService {
       },
     };
 
+    const purchaseRequest = await this.prisma.purchaseRequest.findUnique({
+      where: {
+        id,
+      },
+    });
+
     const user = await this.prisma.user.findFirst({
       where: {
         id: req.user.id,
@@ -396,18 +440,31 @@ export class PurchaseRequestService {
       where: { name: update.data.status_id },
     });
 
+    const administrativoGroup = await this.prisma.group.findFirst({
+      where: {
+        name: ERole.administrativo,
+      },
+    });
+
+    const userAdministrativo = await this.prisma.user.findFirst({
+      where: {
+        group_id: administrativoGroup.id,
+        company_id: purchaseRequest.company_id,
+      },
+    });
+
     await this.prisma.purchaseRequest.update(update);
 
     if (status.name === EStatus.reject) {
       if (process.env.NODE_ENV === 'production') {
-        await this.sendGrid.send({
-          to: 'financeiromt@rta.eng.br',
-          from: process.env.FROM_EMAIL,
-          subject: `Nova Solicitação de compra para aprovação! (${status.name})`,
-          text: `Olá Raphael, sua solicitação de compra foi rejeitada pelo ${user.name}!`,
-          html: `<strong>Olá Raphael, sua solicitação de compra foi rejeitada pelo ${user.name}!,</strong><br><br><br><br>
-        Obs: Favor não responder este e-mail`,
-        });
+        await this.sendEmail(
+          userAdministrativo.email,
+          process.env.FROM_EMAIL,
+          `Nova Solicitação de compra para aprovação (${status.name})`,
+          `Olá ${userAdministrativo.name}, há uma nova solicitação de compra rejeitada pelo ${user.name}. Para visualizar acesse: https://sistema.rta.eng.br`,
+          `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra rejeitada pelo ${user.name}. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+          Obs: Favor não responder este e-mail`,
+        );
       }
     }
 
@@ -606,6 +663,22 @@ export class PurchaseRequestService {
 
     return await this.prisma.purchaseRequest.count({
       where: { active, status_id: status.id },
+    });
+  }
+
+  async sendEmail(
+    to: string,
+    from: string,
+    subject: string,
+    text: string,
+    html: string,
+  ) {
+    await this.sendGrid.send({
+      to,
+      from,
+      subject,
+      text,
+      html,
     });
   }
 }
