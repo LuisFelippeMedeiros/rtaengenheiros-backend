@@ -30,6 +30,7 @@
   "dependencies": {
     "@anchan828/nest-sendgrid": "^0.6.27",
     "@nestjs-modules/mailer": "^1.8.1",
+    "@nestjs/cli": "^9.1.8",
     "@nestjs/common": "latest",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.2.1",
@@ -57,11 +58,9 @@
     "rxjs": "^7.8.0",
     "swagger-ui-express": "4.0.0",
     "uuid": "^9.0.0",
-    "winston": "^3.8.2",
-    "@nestjs/cli": "^9.1.8"
+    "winston": "^3.8.2"
   },
   "devDependencies": {
-
     "@nestjs/schematics": "^9.0.4",
     "@nestjs/testing": "^9.2.1",
     "@types/bcrypt": "^5.0.0",
