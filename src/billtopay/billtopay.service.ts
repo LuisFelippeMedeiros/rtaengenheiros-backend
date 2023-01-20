@@ -4,6 +4,7 @@ import { PostBillToPayDto } from './dto/post-billtopay.dto';
 import { EBillStatus } from '../common/enum/billstatus.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
+import { ERole } from 'src/common/enum/role.enum';
 
 @Injectable()
 export class BillToPayService {
@@ -255,9 +256,18 @@ export class BillToPayService {
     };
   }
 
-  async paid(id: string, putBillToPayDto: PostBillToPayDto) {
+  async paid(id: string, putBillToPayDto: PostBillToPayDto, @Req() req: any) {
     const billToPay = await this.prisma.billToPay.findFirst({
       where: { id },
+    });
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: req.user.id,
+      },
+      include: {
+        group: true,
+      },
     });
 
     if (!billToPay) {
@@ -287,14 +297,16 @@ export class BillToPayService {
       };
     }
 
-    const update = {
-      where: { id },
-      data: {
-        bill_status: putBillToPayDto.bill_status,
-      },
-    };
+    if (user.group.name === ERole.diretor) {
+      const update = {
+        where: { id },
+        data: {
+          bill_status: putBillToPayDto.bill_status,
+        },
+      };
 
-    await this.prisma.billToPay.update(update);
+      await this.prisma.billToPay.update(update);
+    }
   }
 
   async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
