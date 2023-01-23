@@ -56,9 +56,9 @@ import { SendGridModule } from '@anchan828/nest-sendgrid';
       fileSize: 1 * 1024 * 1024,
     }),
     UnitModule,
-    // SendGridModule.forRoot({
-    //   apikey: process.env.SENDGRID_API_KEY,
-    // }),
+    SendGridModule.forRoot({
+      apikey: process.env.SENDGRID_API_KEY,
+    }),
   ],
   controllers: [],
   providers: [
