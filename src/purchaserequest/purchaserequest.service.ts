@@ -7,13 +7,12 @@ import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dt
 import { EStatus } from '../common/enum/status.enum';
 import { ERole } from '../common/enum/role.enum';
 import { EGroupType } from '../common/enum/grouptype.enum';
-import { SendGridService } from '@anchan828/nest-sendgrid';
+// import { SendGridService } from '@anchan828/nest-sendgrid';
 
 @Injectable()
 export class PurchaseRequestService {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly sendGrid: SendGridService,
+    private readonly prisma: PrismaService, // private readonly sendGrid: SendGridService,
   ) {}
 
   async create(
@@ -75,16 +74,16 @@ export class PurchaseRequestService {
         },
       });
 
-      if (process.env.NODE_ENV === 'production') {
-        await this.sendEmail(
-          userGestor.email,
-          process.env.FROM_EMAIL,
-          `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
-          `Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br`,
-          `<strong>Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
-          Obs: Favor não responder este e-mail`,
-        );
-      }
+      // if (process.env.NODE_ENV === 'production') {
+      //   await this.sendEmail(
+      //     userGestor.email,
+      //     process.env.FROM_EMAIL,
+      //     `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
+      //     `Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br`,
+      //     `<strong>Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+      //     Obs: Favor não responder este e-mail`,
+      //   );
+      // }
 
       return {
         status: true,
@@ -265,18 +264,18 @@ export class PurchaseRequestService {
         },
       });
 
-      if (process.env.NODE_ENV === 'production') {
-        if (status.name === EStatus.approvedgestor) {
-          await this.sendEmail(
-            userDiretor.email,
-            process.env.FROM_EMAIL,
-            `Nova Solicitação de compra para aprovação (${status.name})`,
-            `Olá ${userDiretor.name}, há uma nova solicitação de compra aprovada pelo(a) ${gestor.name}, aguardando aprovação do diretor. Para visualizar acesse: https://sistema.rta.eng.br`,
-            `<strong>Olá ${userDiretor.name}, há uma nova solicitação de compra aprovada pelo(a) ${gestor.name}, aguardando aprovação do diretor. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
-            Obs: Favor não responder este e-mail`,
-          );
-        }
-      }
+      // if (process.env.NODE_ENV === 'production') {
+      //   if (status.name === EStatus.approvedgestor) {
+      //     await this.sendEmail(
+      //       userDiretor.email,
+      //       process.env.FROM_EMAIL,
+      //       `Nova Solicitação de compra para aprovação (${status.name})`,
+      //       `Olá ${userDiretor.name}, há uma nova solicitação de compra aprovada pelo(a) ${gestor.name}, aguardando aprovação do diretor. Para visualizar acesse: https://sistema.rta.eng.br`,
+      //       `<strong>Olá ${userDiretor.name}, há uma nova solicitação de compra aprovada pelo(a) ${gestor.name}, aguardando aprovação do diretor. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+      //       Obs: Favor não responder este e-mail`,
+      //     );
+      //   }
+      // }
 
       return {
         status: true,
@@ -351,18 +350,18 @@ export class PurchaseRequestService {
 
       await this.prisma.purchaseRequest.update(update);
 
-      if (process.env.NODE_ENV === 'production') {
-        if (status.name === EStatus.approved) {
-          await this.sendEmail(
-            userAdministrativo.email,
-            process.env.FROM_EMAIL,
-            `Nova Solicitação de compra para aprovação (${status.name})`,
-            `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
-            `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
-            Obs: Favor não responder este e-mail`,
-          );
-        }
-      }
+      // if (process.env.NODE_ENV === 'production') {
+      //   if (status.name === EStatus.approved) {
+      //     await this.sendEmail(
+      //       userAdministrativo.email,
+      //       process.env.FROM_EMAIL,
+      //       `Nova Solicitação de compra para aprovação (${status.name})`,
+      //       `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
+      //       `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+      //       Obs: Favor não responder este e-mail`,
+      //     );
+      //   }
+      // }
 
       const findBudget = await this.prisma.purchaseRequestBudget.findFirst({
         where: {
@@ -455,18 +454,18 @@ export class PurchaseRequestService {
 
     await this.prisma.purchaseRequest.update(update);
 
-    if (status.name === EStatus.reject) {
-      if (process.env.NODE_ENV === 'production') {
-        await this.sendEmail(
-          userAdministrativo.email,
-          process.env.FROM_EMAIL,
-          `Nova Solicitação de compra para aprovação (${status.name})`,
-          `Olá ${userAdministrativo.name}, há uma nova solicitação de compra rejeitada pelo ${user.name}. Para visualizar acesse: https://sistema.rta.eng.br`,
-          `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra rejeitada pelo ${user.name}. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
-          Obs: Favor não responder este e-mail`,
-        );
-      }
-    }
+    // if (status.name === EStatus.reject) {
+    //   if (process.env.NODE_ENV === 'production') {
+    //     await this.sendEmail(
+    //       userAdministrativo.email,
+    //       process.env.FROM_EMAIL,
+    //       `Nova Solicitação de compra para aprovação (${status.name})`,
+    //       `Olá ${userAdministrativo.name}, há uma nova solicitação de compra rejeitada pelo ${user.name}. Para visualizar acesse: https://sistema.rta.eng.br`,
+    //       `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra rejeitada pelo ${user.name}. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+    //       Obs: Favor não responder este e-mail`,
+    //     );
+    //   }
+    // }
 
     return {
       status: true,
@@ -666,19 +665,19 @@ export class PurchaseRequestService {
     });
   }
 
-  async sendEmail(
-    to: string,
-    from: string,
-    subject: string,
-    text: string,
-    html: string,
-  ) {
-    await this.sendGrid.send({
-      to,
-      from,
-      subject,
-      text,
-      html,
-    });
-  }
+  //   async sendEmail(
+  //     to: string,
+  //     from: string,
+  //     subject: string,
+  //     text: string,
+  //     html: string,
+  //   ) {
+  //     await this.sendGrid.send({
+  //       to,
+  //       from,
+  //       subject,
+  //       text,
+  //       html,
+  //     });
+  //   }
 }
