@@ -17,7 +17,6 @@ import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dto';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @ApiTags('PurchaseRequest')
 @Controller({
