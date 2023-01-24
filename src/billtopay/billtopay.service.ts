@@ -256,7 +256,7 @@ export class BillToPayService {
     };
   }
 
-  async paid(id: string, putBillToPayDto: PostBillToPayDto, @Req() req: any) {
+  async paid(id: string, @Req() req: any) {
     const billToPay = await this.prisma.billToPay.findFirst({
       where: { id },
     });
@@ -301,7 +301,7 @@ export class BillToPayService {
       const update = {
         where: { id },
         data: {
-          bill_status: putBillToPayDto.bill_status,
+          bill_status: EBillStatus.fechada,
         },
       };
 
