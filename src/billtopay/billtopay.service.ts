@@ -297,7 +297,7 @@ export class BillToPayService {
       };
     }
 
-    if (user.group.name === ERole.diretor) {
+    if (user.group.type === 'all') {
       const update = {
         where: { id },
         data: {
@@ -306,6 +306,16 @@ export class BillToPayService {
       };
 
       await this.prisma.billToPay.update(update);
+
+      return {
+        status: true,
+        message: `A conta foi fechada com sucesso!`,
+      };
+    } else {
+      return {
+        status: false,
+        message: `Você não tem permissão para fechar esta conta`,
+      };
     }
   }
 
