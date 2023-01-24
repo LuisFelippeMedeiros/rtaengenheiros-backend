@@ -256,7 +256,7 @@ export class BillToPayService {
     };
   }
 
-  async paid(id: string, putBillToPayDto: PostBillToPayDto, @Req() req: any) {
+  async paid(id: string, @Req() req: any) {
     const billToPay = await this.prisma.billToPay.findFirst({
       where: { id },
     });
@@ -297,15 +297,25 @@ export class BillToPayService {
       };
     }
 
-    if (user.group.name === ERole.diretor) {
+    if (user.group.type === 'all') {
       const update = {
         where: { id },
         data: {
-          bill_status: putBillToPayDto.bill_status,
+          bill_status: EBillStatus.fechada,
         },
       };
 
       await this.prisma.billToPay.update(update);
+
+      return {
+        status: true,
+        message: `A conta foi fechada com sucesso!`,
+      };
+    } else {
+      return {
+        status: false,
+        message: `Você não tem permissão para fechar esta conta`,
+      };
     }
   }
 
