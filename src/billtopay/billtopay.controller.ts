@@ -73,7 +73,7 @@ export class BillToPayController {
     return this.billtopayService.deactivate(id, req);
   }
 
-  @Patch(':id/paid')
+  @Patch('paid/:id')
   async paid(@Param('id') id: string, @Req() req: any) {
     return this.billtopayService.paid(id, req);
   }
