@@ -2,7 +2,7 @@ export class Supplier {
   id?: string;
   name: string;
   cnpj: string;
-  ie: string;
+  ie?: string;
   telephone: string;
   account: string;
   agency: string;

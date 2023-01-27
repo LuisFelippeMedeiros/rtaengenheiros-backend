@@ -127,7 +127,7 @@ export class PurchaseRequestService {
         },
       });
 
-    if (purchaseRequestApproved.Status.name === EStatus.approved) {
+    if (purchaseRequestApproved.Status.name === EStatus.approvedDiretor) {
       return {
         status: false,
         message: `Essa solicitação de compra se encontra com o status de APROVADA, não podendo ser alterada`,
@@ -215,7 +215,7 @@ export class PurchaseRequestService {
       where: { id: purchaseRequest.status_id },
     });
 
-    if (statusApproved.name === EStatus.approved) {
+    if (statusApproved.name === EStatus.approvedDiretor) {
       return {
         status: false,
         message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,
@@ -266,7 +266,7 @@ export class PurchaseRequestService {
       });
 
       if (process.env.NODE_ENV === 'production') {
-        if (status.name === EStatus.approvedgestor) {
+        if (status.name === EStatus.approvedGestor) {
           await this.sendEmail(
             userDiretor.email,
             process.env.FROM_EMAIL,
@@ -352,7 +352,7 @@ export class PurchaseRequestService {
       await this.prisma.purchaseRequest.update(update);
 
       if (process.env.NODE_ENV === 'production') {
-        if (status.name === EStatus.approved) {
+        if (status.name === EStatus.approvedDiretor) {
           await this.sendEmail(
             userAdministrativo.email,
             process.env.FROM_EMAIL,
@@ -492,7 +492,7 @@ export class PurchaseRequestService {
       where: { id: purchaseRequest.status_id },
     });
 
-    if (statusApproved.name === EStatus.approved) {
+    if (statusApproved.name === EStatus.approvedDiretor) {
       return {
         status: false,
         message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,

@@ -1,6 +1,6 @@
 export enum EStatus {
   waiting = 'AGUARDANDO',
-  approvedgestor = 'APROVADO GESTOR',
-  approved = 'APROVADO',
+  approvedGestor = '1º APROVAÇÃO',
+  approvedDiretor = '2º APROVAÇÃO',
   reject = 'REJEITADO',
 }

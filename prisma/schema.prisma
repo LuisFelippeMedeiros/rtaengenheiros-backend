@@ -125,7 +125,7 @@ model Supplier {
   id               String                  @id @default(uuid())
   name             String
   cnpj             String                  @unique
-  ie               String
+  ie               String?
   telephone        String
   email            String?
   account          String?

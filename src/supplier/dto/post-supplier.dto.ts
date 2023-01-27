@@ -9,9 +9,6 @@ export class PostSupplierDto extends Supplier {
   cnpj: string;
 
   @IsString()
-  ie: string;
-
-  @IsString()
   telephone: string;
 
   @IsString()
