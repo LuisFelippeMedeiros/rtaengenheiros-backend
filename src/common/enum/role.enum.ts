@@ -1,5 +1,5 @@
 export enum ERole {
-  gestor = 'GESTOR',
-  diretor = 'DIRETOR',
-  administrativo = 'ADMINISTRATIVO',
+  gestor = 'manager',
+  diretor = 'director',
+  administrativo = 'adm',
 }

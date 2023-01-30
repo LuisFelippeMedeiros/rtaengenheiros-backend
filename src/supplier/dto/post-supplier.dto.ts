@@ -41,6 +41,9 @@ export class PostSupplierDto extends Supplier {
   @IsString()
   complement: string;
 
+  @IsString()
+  ie: string;
+
   // @IsString()
   // company_id?: string;
 }
