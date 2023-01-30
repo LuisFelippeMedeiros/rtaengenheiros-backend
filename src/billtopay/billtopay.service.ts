@@ -195,7 +195,6 @@ export class BillToPayService {
     const update = {
       where: { id },
       data: {
-        id: id,
         payment_info: putBillToPayDto.payment_info,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
@@ -203,6 +202,7 @@ export class BillToPayService {
         scheduling: putBillToPayDto.scheduling,
         price_updated: putBillToPayDto.price_updated,
         invoice_attachment: putBillToPayDto.invoice_attachment,
+        company_id: putBillToPayDto.company_id,
         updated_by: req.user.id,
         updated_at: new Date(),
       },

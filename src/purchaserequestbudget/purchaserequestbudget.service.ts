@@ -18,6 +18,11 @@ export class PurchaseRequestBudgetService {
     };
 
     await this.prisma.purchaseRequestBudget.create({ data });
+
+    return {
+      status: true,
+      message: `Orçamento criado com sucesso`,
+    };
   }
 
   async findAll() {

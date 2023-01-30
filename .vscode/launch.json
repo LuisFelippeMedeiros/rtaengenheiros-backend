@@ -5,7 +5,9 @@
           "type": "node",
           "request": "launch",
           "name": "Launch Program",
-          "program": "${workspaceFolder}/app/release/web.js",
+          "args": ["${workspaceFolder}/src/main.ts"],
+          "sourceMaps": true,
+          "cwd": "${workspaceRoot}",
           "outFiles": [
               "${workspaceFolder}/**/*.js"
           ],

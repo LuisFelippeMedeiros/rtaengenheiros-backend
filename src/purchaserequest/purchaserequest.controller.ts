@@ -60,11 +60,6 @@ export class PurchaseRequestController {
     return await this.purchaseRequestService.rowCount(active, status);
   }
 
-  // @Get('all')
-  // async findAll() {
-  //   return await this.purchaseRequestService.findAll();
-  // }
-
   @Get('byid/:id')
   async findById(@Param('id') id: string) {
     return await this.purchaseRequestService.findById(id);
@@ -88,7 +83,7 @@ export class PurchaseRequestController {
     );
   }
 
-  @Patch('approvegestor/:id')
+  @Patch('approve_manager/:id')
   async approveGestor(
     @Param('id') id: string,
     @Body() patchPurchaseRequestDto: PatchPurchaseRequestDto,
@@ -100,7 +95,7 @@ export class PurchaseRequestController {
       req,
     );
   }
-  @Patch('approvediretor/:id')
+  @Patch('approve_director/:id')
   async approveDiretor(
     @Param('id') id: string,
     @Body() patchPurchaseRequestDto: PatchPurchaseRequestDto,
