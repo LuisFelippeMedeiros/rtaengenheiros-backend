@@ -40,4 +40,7 @@ export class PostBillToPayDto extends BillToPay {
 
   @IsString()
   company_id?: string;
+
+  @IsBoolean()
+  is_duty?: boolean;
 }
