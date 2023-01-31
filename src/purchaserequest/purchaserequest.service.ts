@@ -368,35 +368,36 @@ export class PurchaseRequestService {
         },
       });
 
-      await this.prisma.purchaseRequest.update(update);
+      // await this.prisma.purchaseRequest.update(update);
 
-      // if (process.env.NODE_ENV === 'production') {
-      //   const administrativoGroup = await this.prisma.group.findFirst({
-      //     where: {
-      //       type: EGroupType.administrator,
-      //     },
-      //   });
+      if (process.env.NODE_ENV === 'production') {
+        const administrativoGroup = await this.prisma.group.findFirst({
+          where: {
+            type: EGroupType.administrator,
+          },
+        });
 
-      //   if (administrativoGroup) {
-      //     const userAdministrativo = await this.prisma.user.findFirst({
-      //       where: {
-      //         group_id: administrativoGroup.id,
-      //         company_id: purchaseRequest.company_id,
-      //       },
-      //     });
+        if (administrativoGroup) {
+          const userAdministrativo = await this.prisma.user.findFirst({
+            where: {
+              group_id: administrativoGroup.id,
+              company_id: purchaseRequest.company_id,
+            },
+          });
+          await this.prisma.purchaseRequest.update(update);
 
-      //     if (status.name === EStatus.approvedDiretor) {
-      //       await this.sendEmail(
-      //         userAdministrativo.email,
-      //         process.env.FROM_EMAIL,
-      //         `Nova Solicitação de compra para aprovação (${status.name})`,
-      //         `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
-      //         `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
-      //         Obs: Favor não responder este e-mail`,
-      //       );
-      //     }
-      //   }
-      // }
+          if (status.name === EStatus.approvedDiretor) {
+            await this.sendEmail(
+              userAdministrativo.email,
+              process.env.FROM_EMAIL,
+              `Nova Solicitação de compra para aprovação (${status.name})`,
+              `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
+              `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+              Obs: Favor não responder este e-mail`,
+            );
+          }
+        }
+      }
 
       const findBudget = await this.prisma.purchaseRequestBudget.findFirst({
         where: {
