@@ -384,7 +384,6 @@ export class PurchaseRequestService {
               company_id: purchaseRequest.company_id,
             },
           });
-          await this.prisma.purchaseRequest.update(update);
 
           if (status.name === EStatus.approvedDiretor) {
             await this.sendEmail(
@@ -395,6 +394,7 @@ export class PurchaseRequestService {
               `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
               Obs: Favor não responder este e-mail`,
             );
+            await this.prisma.purchaseRequest.update(update);
           }
         }
       }
