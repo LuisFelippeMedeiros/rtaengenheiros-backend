@@ -4,7 +4,6 @@ import { PostBillToPayDto } from './dto/post-billtopay.dto';
 import { EBillStatus } from '../common/enum/billstatus.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
-import { ERole } from 'src/common/enum/role.enum';
 
 @Injectable()
 export class BillToPayService {
@@ -14,7 +13,7 @@ export class BillToPayService {
     const data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
-      type: 'CP',
+      type: postBillToPayDto.is_duty ? 'IMP' : 'CP',
       dda: postBillToPayDto.dda,
       reference_month: postBillToPayDto.reference_month,
       issue_date: postBillToPayDto.issue_date,
