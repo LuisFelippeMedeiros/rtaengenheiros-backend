@@ -382,6 +382,8 @@ export class PurchaseRequestService {
               company_id: purchaseRequest.company_id,
             },
           });
+          console.log(userAdministrativo.name);
+          console.log(diretor.name);
 
           await this.sendEmail(
             userAdministrativo.email,
