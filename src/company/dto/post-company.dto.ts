@@ -8,9 +8,6 @@ export class PostCompanyDto extends Company {
   @IsString()
   cnpj: string;
 
-  @IsString()
-  ie: string;
-
   @IsInt()
   city_id: number;
 }

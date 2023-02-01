@@ -364,7 +364,7 @@ export class PurchaseRequestService {
 
       const status = await this.prisma.status.findFirst({
         where: {
-          name: update.data.status_id,
+          id: update.data.status_id,
         },
       });
 
@@ -386,7 +386,7 @@ export class PurchaseRequestService {
           await this.sendEmail(
             userAdministrativo.email,
             process.env.FROM_EMAIL,
-            `Nova Solicitação de compra para aprovação ()`,
+            `Nova Solicitação de compra para aprovação (${status.name})`,
             `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
             `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
                 Obs: Favor não responder este e-mail`,

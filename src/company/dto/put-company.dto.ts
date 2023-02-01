@@ -4,9 +4,6 @@ import { PostCompanyDto } from './post-company.dto';
 
 export class PutCompanyDto extends PartialType(PostCompanyDto) {
   @IsString()
-  ie: string;
-
-  @IsString()
   name: string;
 
   @IsBoolean()

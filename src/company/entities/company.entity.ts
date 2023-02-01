@@ -1,7 +1,7 @@
 export class Company {
   id?: string;
   cnpj: string;
-  ie: string;
+  ie?: string;
   city_id: number;
   active?: boolean;
   created_at: Date;
