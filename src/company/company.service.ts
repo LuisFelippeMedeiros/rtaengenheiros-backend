@@ -11,7 +11,7 @@ export class CompanyService {
     const data = {
       name: postCompanyDto.name,
       cnpj: postCompanyDto.cnpj,
-      ie: postCompanyDto.ie?,
+      ie: postCompanyDto.ie,
       created_by: req.user.id,
       city_id: postCompanyDto.city_id,
     };
