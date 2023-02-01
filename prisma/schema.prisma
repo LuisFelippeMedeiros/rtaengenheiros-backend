@@ -103,7 +103,7 @@ model Company {
   id              String            @id @default(uuid())
   name            String?
   cnpj            String            @unique()
-  ie              String
+  ie              String?
   active          Boolean           @default(true)
   created_at      DateTime          @default(now())
   created_by      String?
