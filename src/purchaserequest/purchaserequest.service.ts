@@ -54,36 +54,51 @@ export class PurchaseRequestService {
       const result = await this.prisma.purchaseRequest.create({ data });
 
       for (let i = 0; i < sizeArrayProductId; i++) {
-        await this.prisma.purchaseRequestProduct.create({
-          data: {
-            product_id: postPurchaseRequestDto.product_id[i],
-            purchaserequest_id: result.id,
-          },
-        });
+        try {
+          await this.prisma.purchaseRequestProduct.create({
+            data: {
+              product_id: postPurchaseRequestDto.product_id[i],
+              purchaserequest_id: result.id,
+            },
+          });
+        } catch (ex) {
+          await this.prisma.purchaseRequest.delete({
+            where: {
+              id: result.id,
+            },
+          });
+          console.log(ex);
+        }
       }
 
-      const gestorGroup = await this.prisma.group.findFirst({
-        where: {
-          name: ERole.gestor,
-        },
-      });
-
-      const userGestor = await this.prisma.user.findFirst({
-        where: {
-          group_id: gestorGroup.id,
-          company_id: userCreateReq.company_id,
-        },
-      });
-
       if (process.env.NODE_ENV === 'production') {
-        await this.sendEmail(
-          userGestor.email,
-          process.env.FROM_EMAIL,
-          `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
-          `Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br`,
-          `<strong>Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
-          Obs: Favor não responder este e-mail`,
-        );
+        const managerGroups = await this.prisma.group.findMany({
+          where: {
+            type: EGroupType.manager,
+          },
+        });
+
+        if (managerGroups.length > 0) {
+          for (let g = 0; g < managerGroups.length; g++) {
+            const userGestor = await this.prisma.user.findFirst({
+              where: {
+                group_id: managerGroups[g].id,
+                company_id: userCreateReq.company_id,
+              },
+            });
+
+            if (userGestor) {
+              await this.sendEmail(
+                userGestor.email,
+                process.env.FROM_EMAIL,
+                `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
+                `Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br`,
+                `<strong>Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+                Obs: Favor não responder este e-mail`,
+              );
+            }
+          }
+        }
       }
 
       return {
@@ -127,7 +142,7 @@ export class PurchaseRequestService {
         },
       });
 
-    if (purchaseRequestApproved.Status.name === EStatus.approved) {
+    if (purchaseRequestApproved.Status.name === EStatus.approvedDiretor) {
       return {
         status: false,
         message: `Essa solicitação de compra se encontra com o status de APROVADA, não podendo ser alterada`,
@@ -205,68 +220,74 @@ export class PurchaseRequestService {
       },
     });
 
+    if (user.group.type === EGroupType.administrator) {
+      return {
+        status: false,
+        message: `Você não tem permissão para realizar essa ação`,
+      };
+    }
+
     const purchaseRequest = await this.prisma.purchaseRequest.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
-    const statusApproved = await this.prisma.status.findFirst({
+    const statusPurchaseRequest = await this.prisma.status.findFirst({
       where: { id: purchaseRequest.status_id },
     });
 
-    if (statusApproved.name === EStatus.approved) {
+    if (statusPurchaseRequest.name === EStatus.approvedDiretor) {
       return {
         status: false,
         message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,
       };
     }
 
-    if (
-      user.group.name === ERole.gestor &&
-      user.group.type === EGroupType.all
-    ) {
-      const update = {
+    if (user.group.type === EGroupType.manager) {
+      const statusApproved = await this.prisma.status.findFirst({
         where: {
-          id: id,
+          name: EStatus.approvedGestor,
         },
+      });
+
+      const update = {
+        where: { id },
         data: {
-          status_id: patchPurchaseRequestDto.status_id,
+          status_id: statusApproved.id,
           comment: patchPurchaseRequestDto.comment,
           approvedgestor_at: new Date(),
           approvedgestor_by: req.user.id,
-          is_approved_gestor: patchPurchaseRequestDto.is_approved_gestor,
+          is_approved_gestor: patchPurchaseRequestDto.is_approved,
         },
       };
 
-      const gestor = await this.prisma.user.findFirst({
-        where: {
-          id: req.user.id,
-        },
-      });
-
       await this.prisma.purchaseRequest.update(update);
 
-      const status = await this.prisma.status.findFirst({
-        where: {
-          id: update.data.status_id,
-        },
-      });
-
-      const diretorGroup = await this.prisma.group.findFirst({
-        where: {
-          name: ERole.diretor,
-        },
-      });
-
-      const userDiretor = await this.prisma.user.findFirst({
-        where: {
-          group_id: diretorGroup.id,
-        },
-      });
-
       if (process.env.NODE_ENV === 'production') {
-        if (status.name === EStatus.approvedgestor) {
+        const status = await this.prisma.status.findFirst({
+          where: {
+            id: update.data.status_id,
+          },
+        });
+
+        const diretorGroup = await this.prisma.group.findFirst({
+          where: {
+            type: EGroupType.director,
+          },
+        });
+
+        const userDiretor = await this.prisma.user.findFirst({
+          where: {
+            group_id: diretorGroup.id,
+          },
+        });
+
+        if (status.name === EStatus.approvedGestor) {
+          const gestor = await this.prisma.user.findFirst({
+            where: {
+              id: req.user.id,
+            },
+          });
+
           await this.sendEmail(
             userDiretor.email,
             process.env.FROM_EMAIL,
@@ -304,25 +325,34 @@ export class PurchaseRequestService {
       },
     });
 
+    if (user.group.type !== EGroupType.director) {
+      return {
+        status: false,
+        message: `Você não tem permissão para realizar essa ação`,
+      };
+    }
+
     const purchaseRequest = await this.prisma.purchaseRequest.findUnique({
       where: {
         id,
       },
     });
 
-    if (
-      user.group.name === ERole.diretor &&
-      user.group.type === EGroupType.all &&
-      purchaseRequest.is_approved_gestor === true
-    ) {
+    if (purchaseRequest.is_approved_gestor === true) {
+      const statusApprovedDirector = await this.prisma.status.findFirst({
+        where: {
+          name: EStatus.approvedDiretor,
+        },
+      });
+
       const update = {
         where: { id },
         data: {
-          status_id: patchPurchaseRequestDto.status_id,
+          status_id: statusApprovedDirector.id,
           comment: patchPurchaseRequestDto.comment,
           approveddiretor_at: new Date(),
           approveddiretor_by: req.user.id,
-          is_approved_diretor: patchPurchaseRequestDto.is_approved_diretor,
+          is_approved_diretor: patchPurchaseRequestDto.is_approved,
         },
       };
 
@@ -333,44 +363,46 @@ export class PurchaseRequestService {
       });
 
       const status = await this.prisma.status.findFirst({
-        where: { name: update.data.status_id },
-      });
-
-      const administrativoGroup = await this.prisma.group.findFirst({
         where: {
-          name: ERole.administrativo,
+          id: update.data.status_id,
         },
       });
-
-      const userAdministrativo = await this.prisma.user.findFirst({
-        where: {
-          group_id: administrativoGroup.id,
-          company_id: purchaseRequest.company_id,
-        },
-      });
-
-      await this.prisma.purchaseRequest.update(update);
 
       if (process.env.NODE_ENV === 'production') {
-        if (status.name === EStatus.approved) {
+        const administrativoGroup = await this.prisma.group.findFirst({
+          where: {
+            type: EGroupType.administrator,
+          },
+        });
+
+        if (administrativoGroup) {
+          const userAdministrativo = await this.prisma.user.findFirst({
+            where: {
+              group_id: administrativoGroup.id,
+              company_id: purchaseRequest.company_id,
+            },
+          });
+
           await this.sendEmail(
             userAdministrativo.email,
             process.env.FROM_EMAIL,
             `Nova Solicitação de compra para aprovação (${status.name})`,
             `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
             `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
-            Obs: Favor não responder este e-mail`,
+                Obs: Favor não responder este e-mail`,
           );
+          await this.prisma.purchaseRequest.update(update);
         }
       }
 
       const findBudget = await this.prisma.purchaseRequestBudget.findFirst({
         where: {
           id: req.query.id,
+          to_be_approved: true,
         },
       });
 
-      const productName = await this.prisma.purchaseRequestProduct.findFirst({
+      const productName = await this.prisma.purchaseRequestProduct.findMany({
         where: {
           id: req.query.id,
         },
@@ -383,14 +415,31 @@ export class PurchaseRequestService {
         },
       });
 
+      let nameNewBillToPay = '';
+
+      if (productName.length > 0) {
+        for (let i = 0; i < productName.length; i++) {
+          if (i < 1) {
+            nameNewBillToPay = productName[i].Product.name;
+          } else {
+            nameNewBillToPay =
+              nameNewBillToPay + '/' + productName[i].Product.name;
+          }
+        }
+      }
+
       const data = {
-        name: productName.Product.name,
+        name: nameNewBillToPay,
         type: 'SC',
         supplier_id: findBudget.supplier_id,
         price_approved: findBudget.budget,
         price_updated: findBudget.budget,
         created_by: req.user.id,
-        // company_id: req.user.company_id,
+        bill_status: 'A',
+        payment_info: '',
+        comment: '',
+        invoice_attachment: '',
+        company_id: purchaseRequest.company_id,
       };
 
       await this.prisma.billToPay.create({ data });
@@ -407,17 +456,17 @@ export class PurchaseRequestService {
     patchPurchaseRequestDto: PatchPurchaseRequestDto,
     @Req() req: any,
   ) {
-    const statusApproved = await this.prisma.status.findFirst({
+    const statusRejected = await this.prisma.status.findFirst({
       where: {
         name: {
-          equals: 'REJEITADO',
+          equals: EStatus.reject,
         },
       },
     });
     const update = {
       where: { id },
       data: {
-        status_id: statusApproved.id,
+        status_id: statusRejected.id,
         comment: patchPurchaseRequestDto.comment,
         rejected_by: req.user.id,
         rejected_at: new Date(),
@@ -440,23 +489,23 @@ export class PurchaseRequestService {
       where: { name: update.data.status_id },
     });
 
-    const administrativoGroup = await this.prisma.group.findFirst({
-      where: {
-        name: ERole.administrativo,
-      },
-    });
-
-    const userAdministrativo = await this.prisma.user.findFirst({
-      where: {
-        group_id: administrativoGroup.id,
-        company_id: purchaseRequest.company_id,
-      },
-    });
-
     await this.prisma.purchaseRequest.update(update);
 
     if (status.name === EStatus.reject) {
       if (process.env.NODE_ENV === 'production') {
+        const administrativoGroup = await this.prisma.group.findFirst({
+          where: {
+            name: ERole.administrativo,
+          },
+        });
+
+        const userAdministrativo = await this.prisma.user.findFirst({
+          where: {
+            group_id: administrativoGroup.id,
+            company_id: purchaseRequest.company_id,
+          },
+        });
+
         await this.sendEmail(
           userAdministrativo.email,
           process.env.FROM_EMAIL,
@@ -492,7 +541,7 @@ export class PurchaseRequestService {
       where: { id: purchaseRequest.status_id },
     });
 
-    if (statusApproved.name === EStatus.approved) {
+    if (statusApproved.name === EStatus.approvedDiretor) {
       return {
         status: false,
         message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,
@@ -651,11 +700,9 @@ export class PurchaseRequestService {
     return purchaseRequest;
   }
 
-  async rowCount(active = true, statusName: string) {
+  async rowCount(active = true, name: string) {
     const status = await this.prisma.status.findFirst({
-      where: {
-        name: statusName,
-      },
+      where: { name },
       select: {
         id: true,
       },

@@ -4,7 +4,6 @@ import { PostBillToPayDto } from './dto/post-billtopay.dto';
 import { EBillStatus } from '../common/enum/billstatus.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
-import { ERole } from 'src/common/enum/role.enum';
 
 @Injectable()
 export class BillToPayService {
@@ -14,7 +13,7 @@ export class BillToPayService {
     const data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
-      type: 'CP',
+      type: postBillToPayDto.is_duty ? 'IMP' : 'CP',
       dda: postBillToPayDto.dda,
       reference_month: postBillToPayDto.reference_month,
       issue_date: postBillToPayDto.issue_date,
@@ -25,7 +24,7 @@ export class BillToPayService {
       price_updated: postBillToPayDto.price_approved,
       invoice_attachment: postBillToPayDto.invoice_attachment,
       comment: postBillToPayDto.comment,
-      company_id: postBillToPayDto.company_id,
+      company_id: req.user.company_id,
       created_by: req.user.id,
       bill_status: postBillToPayDto.dda
         ? EBillStatus.fechada
@@ -195,7 +194,6 @@ export class BillToPayService {
     const update = {
       where: { id },
       data: {
-        id: id,
         payment_info: putBillToPayDto.payment_info,
         issue_date: putBillToPayDto.issue_date,
         comment: putBillToPayDto.comment,
@@ -203,6 +201,7 @@ export class BillToPayService {
         scheduling: putBillToPayDto.scheduling,
         price_updated: putBillToPayDto.price_updated,
         invoice_attachment: putBillToPayDto.invoice_attachment,
+        company_id: putBillToPayDto.company_id,
         updated_by: req.user.id,
         updated_at: new Date(),
       },
@@ -256,7 +255,7 @@ export class BillToPayService {
     };
   }
 
-  async paid(id: string, putBillToPayDto: PostBillToPayDto, @Req() req: any) {
+  async paid(id: string, @Req() req: any) {
     const billToPay = await this.prisma.billToPay.findFirst({
       where: { id },
     });
@@ -297,15 +296,25 @@ export class BillToPayService {
       };
     }
 
-    if (user.group.name === ERole.diretor) {
+    if (user.group.type === 'all') {
       const update = {
         where: { id },
         data: {
-          bill_status: putBillToPayDto.bill_status,
+          bill_status: EBillStatus.fechada,
         },
       };
 
       await this.prisma.billToPay.update(update);
+
+      return {
+        status: true,
+        message: `A conta foi fechada com sucesso!`,
+      };
+    } else {
+      return {
+        status: false,
+        message: `Você não tem permissão para fechar esta conta`,
+      };
     }
   }
 

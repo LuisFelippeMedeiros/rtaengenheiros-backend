@@ -11,7 +11,9 @@ export class UnitService {
     const data = {
       initials: postUnitDto.initials,
       description: postUnitDto.description,
+      active: true,
       created_by: req.user.id,
+      created_at: new Date(),
     };
 
     await this.prisma.unit.create({ data });
@@ -22,8 +24,10 @@ export class UnitService {
     };
   }
 
-  async findAll() {
-    const units = await this.prisma.unit.findMany();
+  async findAll(active = true) {
+    const units = await this.prisma.unit.findMany({
+      where: { active },
+    });
 
     return units;
   }
@@ -37,6 +41,12 @@ export class UnitService {
       },
     });
     return unit;
+  }
+
+  async findById(id: string) {
+    return await this.prisma.unit.findFirst({
+      where: { id },
+    });
   }
 
   async findPagination(page = 1, active = true) {

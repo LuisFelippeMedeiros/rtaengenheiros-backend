@@ -9,9 +9,6 @@ export class PostSupplierDto extends Supplier {
   cnpj: string;
 
   @IsString()
-  ie: string;
-
-  @IsString()
   telephone: string;
 
   @IsString()
@@ -43,6 +40,9 @@ export class PostSupplierDto extends Supplier {
 
   @IsString()
   complement: string;
+
+  @IsString()
+  ie: string;
 
   // @IsString()
   // company_id?: string;

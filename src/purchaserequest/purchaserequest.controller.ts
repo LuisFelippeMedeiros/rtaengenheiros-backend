@@ -17,7 +17,6 @@ import { PatchPurchaseRequestDto } from './dto/patch-purchaserequest.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { GetPurchaseRequestFilterDto } from './dto/get-purchaserequest-filter.dto';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @ApiTags('PurchaseRequest')
 @Controller({
@@ -61,11 +60,6 @@ export class PurchaseRequestController {
     return await this.purchaseRequestService.rowCount(active, status);
   }
 
-  // @Get('all')
-  // async findAll() {
-  //   return await this.purchaseRequestService.findAll();
-  // }
-
   @Get('byid/:id')
   async findById(@Param('id') id: string) {
     return await this.purchaseRequestService.findById(id);
@@ -89,7 +83,7 @@ export class PurchaseRequestController {
     );
   }
 
-  @Patch('approvegestor/:id')
+  @Patch('approve_manager/:id')
   async approveGestor(
     @Param('id') id: string,
     @Body() patchPurchaseRequestDto: PatchPurchaseRequestDto,
@@ -101,7 +95,7 @@ export class PurchaseRequestController {
       req,
     );
   }
-  @Patch('approvediretor/:id')
+  @Patch('approve_director/:id')
   async approveDiretor(
     @Param('id') id: string,
     @Body() patchPurchaseRequestDto: PatchPurchaseRequestDto,

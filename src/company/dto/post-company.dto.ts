@@ -1,4 +1,4 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 import { Company } from '../entities/company.entity';
 
 export class PostCompanyDto extends Company {
@@ -9,6 +9,7 @@ export class PostCompanyDto extends Company {
   cnpj: string;
 
   @IsString()
+  @IsOptional()
   ie: string;
 
   @IsInt()
