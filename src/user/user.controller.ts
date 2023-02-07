@@ -19,6 +19,7 @@ import {
 import { UserService } from './user.service';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
+import { PatchUserDto } from './dto/patch-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
@@ -71,7 +72,16 @@ export class UserController {
     return this.userService.deactivate(id, req);
   }
 
-  @Patch(':id/avatar')
+  @Patch('password/:id')
+  password(
+    @Param('id') id: string,
+    @Body() patchUserDto: PatchUserDto,
+    @Req() req: any,
+  ) {
+    return this.userService.password(id, patchUserDto, req);
+  }
+
+  @Patch('avatar/:id')
   @UseInterceptors(FileInterceptor('file'))
   async updateAvatar(
     @Param('id') id: string,
