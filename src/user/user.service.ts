@@ -116,6 +116,16 @@ export class UserService {
       },
     };
 
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado!');
+    }
+
     await this.prisma.user.update(update);
 
     return {
