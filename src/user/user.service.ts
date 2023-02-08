@@ -1,10 +1,16 @@
-import { Injectable, Req } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  Req,
+} from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
+import { PatchUserDto } from './dto/patch-user.dto';
 
 const include = {
   group: {
@@ -110,6 +116,16 @@ export class UserService {
       },
     };
 
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado!');
+    }
+
     await this.prisma.user.update(update);
 
     return {
@@ -139,6 +155,38 @@ export class UserService {
     return {
       status: true,
       message: `O usuário ${user.name} foi desativado com sucesso.`,
+    };
+  }
+
+  async password(id: string, patchUserDto: PatchUserDto, @Req() req: any) {
+    const update = {
+      where: { id },
+      data: {
+        password: await bcrypt.hash(patchUserDto.password, 10),
+        updated_by: req.user.id,
+        updated_at: new Date(),
+      },
+    };
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado!');
+    }
+
+    if (patchUserDto.password !== patchUserDto.password_confirmation) {
+      throw new BadRequestException('As senhas não coincidem');
+    }
+
+    await this.prisma.user.update(update);
+
+    return {
+      status: true,
+      message: `A senha foi alterada com sucesso.`,
     };
   }
 
