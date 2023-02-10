@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { PostSupplierDto } from './post-supplier.dto';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class PutSupplierDto extends PartialType(PostSupplierDto) {
   @IsString()
@@ -9,36 +9,47 @@ export class PutSupplierDto extends PartialType(PostSupplierDto) {
   @IsString()
   telephone: string;
 
+  @IsOptional()
   @IsString()
   account: string;
 
+  @IsOptional()
+  @IsString()
+  account_type: string;
+
+  @IsOptional()
+  @IsString()
+  operation: string;
+
+  @IsOptional()
   @IsString()
   cnpj: string;
 
-  @IsString()
-  ie: string;
-
+  @IsOptional()
   @IsString()
   agency: string;
 
+  @IsOptional()
   @IsString()
   bank: string;
 
+  @IsOptional()
   @IsString()
   pix: string;
 
-  @IsString()
-  pix2: string;
-
+  @IsOptional()
   @IsString()
   address: string;
 
+  @IsOptional()
   @IsString()
   district: string;
 
+  @IsOptional()
   @IsString()
   number: string;
 
+  @IsOptional()
   @IsString()
   complement: string;
 }
