@@ -129,7 +129,7 @@ export class BillToPayService {
         },
       },
       orderBy: {
-        due_date: 'desc',
+        identifier: 'desc',
       },
       where,
     });
@@ -146,6 +146,15 @@ export class BillToPayService {
           select: {
             id: true,
             name: true,
+            email: true,
+            pix: true,
+            telephone: true,
+            cnpj: true,
+            agency: true,
+            bank: true,
+            account: true,
+            account_type: true,
+            operation: true,
           },
         },
         Company: {

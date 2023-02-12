@@ -674,6 +674,9 @@ export class PurchaseRequestService {
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 5,
       skip: 5 * (page - 1),
+      orderBy: {
+        identifier: 'desc',
+      },
       where: {
         active,
         status_id: status.id,
