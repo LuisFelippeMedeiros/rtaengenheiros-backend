@@ -6,7 +6,7 @@ export class PostBillToPayDto extends BillToPay {
   name: string;
 
   @IsString()
-  payment_info?: string;
+  payment_info?: string = '';
 
   @IsString()
   reference_month?: string;
