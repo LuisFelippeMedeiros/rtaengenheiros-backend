@@ -32,8 +32,8 @@ export class BillToPayController {
   }
 
   @Get('all')
-  async findAll() {
-    return this.billtopayService.findAll();
+  async findAll(@Req() req: any) {
+    return this.billtopayService.findAll(req);
   }
 
   @Get()

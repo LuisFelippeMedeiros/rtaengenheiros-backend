@@ -557,7 +557,7 @@ export class PurchaseRequestService {
   }
 
   async filtered(filterDto: GetPurchaseRequestFilterDto) {
-    const { id, initial_date, final_date, created_by } = filterDto;
+    const { id, initial_date, final_date, created_by, company_id } = filterDto;
     let purchases = await this.prisma.purchaseRequest.findMany({
       include: {
         Status: {
@@ -584,17 +584,29 @@ export class PurchaseRequestService {
           purchase.created_at.toISOString >= final_date.toISOString,
       );
     }
-    // if (company_id) {
-    //   purchases = purchases.filter(
-    //     (purchase) => purchase.company_id === company_id,
-    //   );
-    // }
+    if (company_id) {
+      purchases = purchases.filter(
+        (purchase) => purchase.company_id === company_id,
+      );
+    }
 
     return purchases;
   }
 
-  async findAll() {
-    const purchaseRequests = await this.prisma.purchaseRequest.findMany({
+  async findAll(@Req() req: any) {
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: req.user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.name === EGroupType.director
+        ? { active: true }
+        : { company_id: req.user.company_id, active: true };
+
+    return await this.prisma.purchaseRequest.findMany({
+      where: whereClause,
       include: {
         Status: {
           select: {
@@ -613,8 +625,6 @@ export class PurchaseRequestService {
         },
       },
     });
-
-    return purchaseRequests;
   }
 
   async findById(id: string) {

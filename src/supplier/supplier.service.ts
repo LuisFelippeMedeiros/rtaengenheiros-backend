@@ -1,4 +1,5 @@
 import { Injectable, Req } from '@nestjs/common';
+import { EGroupType } from 'src/common/enum/grouptype.enum';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostSupplierDto } from './dto/post-supplier.dto';
 import { PutSupplierDto } from './dto/put-supplier.dto';
@@ -82,11 +83,20 @@ export class SupplierService {
     });
   }
 
-  async getAll() {
-    return await this.prisma.supplier.findMany({
+  async getAll(@Req() req: any) {
+    const group = await this.prisma.group.findUnique({
       where: {
-        active: true,
+        id: req.user.group_id,
       },
+    });
+
+    const whereClause =
+      group.name === EGroupType.director
+        ? { active: true }
+        : { company_id: req.user.company_id, active: true };
+
+    return await this.prisma.supplier.findMany({
+      where: whereClause,
       select: {
         id: true,
         name: true,
@@ -144,7 +154,6 @@ export class SupplierService {
       },
     };
 
-    console.log(update);
     await this.prisma.supplier.update(update);
 
     return {

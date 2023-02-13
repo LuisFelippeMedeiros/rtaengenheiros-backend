@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
 import { EBillStatus } from '../common/enum/billstatus.enum';
+import { EGroupType } from '../common/enum/grouptype.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
 
@@ -39,8 +40,20 @@ export class BillToPayService {
     };
   }
 
-  async findAll() {
+  async findAll(@Req() req: any) {
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: req.user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.name === EGroupType.director
+        ? { active: true }
+        : { company_id: req.user.company_id, active: true };
+
     return await this.prisma.billToPay.findMany({
+      where: whereClause,
       include: {
         Supplier: {
           select: {
