@@ -91,6 +91,9 @@ export class SupplierService {
         id: true,
         name: true,
       },
+      orderBy: {
+        name: 'asc',
+      },
     });
   }
 
