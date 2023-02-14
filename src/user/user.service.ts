@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
 import { PatchUserDto } from './dto/patch-user.dto';
+import { EGroupType } from 'src/common/enum/grouptype.enum';
 
 const include = {
   group: {
@@ -35,17 +36,19 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postUserDto: PostUserDto, @Req() req: any) {
+    const { name, email, password, group_id, company_id } = postUserDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const data = {
-      name: postUserDto.name,
-      email: postUserDto.email,
-      password: await bcrypt.hash(postUserDto.password, 10),
-      group_id: postUserDto.group_id,
-      company_id: postUserDto.company_id,
+      name,
+      email,
+      password: hashedPassword,
+      group_id,
+      company_id,
       created_by: req.user.id,
       created_at: new Date(),
     };
 
-    const emailExists = await this.findByEmail(data.email);
+    const emailExists = await this.findByEmail(email);
 
     if (emailExists) {
       return {
@@ -58,7 +61,7 @@ export class UserService {
 
     return {
       status: true,
-      message: `O Usuário ${postUserDto.name} foi criado com sucesso.`,
+      message: `O Usuário ${name} foi criado com sucesso.`,
     };
   }
 
@@ -68,21 +71,45 @@ export class UserService {
     });
   }
 
-  async findAll(page = 1, active: boolean) {
-    const users = await this.prisma.user.findMany({
-      take: 5,
-      skip: 5 * (page - 1),
-      // include,
-      include,
+  async findAll(page = 1, active: boolean, @Req() req: any) {
+    const group = await this.prisma.group.findUnique({
       where: {
-        active: active,
-      },
-      orderBy: {
-        name: 'asc',
+        id: req.user.group_id,
       },
     });
 
-    return users;
+    if (group.name === EGroupType.director) {
+      const users = await this.prisma.user.findMany({
+        take: 5,
+        skip: 5 * (page - 1),
+        // include,
+        include,
+        where: {
+          active: active,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      });
+
+      return users;
+    } else {
+      const users = await this.prisma.user.findMany({
+        take: 5,
+        skip: 5 * (page - 1),
+        // include,
+        include,
+        where: {
+          company_id: req.user.company_id,
+          active: active,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      });
+
+      return users;
+    }
   }
 
   async findByEmail(email: string) {

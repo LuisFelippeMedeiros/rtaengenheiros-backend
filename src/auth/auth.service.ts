@@ -19,6 +19,7 @@ export class AuthService {
   async login(user: User) {
     const payload: UserPayload = {
       sub: user.id,
+      group: user.group_id,
     };
 
     const group = await this.groupService.findById(user.group_id);

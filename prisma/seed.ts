@@ -10,11 +10,11 @@ import { suppliers } from './seeds/suppliers';
 const prisma = new PrismaClient();
 
 async function main() {
-  // for (const supplier of suppliers) {
-  //   await prisma.supplier.create({
-  //     data: supplier,
-  //   });
-  // }
+  for (const supplier of suppliers) {
+    await prisma.supplier.create({
+      data: supplier,
+    });
+  }
   // for (const state of states) {
   //   await prisma.state.create({
   //     data: state,

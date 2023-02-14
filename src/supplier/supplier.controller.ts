@@ -39,8 +39,8 @@ export class SupplierController {
   }
 
   @Get('all')
-  async getAll() {
-    return await this.supplierService.getAll();
+  async getAll(@Req() req: any) {
+    return await this.supplierService.getAll(req);
   }
 
   @Get('rowCount')

@@ -44,8 +44,12 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('all')
-  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
-    return await this.userService.findAll(page, active);
+  async findAll(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+    @Req() req: any,
+  ) {
+    return await this.userService.findAll(page, active, req);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
