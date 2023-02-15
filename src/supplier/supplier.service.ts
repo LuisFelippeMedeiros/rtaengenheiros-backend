@@ -61,74 +61,41 @@ export class SupplierService {
   }
 
   async findFilter(filter = '', @Req() req: any) {
-    // const user = await this.prisma.user.findUnique({
-    //   where: {
-    //     id: req.user.id,
-    //   },
-    // });
-
-    // const group = await this.prisma.group.findUnique({
-    //   where: {
-    //     id: user.group_id,
-    //   },
-    // });
-
-    // const whereClause =
-    //   group.type === EGroupType.director
-    //     ? { active: true }
-    //     : { company_id: user.company_id, active: true };
-
-    // if (filter === '') {
-    //   return await this.prisma.supplier.findMany({
-    //     take: 10,
-    //     where: whereClause,
-    //     orderBy: {
-    //       name: 'asc',
-    //     },
-    //   });
-    // }
-
-    // return await this.prisma.supplier.findMany({
-    //   where: {
-    //     name: {
-    //       contains: filter.toUpperCase(),
-    //     },
-    //     active: true,
-    //   },
-    // });
-
-    const { id } = req.user;
-    const { group_id, company_id } = await this.prisma.user.findUnique({
-      where: { id },
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
     });
 
     const group = await this.prisma.group.findUnique({
-      where: { id: group_id },
+      where: {
+        id: user.group_id,
+      },
     });
 
     const whereClause =
       group.type === EGroupType.director
         ? { active: true }
-        : { company_id, active: true };
+        : { company_id: user.company_id, active: true };
 
-    const suppliers = filter
-      ? await this.prisma.supplier.findMany({
-          where: {
-            name: {
-              contains: filter.toUpperCase(),
-            },
-            ...whereClause,
-          },
-        })
-      : await this.prisma.supplier.findMany({
-          take: 10,
-          where: whereClause,
-          orderBy: {
-            name: 'asc',
-          },
-        });
+    if (filter === '') {
+      return await this.prisma.supplier.findMany({
+        take: 10,
+        where: whereClause,
+        orderBy: {
+          name: 'asc',
+        },
+      });
+    }
 
-    return suppliers;
+    return await this.prisma.supplier.findMany({
+      where: {
+        name: {
+          contains: filter.toUpperCase(),
+        },
+        ...whereClause,
+      },
+    });
   }
 
   async getAll(@Req() req: any) {
