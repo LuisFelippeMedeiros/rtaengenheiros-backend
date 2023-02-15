@@ -43,7 +43,7 @@ export class BillToPayService {
   async findAll(@Req() req: any) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: req.user,
+        id: req.user.id,
       },
     });
 
@@ -56,7 +56,7 @@ export class BillToPayService {
     const whereClause =
       group.name === EGroupType.director
         ? { active: true }
-        : { company_id: req.user.company_id, active: true };
+        : { company_id: user.company_id, active: true };
 
     return await this.prisma.billToPay.findMany({
       where: whereClause,

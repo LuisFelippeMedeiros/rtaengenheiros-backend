@@ -87,7 +87,7 @@ export class UserService {
     const whereClause =
       group.name === EGroupType.director
         ? { active: true }
-        : { company_id: req.user.company_id, active: true };
+        : { company_id: user.company_id, active: true };
 
     const users = await this.prisma.user.findMany({
       take: 5,
