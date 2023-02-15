@@ -72,10 +72,15 @@ export class UserService {
   }
 
   async findAll(page = 1, active: boolean, @Req() req: any) {
-    console.log(req.user);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user,
+      },
+    });
+
     const group = await this.prisma.group.findUnique({
       where: {
-        id: req.user.group_id,
+        id: user.company_id,
       },
     });
 

@@ -41,10 +41,15 @@ export class BillToPayService {
   }
 
   async findAll(@Req() req: any) {
-    console.log(req);
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user,
+      },
+    });
+
     const group = await this.prisma.group.findUnique({
       where: {
-        id: req.user.group_id,
+        id: user.company_id,
       },
     });
 
