@@ -49,7 +49,7 @@ export class BillToPayService {
 
     const group = await this.prisma.group.findUnique({
       where: {
-        id: user.company_id,
+        id: user.group_id,
       },
     });
 
