@@ -11,6 +11,7 @@ export class BillToPayService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postBillToPayDto: PostBillToPayDto, @Req() req: any) {
+    console.log('Erro aqui');
     const data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
@@ -41,6 +42,7 @@ export class BillToPayService {
   }
 
   async findAll(@Req() req: any) {
+    console.log('Chegando aqui.');
     // const user = await this.prisma.user.findUnique({
     //   where: {
     //     id: req.user.id,
