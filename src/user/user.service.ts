@@ -83,6 +83,7 @@ export class UserService {
         id: user.company_id,
       },
     });
+    console.log(group);
 
     const whereClause =
       group.name === EGroupType.director
