@@ -78,38 +78,24 @@ export class UserService {
       },
     });
 
-    if (group.name === EGroupType.director) {
-      const users = await this.prisma.user.findMany({
-        take: 5,
-        skip: 5 * (page - 1),
-        // include,
-        include,
-        where: {
-          active: active,
-        },
-        orderBy: {
-          name: 'asc',
-        },
-      });
+    const whereClause =
+      group.name === EGroupType.director
+        ? { active: true }
+        : { company_id: req.user.company_id, active: true };
+    console.log(whereClause);
 
-      return users;
-    } else {
-      const users = await this.prisma.user.findMany({
-        take: 5,
-        skip: 5 * (page - 1),
-        // include,
-        include,
-        where: {
-          company_id: req.user.company_id,
-          active: active,
-        },
-        orderBy: {
-          name: 'asc',
-        },
-      });
+    const users = await this.prisma.user.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      // include,
+      include,
+      where: whereClause,
+      orderBy: {
+        name: 'asc',
+      },
+    });
 
-      return users;
-    }
+    return users;
   }
 
   async findByEmail(email: string) {
