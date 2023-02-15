@@ -41,25 +41,25 @@ export class BillToPayService {
   }
 
   async findAll(@Req() req: any) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: req.user.id,
-      },
-    });
+    // const user = await this.prisma.user.findUnique({
+    //   where: {
+    //     id: req.user.id,
+    //   },
+    // });
 
-    const group = await this.prisma.group.findUnique({
-      where: {
-        id: user.group_id,
-      },
-    });
+    // const group = await this.prisma.group.findUnique({
+    //   where: {
+    //     id: user.group_id,
+    //   },
+    // });
 
-    const whereClause =
-      group.name === EGroupType.director
-        ? { active: true }
-        : { company_id: user.company_id, active: true };
+    // const whereClause =
+    //   group.name === EGroupType.director
+    //     ? { active: true }
+    //     : { company_id: user.company_id, active: true };
 
     return await this.prisma.billToPay.findMany({
-      where: whereClause,
+      // where: whereClause,
       include: {
         Supplier: {
           select: {
