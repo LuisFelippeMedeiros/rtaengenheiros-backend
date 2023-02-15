@@ -74,7 +74,7 @@ export class UserService {
   async findAll(page = 1, active: boolean, @Req() req: any) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: req.user,
+        id: req.user.id,
       },
     });
 
