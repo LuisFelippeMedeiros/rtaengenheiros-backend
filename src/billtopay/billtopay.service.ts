@@ -41,6 +41,7 @@ export class BillToPayService {
   }
 
   async findAll(@Req() req: any) {
+    console.log(req);
     const group = await this.prisma.group.findUnique({
       where: {
         id: req.user.group_id,
