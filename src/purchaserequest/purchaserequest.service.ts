@@ -609,8 +609,7 @@ export class PurchaseRequestService {
     const whereClause =
       group.type === EGroupType.director
         ? { active: true }
-        : { company_id: req.user.company_id, active: true };
-    console.log(whereClause);
+        : { company_id: user.company_id, active: true };
 
     return await this.prisma.purchaseRequest.findMany({
       where: whereClause,

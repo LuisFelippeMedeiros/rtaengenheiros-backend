@@ -85,7 +85,7 @@ export class UserService {
     });
 
     const whereClause =
-      group.name === EGroupType.director
+      group.type === EGroupType.director
         ? { active: true }
         : { company_id: user.company_id, active: true };
 

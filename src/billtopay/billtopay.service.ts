@@ -11,7 +11,6 @@ export class BillToPayService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postBillToPayDto: PostBillToPayDto, @Req() req: any) {
-    console.log('Erro aqui');
     const data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
@@ -42,26 +41,26 @@ export class BillToPayService {
   }
 
   async findAll(@Req() req: any) {
-    console.log('Chegando aqui.');
-    // const user = await this.prisma.user.findUnique({
-    //   where: {
-    //     id: req.user.id,
-    //   },
-    // });
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
 
-    // const group = await this.prisma.group.findUnique({
-    //   where: {
-    //     id: user.group_id,
-    //   },
-    // });
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
 
-    // const whereClause =
-    //   group.name === EGroupType.director
-    //     ? { active: true }
-    //     : { company_id: user.company_id, active: true };
+    const whereClause =
+      group.name === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+    console.log(whereClause);
 
     return await this.prisma.billToPay.findMany({
-      // where: whereClause,
+      where: whereClause,
       include: {
         Supplier: {
           select: {
