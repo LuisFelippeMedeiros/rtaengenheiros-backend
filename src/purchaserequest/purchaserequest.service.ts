@@ -594,14 +594,20 @@ export class PurchaseRequestService {
   }
 
   async findAll(@Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
     const group = await this.prisma.group.findUnique({
       where: {
-        id: req.user.group_id,
+        id: user.group_id,
       },
     });
 
     const whereClause =
-      group.name === EGroupType.director
+      group.type === EGroupType.director
         ? { active: true }
         : { company_id: req.user.company_id, active: true };
 
