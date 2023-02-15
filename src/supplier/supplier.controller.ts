@@ -29,8 +29,8 @@ export class SupplierController {
   }
 
   @Get('filter')
-  async findFilter(@Query('filter') filter: string) {
-    return await this.supplierService.findFilter(filter);
+  async findFilter(@Query('filter') filter: string, @Req() req: any) {
+    return await this.supplierService.findFilter(filter, req);
   }
 
   @Get()
