@@ -16,6 +16,19 @@ export class UnitService {
       created_at: new Date(),
     };
 
+    const unit = await this.prisma.unit.findUnique({
+      where: {
+        initials: postUnitDto.initials,
+      },
+    });
+
+    if (unit) {
+      return {
+        status: false,
+        message: `A unidade de medida já se encontra criada em nosso sistema, favor verificar!`,
+      };
+    }
+
     await this.prisma.unit.create({ data });
 
     return {

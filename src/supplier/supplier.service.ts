@@ -128,9 +128,26 @@ export class SupplierService {
     });
   }
 
-  async rowCount(active = true) {
+  async rowCount(active = true, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active }
+        : { company_id: user.company_id, active };
+
     return await this.prisma.supplier.count({
-      where: { active },
+      where: whereClause,
     });
   }
 
