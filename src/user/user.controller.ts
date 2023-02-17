@@ -38,8 +38,8 @@ export class UserController {
   }
 
   @Get('rowCount')
-  async countRows(@Query('active') active: boolean) {
-    return await this.userService.rowCount(active);
+  async countRows(@Query('active') active: boolean, @Req() req: any) {
+    return await this.userService.rowCount(active, req);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

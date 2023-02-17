@@ -60,13 +60,28 @@ export class SupplierService {
     return suppliers;
   }
 
-  async findFilter(filter = '') {
+  async findFilter(filter = '', @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
     if (filter === '') {
       return await this.prisma.supplier.findMany({
         take: 10,
-        where: {
-          active: true,
-        },
+        where: whereClause,
         orderBy: {
           name: 'asc',
         },
@@ -78,22 +93,28 @@ export class SupplierService {
         name: {
           contains: filter.toUpperCase(),
         },
-        active: true,
+        ...whereClause,
       },
     });
   }
 
   async getAll(@Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
     const group = await this.prisma.group.findUnique({
       where: {
-        id: req.user.group_id,
+        id: user.group_id,
       },
     });
 
     const whereClause =
-      group.name === EGroupType.director
+      group.type === EGroupType.director
         ? { active: true }
-        : { company_id: req.user.company_id, active: true };
+        : { company_id: user.company_id, active: true };
 
     return await this.prisma.supplier.findMany({
       where: whereClause,
@@ -101,12 +122,32 @@ export class SupplierService {
         id: true,
         name: true,
       },
+      orderBy: {
+        name: 'asc',
+      },
     });
   }
 
-  async rowCount(active = true) {
+  async rowCount(active = true, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active }
+        : { company_id: user.company_id, active };
+
     return await this.prisma.supplier.count({
-      where: { active },
+      where: whereClause,
     });
   }
 

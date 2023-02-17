@@ -65,24 +65,46 @@ export class UserService {
     };
   }
 
-  async rowCount(active = true) {
-    return await this.prisma.user.count({
-      where: { active },
+  async rowCount(active = true, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
     });
-  }
 
-  async findAll(page = 1, active: boolean, @Req() req: any) {
     const group = await this.prisma.group.findUnique({
       where: {
-        id: req.user.group_id,
+        id: user.group_id,
       },
     });
 
     const whereClause =
-      group.name === EGroupType.director
+      group.type === EGroupType.director
+        ? { active }
+        : { company_id: user.company_id, active };
+
+    return await this.prisma.user.count({
+      where: whereClause,
+    });
+  }
+
+  async findAll(page = 1, active: boolean, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
         ? { active: true }
-        : { company_id: req.user.company_id, active: true };
-    console.log(whereClause);
+        : { company_id: user.company_id, active: true };
 
     const users = await this.prisma.user.findMany({
       take: 5,
@@ -118,21 +140,21 @@ export class UserService {
   }
 
   async update(id: string, putUserDto: PutUserDto, @Req() req: any) {
+    const { name, group_id, company_id } = putUserDto;
+
     const update = {
       where: { id },
       data: {
-        name: putUserDto.name,
-        group_id: putUserDto.group_id,
-        company_id: putUserDto.company_id,
+        name,
+        group_id,
+        company_id,
         updated_by: req.user.id,
         updated_at: new Date(),
       },
     };
 
     const user = await this.prisma.user.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!user) {
@@ -143,26 +165,33 @@ export class UserService {
 
     return {
       status: true,
-      message: `O usuário ${putUserDto.name} foi alterado com sucesso.`,
+      message: `O usuário ${name} foi alterado com sucesso.`,
     };
   }
 
   async deactivate(id_user: string, @Req() req: any) {
-    const user = await this.prisma.user.findFirst({ where: { id: id_user } });
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: id_user,
+      },
+    });
 
     if (!user) {
       return {
         status: false,
         message: 'Este usuário não existe no sistema',
       };
-    } else {
-      user.active = false;
-      (user.deleted_by = req.body.id), (user.deleted_at = new Date());
     }
+
+    const data = {
+      active: false,
+      deleted_by: req.user.id,
+      deleted_at: new Date(),
+    };
 
     await this.prisma.user.update({
       where: { id: id_user },
-      data: user,
+      data,
     });
 
     return {
@@ -172,15 +201,6 @@ export class UserService {
   }
 
   async password(id: string, patchUserDto: PatchUserDto, @Req() req: any) {
-    const update = {
-      where: { id },
-      data: {
-        password: await bcrypt.hash(patchUserDto.password, 10),
-        updated_by: req.user.id,
-        updated_at: new Date(),
-      },
-    };
-
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -195,7 +215,16 @@ export class UserService {
       throw new BadRequestException('As senhas não coincidem');
     }
 
-    await this.prisma.user.update(update);
+    const passwordHash = await bcrypt.hash(patchUserDto.password, 10);
+
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: passwordHash,
+        updated_by: req.user.id,
+        updated_at: new Date(),
+      },
+    });
 
     return {
       status: true,
@@ -204,8 +233,8 @@ export class UserService {
   }
 
   async uploadAvatar(id: string, dataBuffer: Buffer, filename: string) {
+    const s3 = new S3();
     try {
-      const s3 = new S3();
       const uploadResult = await s3
         .upload({
           Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
@@ -213,23 +242,16 @@ export class UserService {
           Key: `${uuidv4()}-${filename}`,
         })
         .promise();
-      const userAvatar = {
-        where: {
-          id,
-        },
-        data: {
-          avatar: uploadResult.Location,
-        },
+      const user = await this.prisma.user.update({
+        where: { id },
+        data: { avatar: uploadResult.Location },
+      });
+      return {
+        status: true,
+        message: `A foto de perfil do usuário ${user.name} foi atualizada com sucesso.`,
       };
-
-      await this.prisma.user.update(userAvatar);
     } catch (err) {
-      return { key: 'error', url: err.message };
+      return { status: false, message: err.message };
     }
-
-    return {
-      status: true,
-      message: `A foto de perfil do usuário foi atualizada com sucesso.`,
-    };
   }
 }
