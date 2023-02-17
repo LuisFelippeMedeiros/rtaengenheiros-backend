@@ -2,6 +2,7 @@ import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
 import { EBillStatus } from '../common/enum/billstatus.enum';
+import { EGroupType } from '../common/enum/grouptype.enum';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
 
@@ -39,8 +40,27 @@ export class BillToPayService {
     };
   }
 
-  async findAll() {
+  async findAll(@Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.name === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+    console.log(whereClause);
+
     return await this.prisma.billToPay.findMany({
+      where: whereClause,
       include: {
         Supplier: {
           select: {
@@ -55,7 +75,26 @@ export class BillToPayService {
     });
   }
 
-  async findPagination(filters: IFilter_bill_to_pay, onlyRowCount = false) {
+  async findPagination(
+    filters: IFilter_bill_to_pay,
+    onlyRowCount = false,
+    @Req() req: any,
+  ) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+      select: {
+        group: true,
+        company_id: true,
+      },
+    });
+
+    const whereClause =
+      user.group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
     const filtersParameters = JSON.parse(String(filters));
     const where: any = {};
     let supplier = null;
@@ -74,16 +113,16 @@ export class BillToPayService {
           message: 'Fornecedor não encontrado',
         };
       }
-      where.supplier_id = supplier ? supplier.id : undefined;
+      where.supplier_id = supplier.id;
     }
 
     if (
       filtersParameters.date_filter &&
       filtersParameters.date_filter.length > 0
     ) {
-      datesFilter = filtersParameters.date_filter;
-      datesFilter[0] = datesFilter[0] ? new Date(datesFilter[0]) : undefined;
-      datesFilter[1] = datesFilter[1] ? new Date(datesFilter[1]) : undefined;
+      datesFilter = filtersParameters.date_filter.map((date) =>
+        date ? new Date(date) : undefined,
+      );
 
       if (filtersParameters.type_date_filter === 'dueDate') {
         where.due_date = {
@@ -105,10 +144,11 @@ export class BillToPayService {
     }
 
     if (onlyRowCount) {
-      return await this.prisma.billToPay.count({ where });
+      const count = await this.prisma.billToPay.count({ where });
+      return count;
     }
 
-    return await this.prisma.billToPay.findMany({
+    const billsToPay = await this.prisma.billToPay.findMany({
       take: 5,
       skip: 5 * (filtersParameters.page - 1),
       include: {
@@ -129,14 +169,36 @@ export class BillToPayService {
         },
       },
       orderBy: {
-        due_date: 'desc',
+        identifier: 'desc',
       },
-      where,
+      where: {
+        ...whereClause,
+        ...where,
+      },
     });
+
+    return billsToPay;
   }
 
-  async rowCount() {
-    return await this.prisma.billToPay.count();
+  async rowCount(@Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
+    return await this.prisma.billToPay.count({ where: whereClause });
   }
 
   async findById(id: string) {
@@ -146,6 +208,15 @@ export class BillToPayService {
           select: {
             id: true,
             name: true,
+            email: true,
+            pix: true,
+            telephone: true,
+            cnpj: true,
+            agency: true,
+            bank: true,
+            account: true,
+            account_type: true,
+            operation: true,
           },
         },
         Company: {

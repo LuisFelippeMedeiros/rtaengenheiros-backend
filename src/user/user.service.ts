@@ -1,10 +1,17 @@
-import { Injectable, Req } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  Req,
+} from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
+import { PatchUserDto } from './dto/patch-user.dto';
+import { EGroupType } from 'src/common/enum/grouptype.enum';
 
 const include = {
   group: {
@@ -29,17 +36,19 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postUserDto: PostUserDto, @Req() req: any) {
+    const { name, email, password, group_id, company_id } = postUserDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const data = {
-      name: postUserDto.name,
-      email: postUserDto.email,
-      password: await bcrypt.hash(postUserDto.password, 10),
-      group_id: postUserDto.group_id,
-      company_id: postUserDto.company_id,
+      name,
+      email,
+      password: hashedPassword,
+      group_id,
+      company_id,
       created_by: req.user.id,
       created_at: new Date(),
     };
 
-    const emailExists = await this.findByEmail(data.email);
+    const emailExists = await this.findByEmail(email);
 
     if (emailExists) {
       return {
@@ -52,25 +61,57 @@ export class UserService {
 
     return {
       status: true,
-      message: `O Usuário ${postUserDto.name} foi criado com sucesso.`,
+      message: `O Usuário ${name} foi criado com sucesso.`,
     };
   }
 
-  async rowCount(active = true) {
+  async rowCount(active = true, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active }
+        : { company_id: user.company_id, active };
+
     return await this.prisma.user.count({
-      where: { active },
+      where: whereClause,
     });
   }
 
-  async findAll(page = 1, active: boolean) {
+  async findAll(page = 1, active: boolean, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
     const users = await this.prisma.user.findMany({
       take: 5,
       skip: 5 * (page - 1),
       // include,
       include,
-      where: {
-        active: active,
-      },
+      where: whereClause,
       orderBy: {
         name: 'asc',
       },
@@ -99,41 +140,58 @@ export class UserService {
   }
 
   async update(id: string, putUserDto: PutUserDto, @Req() req: any) {
+    const { name, group_id, company_id } = putUserDto;
+
     const update = {
       where: { id },
       data: {
-        name: putUserDto.name,
-        group_id: putUserDto.group_id,
-        company_id: putUserDto.company_id,
+        name,
+        group_id,
+        company_id,
         updated_by: req.user.id,
         updated_at: new Date(),
       },
     };
 
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado!');
+    }
+
     await this.prisma.user.update(update);
 
     return {
       status: true,
-      message: `O usuário ${putUserDto.name} foi alterado com sucesso.`,
+      message: `O usuário ${name} foi alterado com sucesso.`,
     };
   }
 
   async deactivate(id_user: string, @Req() req: any) {
-    const user = await this.prisma.user.findFirst({ where: { id: id_user } });
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: id_user,
+      },
+    });
 
     if (!user) {
       return {
         status: false,
         message: 'Este usuário não existe no sistema',
       };
-    } else {
-      user.active = false;
-      (user.deleted_by = req.body.id), (user.deleted_at = new Date());
     }
+
+    const data = {
+      active: false,
+      deleted_by: req.user.id,
+      deleted_at: new Date(),
+    };
 
     await this.prisma.user.update({
       where: { id: id_user },
-      data: user,
+      data,
     });
 
     return {
@@ -142,9 +200,41 @@ export class UserService {
     };
   }
 
+  async password(id: string, patchUserDto: PatchUserDto, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado!');
+    }
+
+    if (patchUserDto.password !== patchUserDto.password_confirmation) {
+      throw new BadRequestException('As senhas não coincidem');
+    }
+
+    const passwordHash = await bcrypt.hash(patchUserDto.password, 10);
+
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: passwordHash,
+        updated_by: req.user.id,
+        updated_at: new Date(),
+      },
+    });
+
+    return {
+      status: true,
+      message: `A senha foi alterada com sucesso.`,
+    };
+  }
+
   async uploadAvatar(id: string, dataBuffer: Buffer, filename: string) {
+    const s3 = new S3();
     try {
-      const s3 = new S3();
       const uploadResult = await s3
         .upload({
           Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
@@ -152,23 +242,16 @@ export class UserService {
           Key: `${uuidv4()}-${filename}`,
         })
         .promise();
-      const userAvatar = {
-        where: {
-          id,
-        },
-        data: {
-          avatar: uploadResult.Location,
-        },
+      const user = await this.prisma.user.update({
+        where: { id },
+        data: { avatar: uploadResult.Location },
+      });
+      return {
+        status: true,
+        message: `A foto de perfil do usuário ${user.name} foi atualizada com sucesso.`,
       };
-
-      await this.prisma.user.update(userAvatar);
     } catch (err) {
-      return { key: 'error', url: err.message };
+      return { status: false, message: err.message };
     }
-
-    return {
-      status: true,
-      message: `A foto de perfil do usuário foi atualizada com sucesso.`,
-    };
   }
 }

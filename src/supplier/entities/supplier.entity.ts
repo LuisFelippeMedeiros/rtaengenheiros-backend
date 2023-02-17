@@ -2,13 +2,13 @@ export class Supplier {
   id?: string;
   name: string;
   cnpj: string;
-  ie?: string;
   telephone: string;
-  account: string;
-  agency: string;
-  bank: string;
-  pix: string;
-  pix2: string;
+  account?: string;
+  account_type?: string;
+  operation?: string;
+  agency?: string;
+  bank?: string;
+  pix?: string;
   address: string;
   district: string;
   number: string;
@@ -17,5 +17,5 @@ export class Supplier {
   created_by: string;
   updated_by: string;
   deleted_by: string;
-  // company_id?: string;
+  company_id?: string;
 }

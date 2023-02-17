@@ -19,6 +19,7 @@ import {
 import { UserService } from './user.service';
 import { PostUserDto } from './dto/post-user.dto';
 import { PutUserDto } from './dto/put-user.dto';
+import { PatchUserDto } from './dto/patch-user.dto';
 import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
@@ -37,14 +38,18 @@ export class UserController {
   }
 
   @Get('rowCount')
-  async countRows(@Query('active') active: boolean) {
-    return await this.userService.rowCount(active);
+  async countRows(@Query('active') active: boolean, @Req() req: any) {
+    return await this.userService.rowCount(active, req);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('all')
-  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
-    return await this.userService.findAll(page, active);
+  async findAll(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+    @Req() req: any,
+  ) {
+    return await this.userService.findAll(page, active, req);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -71,7 +76,16 @@ export class UserController {
     return this.userService.deactivate(id, req);
   }
 
-  @Patch(':id/avatar')
+  @Patch('password/:id')
+  password(
+    @Param('id') id: string,
+    @Body() patchUserDto: PatchUserDto,
+    @Req() req: any,
+  ) {
+    return this.userService.password(id, patchUserDto, req);
+  }
+
+  @Patch('avatar/:id')
   @UseInterceptors(FileInterceptor('file'))
   async updateAvatar(
     @Param('id') id: string,

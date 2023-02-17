@@ -125,14 +125,14 @@ model Supplier {
   id               String                  @id @default(uuid())
   name             String
   cnpj             String                  @unique
-  ie               String?
   telephone        String
   email            String?
   account          String?
+  account_type     String?
+  operation        String?
   agency           String?
   bank             String?
   pix              String?
-  pix2             String?
   address          String?
   district         String?
   number           String?

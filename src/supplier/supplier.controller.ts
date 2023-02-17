@@ -29,8 +29,8 @@ export class SupplierController {
   }
 
   @Get('filter')
-  async findFilter(@Query('filter') filter: string) {
-    return await this.supplierService.findFilter(filter);
+  async findFilter(@Query('filter') filter: string, @Req() req: any) {
+    return await this.supplierService.findFilter(filter, req);
   }
 
   @Get()
@@ -39,13 +39,13 @@ export class SupplierController {
   }
 
   @Get('all')
-  async getAll() {
-    return await this.supplierService.getAll();
+  async getAll(@Req() req: any) {
+    return await this.supplierService.getAll(req);
   }
 
   @Get('rowCount')
-  async countRows(@Query('active') active: boolean) {
-    return await this.supplierService.rowCount(active);
+  async countRows(@Query('active') active: boolean, @Req() req: any) {
+    return await this.supplierService.rowCount(active, req);
   }
 
   @Get(':id')

@@ -1,4 +1,5 @@
 import { Injectable, Req } from '@nestjs/common';
+import { EGroupType } from 'src/common/enum/grouptype.enum';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostSupplierDto } from './dto/post-supplier.dto';
 import { PutSupplierDto } from './dto/put-supplier.dto';
@@ -11,20 +12,20 @@ export class SupplierService {
     const data = {
       name: postSupplierDto.name,
       cnpj: postSupplierDto.cnpj,
-      ie: postSupplierDto.ie,
       telephone: postSupplierDto.telephone,
       email: postSupplierDto.email,
       account: postSupplierDto.account,
+      account_type: postSupplierDto.account_type,
+      operation: postSupplierDto.operation,
       agency: postSupplierDto.agency,
       bank: postSupplierDto.bank,
       pix: postSupplierDto.pix,
-      pix2: postSupplierDto.pix2,
       address: postSupplierDto.address,
       district: postSupplierDto.district,
       number: postSupplierDto.number,
       complement: postSupplierDto.complement,
       created_by: req.user.id,
-      // company_id: req.user.company_id,
+      company_id: postSupplierDto.company_id,
     };
 
     const supplierExists = await this.findByCNPJ(data.cnpj);
@@ -59,13 +60,28 @@ export class SupplierService {
     return suppliers;
   }
 
-  async findFilter(filter = '') {
+  async findFilter(filter = '', @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
     if (filter === '') {
       return await this.prisma.supplier.findMany({
         take: 10,
-        where: {
-          active: true,
-        },
+        where: whereClause,
         orderBy: {
           name: 'asc',
         },
@@ -77,26 +93,61 @@ export class SupplierService {
         name: {
           contains: filter.toUpperCase(),
         },
-        active: true,
+        ...whereClause,
       },
     });
   }
 
-  async getAll() {
-    return await this.prisma.supplier.findMany({
+  async getAll(@Req() req: any) {
+    const user = await this.prisma.user.findUnique({
       where: {
-        active: true,
+        id: req.user.id,
       },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
+    return await this.prisma.supplier.findMany({
+      where: whereClause,
       select: {
         id: true,
         name: true,
       },
+      orderBy: {
+        name: 'asc',
+      },
     });
   }
 
-  async rowCount(active = true) {
+  async rowCount(active = true, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active }
+        : { company_id: user.company_id, active };
+
     return await this.prisma.supplier.count({
-      where: { active },
+      where: whereClause,
     });
   }
 
@@ -128,22 +179,22 @@ export class SupplierService {
         telephone: putSupplierDto.telephone,
         email: putSupplierDto.email,
         account: putSupplierDto.account,
+        account_type: putSupplierDto.account_type,
+        operation: putSupplierDto.operation,
         agency: putSupplierDto.agency,
         cnpj: putSupplierDto.cnpj,
-        ie: putSupplierDto.ie,
         bank: putSupplierDto.bank,
         pix: putSupplierDto.pix,
-        pix2: putSupplierDto.pix2,
         address: putSupplierDto.address,
         district: putSupplierDto.district,
         number: putSupplierDto.number,
         complement: putSupplierDto.complement,
         updated_by: req.user.id,
         updated_at: new Date(),
+        company_id: putSupplierDto.company_id,
       },
     };
 
-    console.log(update);
     await this.prisma.supplier.update(update);
 
     return {
