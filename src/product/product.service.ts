@@ -48,11 +48,16 @@ export class ProductService {
     });
   }
 
-  async findPagination(page = 1, active: boolean) {
+  async findPagination(page = 1, active: boolean, filter = '') {
     const products = await this.prisma.product.findMany({
       take: 5,
       skip: 5 * (page - 1),
-      where: { active },
+      where: {
+        active,
+        name: {
+          contains: filter
+        }
+      },
       include: {
         Category: {
           select: {

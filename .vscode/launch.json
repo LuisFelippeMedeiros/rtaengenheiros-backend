@@ -2,16 +2,16 @@
   "version": "0.2.0",
   "configurations": [
       {
-          "type": "node",
-          "request": "launch",
-          "name": "Launch Program",
-          "args": ["${workspaceFolder}/src/main.ts"],
-          "sourceMaps": true,
-          "cwd": "${workspaceRoot}",
-          "outFiles": [
-              "${workspaceFolder}/**/*.js"
-          ],
-          "runtimeExecutable": "/home/mario/.nvm/versions/node/v16.13.2/bin/node"
+        "type": "node",
+        "request": "launch",
+        "name": "Launch Program",
+        "args": ["${workspaceFolder}/src/main.ts"],
+        "sourceMaps": true,
+        "cwd": "${workspaceRoot}",
+        "outFiles": [
+          "${workspaceFolder}/**/*.js"
+        ],
+        "runtimeExecutable": "C:/Users/marioleite/AppData/Roaming/nvm/v16.13.2/node"
       }
   ]
 }
