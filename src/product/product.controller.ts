@@ -32,8 +32,9 @@ export class ProductController {
   async findPagination(
     @Query('page') page: number,
     @Query('active') active: boolean,
+    @Query('filter') filter: string
   ) {
-    return await this.productService.findPagination(page, active);
+    return await this.productService.findPagination(page, active, filter);
   }
 
   @Get('all')

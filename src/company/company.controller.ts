@@ -47,8 +47,9 @@ export class CompanyController {
   async findPagination(
     @Query('page') page: number,
     @Query('active') active: boolean,
+    @Query('filter') filter: string
   ) {
-    return await this.companyService.findPagination(page, active);
+    return await this.companyService.findPagination(page, active, filter);
   }
 
   @Get(':id')

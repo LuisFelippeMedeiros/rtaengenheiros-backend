@@ -95,11 +95,16 @@ export class CompanyService {
     };
   }
 
-  async findPagination(page = 1, active: boolean) {
+  async findPagination(page = 1, active: boolean, filter = '') {
     return await this.prisma.company.findMany({
       take: 5,
       skip: 5 * (page - 1),
-      where: { active },
+      where: {
+        active,
+        name: {
+          contains: filter
+        }
+      },
       include: {
         City: {
           select: {

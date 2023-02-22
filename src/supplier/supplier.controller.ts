@@ -34,8 +34,12 @@ export class SupplierController {
   }
 
   @Get()
-  async findAll(@Query('page') page: number, @Query('active') active: boolean) {
-    return await this.supplierService.findAll(page, active);
+  async findAll(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+    @Query('filter') filter: string
+  ) {
+    return await this.supplierService.findAll(page, active, filter);
   }
 
   @Get('all')
