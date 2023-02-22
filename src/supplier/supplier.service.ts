@@ -46,12 +46,15 @@ export class SupplierService {
     };
   }
 
-  async findAll(page = 1, active: boolean) {
+  async findAll(page = 1, active: boolean, filter = '') {
     const suppliers = await this.prisma.supplier.findMany({
       take: 5,
       skip: 5 * (page - 1),
       where: {
         active: active,
+        name: {
+          contains: filter
+        }
       },
       orderBy: {
         name: 'asc',

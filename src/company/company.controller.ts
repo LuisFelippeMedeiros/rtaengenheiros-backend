@@ -23,6 +23,11 @@ import { PutCompanyDto } from './dto/put-company.dto';
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
+  @Get('rowCount')
+  async countRows(@Query('active') active: boolean) {
+    return await this.companyService.rowCount(active);
+  }
+
   @Get('all')
   findAll() {
     return this.companyService.findAll();
@@ -42,13 +47,9 @@ export class CompanyController {
   async findPagination(
     @Query('page') page: number,
     @Query('active') active: boolean,
+    @Query('filter') filter: string
   ) {
-    return await this.companyService.findPagination(page, active);
-  }
-
-  @Get('rowCount')
-  async countRows(@Query('active') active: boolean) {
-    return await this.companyService.rowCount(active);
+    return await this.companyService.findPagination(page, active, filter);
   }
 
   @Get(':id')
