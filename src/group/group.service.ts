@@ -50,10 +50,19 @@ export class GroupService {
       take: 5,
       skip: 5 * (page - 1),
       where: {
-        active,
-        name: {
-          contains: filter
-        }
+        active: active,
+        OR: [
+          {
+            name: {
+              contains: filter
+            }
+          },
+          {
+            description: {
+              contains: filter
+            }
+          }
+        ]
       },
       include: {
         roles: {

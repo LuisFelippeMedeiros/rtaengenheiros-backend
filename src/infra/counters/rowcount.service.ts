@@ -89,7 +89,23 @@ export class RowCountService {
         });
 
       case 'groups':
-        return await this.prisma.group.count({where});
+        return await this.prisma.group.count({
+          where: {
+            active: paginator.active,
+            OR: [
+              {
+                name: {
+                  contains: paginator.filter
+                }
+              },
+              {
+                description: {
+                  contains: paginator.filter
+                }
+              }
+            ]
+          }
+        });
 
       case 'user':
         return await this.prisma.user.count({where});
