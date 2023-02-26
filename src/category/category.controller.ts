@@ -37,8 +37,9 @@ export class CategoryController {
   async findPagination(
     @Query('page') page: number,
     @Query('active') active: boolean,
+    @Query('filter') filter: string,
   ) {
-    return await this.categoryService.findPagination(page, active);
+    return await this.categoryService.findPagination(page, active, filter);
   }
 
   @Get('rowCount')

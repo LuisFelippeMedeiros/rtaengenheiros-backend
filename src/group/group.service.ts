@@ -45,8 +45,16 @@ export class GroupService {
     };
   }
 
-  async findAll() {
+  async findAll(page = 1, active: boolean = true, filter = '') {
     const groups = await this.prisma.group.findMany({
+      take: 5,
+      skip: 5 * (page - 1),
+      where: {
+        active,
+        name: {
+          contains: filter
+        }
+      },
       include: {
         roles: {
           select: {

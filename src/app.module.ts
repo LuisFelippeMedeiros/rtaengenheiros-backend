@@ -25,6 +25,9 @@ import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './configs/winston.config';
 // import { SendGridModule } from '@anchan828/nest-sendgrid';
 
+// INFRA
+import { RowCountModule } from './infra/counters/rowcount.module'
+
 @Module({
   imports: [
     UserModule,
@@ -43,6 +46,9 @@ import { winstonConfig } from './configs/winston.config';
     PurchaserequestbudgetModule,
     BillToPayModule,
     PurchaseRequestProductModule,
+    // INFRA,
+    RowCountModule,
+    // ------------------------
     ConfigModule.forRoot(),
     WinstonModule.forRoot(winstonConfig),
     MulterExtendedModule.register({
