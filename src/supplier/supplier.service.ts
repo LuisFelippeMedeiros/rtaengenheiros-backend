@@ -51,10 +51,19 @@ export class SupplierService {
       take: 5,
       skip: 5 * (page - 1),
       where: {
-        active: active,
-        name: {
-          contains: filter
-        }
+        active,
+        OR: [
+          {
+            cnpj: {
+              contains: filter
+            },
+          },
+          {
+            name: {
+              contains: filter
+            },
+          }
+        ]
       },
       orderBy: {
         name: 'asc',

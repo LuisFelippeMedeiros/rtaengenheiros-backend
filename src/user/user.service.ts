@@ -91,7 +91,7 @@ export class UserService {
   async findAll(page = 1, active: boolean, @Req() req: any) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: req.user.id,
+        id: req.user.id
       },
     });
 
@@ -103,13 +103,14 @@ export class UserService {
 
     const whereClause =
       group.type === EGroupType.director
-        ? { active: true }
+        ? { active: active }
         : { company_id: user.company_id, active: true };
+
+    console.log(whereClause)
 
     const users = await this.prisma.user.findMany({
       take: 5,
       skip: 5 * (page - 1),
-      // include,
       include,
       where: whereClause,
       orderBy: {
