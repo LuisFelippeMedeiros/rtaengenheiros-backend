@@ -43,7 +43,7 @@ export class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get('all')
+  @Get()
   async findAll(
     @Query('page') page: number,
     @Query('active') active: boolean,

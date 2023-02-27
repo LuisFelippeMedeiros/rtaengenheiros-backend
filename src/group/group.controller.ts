@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Req,
+  Query,
   Delete,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
@@ -27,9 +28,13 @@ export class GroupController {
     return await this.groupService.create(postGroupDto, req);
   }
 
-  @Get('all')
-  async findAll() {
-    return await this.groupService.findAll();
+  @Get()
+  async findAll(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+    @Query('filter') filter: string
+  ) {
+    return await this.groupService.findAll(page, active, filter);
   }
 
   @Get('byname/:name')
