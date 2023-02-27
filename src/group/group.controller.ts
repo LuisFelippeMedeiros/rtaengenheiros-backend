@@ -32,7 +32,7 @@ export class GroupController {
   async findAll(
     @Query('page') page: number,
     @Query('active') active: boolean,
-    @Query('filter') filter: string
+    @Query('filter') filter: string,
   ) {
     return await this.groupService.findAll(page, active, filter);
   }

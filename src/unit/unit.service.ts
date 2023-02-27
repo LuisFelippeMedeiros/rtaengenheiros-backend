@@ -71,15 +71,15 @@ export class UnitService {
         OR: [
           {
             description: {
-              contains: filter
-            }
+              contains: filter,
+            },
           },
           {
             initials: {
-              contains: filter
-            }
-          }
-        ]
+              contains: filter,
+            },
+          },
+        ],
       },
     });
 

@@ -57,17 +57,17 @@ export class ProductService {
         OR: [
           {
             name: {
-              contains: filter
-            }
+              contains: filter,
+            },
           },
           {
             Category: {
               name: {
-                contains: filter
-              }
-            }
-          }
-        ]
+                contains: filter,
+              },
+            },
+          },
+        ],
       },
       include: {
         Category: {

@@ -13,14 +13,14 @@ export class RowCountController {
   async countRows(
     @Query('filter') filterQuery: string,
     @Query('module') moduleQuery: string,
-    @Query('active') activeQuery: boolean
+    @Query('active') activeQuery: boolean,
   ) {
     const paginator: IPaginator = {
       active: activeQuery,
       filter: filterQuery.toUpperCase(),
       module: moduleQuery,
-      page: 0
-    }
+      page: 0,
+    };
 
     return await this.rowCountService.rowCount(paginator);
   }
