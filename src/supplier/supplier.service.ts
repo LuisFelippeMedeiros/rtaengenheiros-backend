@@ -55,15 +55,15 @@ export class SupplierService {
         OR: [
           {
             cnpj: {
-              contains: filter
+              contains: filter,
             },
           },
           {
             name: {
-              contains: filter
+              contains: filter,
             },
-          }
-        ]
+          },
+        ],
       },
       orderBy: {
         name: 'asc',

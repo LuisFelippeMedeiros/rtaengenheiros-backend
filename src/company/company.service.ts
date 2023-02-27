@@ -104,27 +104,27 @@ export class CompanyService {
         OR: [
           {
             name: {
-              contains: filter
+              contains: filter,
             },
           },
           {
             cnpj: {
-              contains: filter
+              contains: filter,
             },
           },
           {
             ie: {
-              contains: filter
+              contains: filter,
             },
           },
           {
             City: {
               name: {
-                contains: filter
-              }
-            }
-          }
-        ]
+                contains: filter,
+              },
+            },
+          },
+        ],
       },
       include: {
         City: {

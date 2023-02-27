@@ -46,8 +46,8 @@ export class CategoryService {
       where: {
         active,
         name: {
-          contains: filter
-        }
+          contains: filter,
+        },
       },
       orderBy: {
         name: 'asc',
