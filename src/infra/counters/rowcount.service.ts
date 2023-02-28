@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/database/PrismaService";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()
 export class RowCountService {
@@ -9,9 +9,9 @@ export class RowCountService {
     const where = {
       active: paginator.active,
       name: {
-        contains: paginator.filter
-      }
-    }
+        contains: paginator.filter,
+      },
+    };
 
     switch (paginator.module) {
       case 'supplier':
@@ -21,20 +21,20 @@ export class RowCountService {
             OR: [
               {
                 cnpj: {
-                  contains: paginator.filter
+                  contains: paginator.filter,
                 },
               },
               {
                 name: {
-                  contains: paginator.filter
+                  contains: paginator.filter,
                 },
-              }
-            ]
-          }
+              },
+            ],
+          },
         });
 
       case 'category':
-        return await this.prisma.category.count({where});
+        return await this.prisma.category.count({ where });
 
       case 'product':
         return await this.prisma.product.count({
@@ -43,18 +43,18 @@ export class RowCountService {
             OR: [
               {
                 name: {
-                  contains: paginator.filter
-                }
+                  contains: paginator.filter,
+                },
               },
               {
                 Category: {
                   name: {
-                    contains: paginator.filter
-                  }
-                }
-              }
-            ]
-          }
+                    contains: paginator.filter,
+                  },
+                },
+              },
+            ],
+          },
         });
 
       case 'company':
@@ -64,28 +64,28 @@ export class RowCountService {
             OR: [
               {
                 name: {
-                  contains: paginator.filter
+                  contains: paginator.filter,
                 },
               },
               {
                 cnpj: {
-                  contains: paginator.filter
+                  contains: paginator.filter,
                 },
               },
               {
                 ie: {
-                  contains: paginator.filter
+                  contains: paginator.filter,
                 },
               },
               {
                 City: {
                   name: {
-                    contains: paginator.filter
-                  }
-                }
-              }
-            ]
-          }
+                    contains: paginator.filter,
+                  },
+                },
+              },
+            ],
+          },
         });
 
       case 'groups':
@@ -95,27 +95,27 @@ export class RowCountService {
             OR: [
               {
                 name: {
-                  contains: paginator.filter
-                }
+                  contains: paginator.filter,
+                },
               },
               {
                 description: {
-                  contains: paginator.filter
-                }
-              }
-            ]
-          }
+                  contains: paginator.filter,
+                },
+              },
+            ],
+          },
         });
 
       case 'user':
-        return await this.prisma.user.count({where});
+        return await this.prisma.user.count({ where });
 
       case 'purchaserequest':
         return await this.prisma.purchaseRequest.count({
-          where :{
+          where: {
             active: paginator.active,
-            reason: paginator.filter
-          }
+            reason: paginator.filter,
+          },
         });
 
       case 'unit':
@@ -125,16 +125,16 @@ export class RowCountService {
             OR: [
               {
                 description: {
-                  contains: paginator.filter
-                } 
+                  contains: paginator.filter,
+                },
               },
               {
                 initials: {
-                  contains: paginator.filter
-                }
-              }
-            ]
-          }
+                  contains: paginator.filter,
+                },
+              },
+            ],
+          },
         });
     }
   }

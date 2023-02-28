@@ -45,7 +45,7 @@ export class GroupService {
     };
   }
 
-  async findAll(page = 1, active: boolean = true, filter = '') {
+  async findAll(page = 1, active = true, filter = '') {
     const groups = await this.prisma.group.findMany({
       take: 5,
       skip: 5 * (page - 1),
@@ -54,15 +54,15 @@ export class GroupService {
         OR: [
           {
             name: {
-              contains: filter
-            }
+              contains: filter,
+            },
           },
           {
             description: {
-              contains: filter
-            }
-          }
-        ]
+              contains: filter,
+            },
+          },
+        ],
       },
       include: {
         roles: {

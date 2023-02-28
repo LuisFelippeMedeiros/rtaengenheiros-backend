@@ -91,7 +91,7 @@ export class UserService {
   async findAll(page = 1, active: boolean, @Req() req: any) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: req.user.id
+        id: req.user.id,
       },
     });
 
@@ -106,7 +106,7 @@ export class UserService {
         ? { active: active }
         : { company_id: user.company_id, active: true };
 
-    console.log(whereClause)
+    console.log(whereClause);
 
     const users = await this.prisma.user.findMany({
       take: 5,
