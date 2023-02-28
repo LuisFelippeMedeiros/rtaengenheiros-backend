@@ -103,13 +103,12 @@ export class UserService {
 
     const whereClause =
       group.type === EGroupType.director
-        ? { active: true }
+        ? { active: active }
         : { company_id: user.company_id, active: true };
 
     const users = await this.prisma.user.findMany({
       take: 5,
       skip: 5 * (page - 1),
-      // include,
       include,
       where: whereClause,
       orderBy: {

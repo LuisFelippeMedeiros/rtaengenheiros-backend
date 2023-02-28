@@ -101,9 +101,30 @@ export class CompanyService {
       skip: 5 * (page - 1),
       where: {
         active,
-        name: {
-          contains: filter
-        }
+        OR: [
+          {
+            name: {
+              contains: filter,
+            },
+          },
+          {
+            cnpj: {
+              contains: filter,
+            },
+          },
+          {
+            ie: {
+              contains: filter,
+            },
+          },
+          {
+            City: {
+              name: {
+                contains: filter,
+              },
+            },
+          },
+        ],
       },
       include: {
         City: {

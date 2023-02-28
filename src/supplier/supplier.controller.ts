@@ -37,9 +37,10 @@ export class SupplierController {
   async findAll(
     @Query('page') page: number,
     @Query('active') active: boolean,
-    @Query('filter') filter: string
+    @Query('filter') filter: string,
+    @Req() req: any,
   ) {
-    return await this.supplierService.findAll(page, active, filter);
+    return await this.supplierService.findAll(page, active, filter, req);
   }
 
   @Get('all')

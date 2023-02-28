@@ -1,54 +1,36 @@
-version: '3.5'
+version: '3.9'
 
 services:
 
-  db:
+  postgres:
     container_name: postgres_container
     image: postgres
     environment:
-      POSTGRES_DB: db-rtaengenheiros
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      - POSTGRES_DB=db-rtaengenheiros
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
        - ./pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    networks:
-      - postgres
     restart: unless-stopped
-
-  api:
-    container_name: rtaengenheiros-api
-    build: .
-    command: yarn start`:dev
-    ports:
-      - "3000:3000"
-    networks:
-      - postgres
-    depends_on:
-      - db
-    volumes:
-      - .:/home/rtaengenheiros_api
-      - /home/rtaengenheiros_api/node_modules
 
   pgadmin:
     container_name: pgadmin_container
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:6
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      - PGADMIN_DEFAULT_EMAIL=admin@email.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_PORT=5050
+
     volumes:
        - ./pgadmin:/var/lib/pgadmin
 
     ports:
-      - "${PGADMIN_PORT:-5050}:80"
-    networks:
-      - postgres
-    restart: unless-stopped
+      - "5050:5050"
 
 networks:
-  postgres:
+  host:
     driver: bridge
 
 volumes:

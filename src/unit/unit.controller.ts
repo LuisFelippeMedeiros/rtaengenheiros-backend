@@ -28,13 +28,14 @@ export class UnitController {
     return this.unitService.create(postUnitDto, req);
   }
 
-  // @Get()
-  // async findPagination(
-  //   @Query('page') page: number,
-  //   @Query('active') active: boolean,
-  // ) {
-  //   return await this.unitService.findPagination(page, active);
-  // }
+  @Get()
+  async findPagination(
+    @Query('page') page: number,
+    @Query('active') active: boolean,
+    @Query('filter') filter: string,
+  ) {
+    return await this.unitService.findPagination(page, active, filter);
+  }
 
   @Get('rowCount')
   async countRows(@Query('active') active: boolean) {
@@ -44,11 +45,6 @@ export class UnitController {
   @Get(':id')
   async findById(@Param('id') id: string) {
     return await this.unitService.findById(id);
-  }
-
-  @Get()
-  async findAll(@Query('active') active: boolean) {
-    return this.unitService.findAll(active);
   }
 
   @Get('byName/:initials')
