@@ -46,12 +46,28 @@ export class SupplierService {
     };
   }
 
-  async findAll(page = 1, active: boolean, filter = '') {
+  async findAll(page = 1, active: boolean, filter = '', @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
     const suppliers = await this.prisma.supplier.findMany({
       take: 5,
       skip: 5 * (page - 1),
       where: {
-        active,
         OR: [
           {
             cnpj: {
@@ -64,6 +80,7 @@ export class SupplierService {
             },
           },
         ],
+        ...whereClause,
       },
       orderBy: {
         name: 'asc',
@@ -170,10 +187,10 @@ export class SupplierService {
         Company: {
           select: {
             id: true,
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
   }
 

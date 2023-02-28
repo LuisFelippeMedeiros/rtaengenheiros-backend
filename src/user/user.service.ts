@@ -106,8 +106,6 @@ export class UserService {
         ? { active: active }
         : { company_id: user.company_id, active: true };
 
-    console.log(whereClause);
-
     const users = await this.prisma.user.findMany({
       take: 5,
       skip: 5 * (page - 1),
