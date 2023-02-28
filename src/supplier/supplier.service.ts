@@ -166,6 +166,14 @@ export class SupplierService {
   async findById(id: string) {
     return await this.prisma.supplier.findUnique({
       where: { id },
+      include: {
+        Company: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
     });
   }
 
