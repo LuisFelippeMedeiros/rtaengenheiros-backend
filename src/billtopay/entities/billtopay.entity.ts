@@ -1,6 +1,5 @@
 export class BillToPay {
   id: string;
-  identifier: number;
   name: string;
   type?: string;
   payment_info?: string;
