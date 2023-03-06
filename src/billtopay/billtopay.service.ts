@@ -69,7 +69,7 @@ export class BillToPayService {
         },
       },
       orderBy: {
-        identifier: 'desc',
+        due_date: 'desc',
       },
     });
   }
@@ -168,7 +168,7 @@ export class BillToPayService {
         },
       },
       orderBy: {
-        identifier: 'desc',
+        due_date: 'desc',
       },
       where: {
         ...whereClause,
