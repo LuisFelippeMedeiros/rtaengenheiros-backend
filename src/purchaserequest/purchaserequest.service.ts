@@ -691,7 +691,7 @@ export class PurchaseRequestService {
       take: 5,
       skip: 5 * (page - 1),
       orderBy: {
-        identifier: 'desc',
+        created_at: 'desc',
       },
       where: {
         active,
