@@ -106,6 +106,7 @@ export class PurchaseRequestService {
         message: `A Solicitação de compra foi criada com sucesso`,
       };
     } catch (ex) {
+      console.log(ex);
       return {
         status: false,
         message: `Não foi possível criar uma nova solicitação`,
