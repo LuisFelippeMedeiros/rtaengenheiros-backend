@@ -143,6 +143,8 @@ export class BillToPayService {
       where.bill_status = filtersParameters.status;
     }
 
+    const whereAll = { ...where, ...whereClause }
+
     if (onlyRowCount) {
       const count = await this.prisma.billToPay.count({ where });
       return count;
@@ -171,10 +173,7 @@ export class BillToPayService {
       orderBy: {
         identifier: 'desc',
       },
-      where: {
-        ...whereClause,
-        ...where,
-      },
+      where: where
     });
 
     return billsToPay;
@@ -270,6 +269,7 @@ export class BillToPayService {
         comment: putBillToPayDto.comment,
         due_date: putBillToPayDto.due_date,
         scheduling: putBillToPayDto.scheduling,
+        price_approved: putBillToPayDto.price_approved,
         price_updated: putBillToPayDto.price_updated,
         invoice_attachment: putBillToPayDto.invoice_attachment,
         company_id: putBillToPayDto.company_id,
@@ -367,7 +367,7 @@ export class BillToPayService {
       };
     }
 
-    if (user.group.type === 'all') {
+    if (user.group.type === EGroupType.director) {
       const update = {
         where: { id },
         data: {

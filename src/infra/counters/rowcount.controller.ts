@@ -24,4 +24,9 @@ export class RowCountController {
 
     return await this.rowCountService.rowCount(paginator);
   }
+
+  @Get('bill_status')
+  async billStatus() {
+    return await this.rowCountService.countBills()
+  }
 }
