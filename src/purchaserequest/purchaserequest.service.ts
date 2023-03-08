@@ -106,6 +106,7 @@ export class PurchaseRequestService {
         message: `A Solicitação de compra foi criada com sucesso`,
       };
     } catch (ex) {
+      console.log(ex);
       return {
         status: false,
         message: `Não foi possível criar uma nova solicitação`,
@@ -691,7 +692,7 @@ export class PurchaseRequestService {
       take: 5,
       skip: 5 * (page - 1),
       orderBy: {
-        identifier: 'desc',
+        created_at: 'desc',
       },
       where: {
         active,

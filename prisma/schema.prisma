@@ -187,7 +187,6 @@ model Category {
 
 model PurchaseRequest {
   id                     String                   @id @default(uuid())
-  identifier             Int                      @default(autoincrement())
   reason                 String
   active                 Boolean                  @default(true)
   comment                String
@@ -247,7 +246,6 @@ model Status {
 
 model BillToPay {
   id                 String    @id @default(uuid())
-  identifier         Int       @default(autoincrement())
   type               String?
   name               String
   payment_info       String?
