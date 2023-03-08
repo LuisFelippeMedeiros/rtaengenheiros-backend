@@ -25,7 +25,7 @@ export class BillToPayService {
       price_updated: postBillToPayDto.price_approved,
       invoice_attachment: postBillToPayDto.invoice_attachment,
       comment: postBillToPayDto.comment,
-      company_id: req.user.company_id,
+      company_id: postBillToPayDto.company_id,
       created_by: req.user.id,
       bill_status: postBillToPayDto.dda
         ? EBillStatus.fechada
@@ -57,7 +57,6 @@ export class BillToPayService {
       group.name === EGroupType.director
         ? { active: true }
         : { company_id: user.company_id, active: true };
-    console.log(whereClause);
 
     return await this.prisma.billToPay.findMany({
       where: whereClause,
@@ -175,7 +174,6 @@ export class BillToPayService {
       },
       where: where
     });
-
     return billsToPay;
   }
 
