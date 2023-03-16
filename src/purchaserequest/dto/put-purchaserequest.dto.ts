@@ -20,4 +20,7 @@ export class PutPurchaseRequestDto extends PartialType(PostPurchaseRequestDto) {
 
   @IsString()
   company_id?: string;
+
+  @IsString()
+  shipping_fee?: string;
 }
