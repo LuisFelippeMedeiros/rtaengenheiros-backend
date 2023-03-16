@@ -191,6 +191,7 @@ model PurchaseRequest {
   reason                 String
   active                 Boolean                  @default(true)
   comment                String
+  shipping_fee           String?
   created_at             DateTime                 @default(now())
   created_by             String?
   updated_at             DateTime?
