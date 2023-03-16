@@ -4,7 +4,7 @@ export class PurchaseRequest {
   reason: string;
   status_id: string;
   active: boolean;
-  shipping_fee: string;
+  shipping_fee?: string;
   comment: string;
   created_at: Date;
   created_by?: string;
