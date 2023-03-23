@@ -11,6 +11,7 @@ export class PurchaseRequestBudgetService {
     const data = {
       quantity: postPurchaseRequestBudgetDto.quantity,
       budget: postPurchaseRequestBudgetDto.budget,
+      shipping_fee: postPurchaseRequestBudgetDto.shipping_fee,
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
       unit_id: postPurchaseRequestBudgetDto.unit_id,
@@ -105,6 +106,7 @@ export class PurchaseRequestBudgetService {
       data: {
         quantity: putPurchaseRequestBudgetDto.quantity,
         budget: putPurchaseRequestBudgetDto.budget,
+        shipping_fee: putPurchaseRequestBudgetDto.shipping_fee,
         purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
         supplier_id: putPurchaseRequestBudgetDto.supplier_id,
         unit_id: putPurchaseRequestBudgetDto.unit_id,
