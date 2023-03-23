@@ -22,4 +22,7 @@ export class PutPurchaseRequestBudgetDto extends PartialType(
 
   @IsBoolean()
   to_be_approved?: boolean;
+
+  @IsNumber()
+  shipping_fee?: number;
 }

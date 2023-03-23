@@ -35,7 +35,6 @@ export class PurchaseRequestService {
       active: postPurchaseRequestDto.active,
       comment: postPurchaseRequestDto.comment,
       company_id: postPurchaseRequestDto.company_id,
-      shipping_fee: postPurchaseRequestDto.shipping_fee,
       created_at: new Date(),
       created_by: req.user.id,
     };
@@ -157,7 +156,6 @@ export class PurchaseRequestService {
       comment: putPurchaseRequestDto.comment,
       statud_id: putPurchaseRequestDto.status_id,
       company_id: putPurchaseRequestDto.company_id,
-      shipping_fee: putPurchaseRequestDto.shipping_fee,
       updated_by: req.user.id,
       updated_at: new Date(),
     };
