@@ -191,7 +191,6 @@ model PurchaseRequest {
   reason                 String
   active                 Boolean                  @default(true)
   comment                String
-  shipping_fee           String?
   created_at             DateTime                 @default(now())
   created_by             String?
   updated_at             DateTime?
@@ -220,6 +219,7 @@ model PurchaseRequestBudget {
   id                 String           @id @default(uuid())
   quantity           Int?
   budget             Float?
+  shipping_fee       Float?           @default(0)
   to_be_approved     Boolean?
   Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id        String?
