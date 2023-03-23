@@ -15,7 +15,4 @@ export class PostPurchaseRequestDto extends PurchaseRequest {
 
   @IsString()
   company_id?: string;
-
-  @IsString()
-  shipping_fee?: string;
 }
