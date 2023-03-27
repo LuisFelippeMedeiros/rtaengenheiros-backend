@@ -1,5 +1,5 @@
 import { PurchaseRequestBudget } from '../entities/purchaserequestbudget.entity';
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class PostPurchaseRequestBudgetDto extends PurchaseRequestBudget {
   @IsNumber()
@@ -17,6 +17,7 @@ export class PostPurchaseRequestBudgetDto extends PurchaseRequestBudget {
   @IsString()
   unit_id?: string;
 
+  @IsOptional()
   @IsNumber()
   shipping_fee?: number;
 

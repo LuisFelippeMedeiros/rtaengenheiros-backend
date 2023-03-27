@@ -11,6 +11,9 @@ export class PatchPurchaseRequestDto extends PartialType(
   @IsBoolean()
   is_approved: boolean;
 
+  @IsString()
+  purchaserequest_id: number;
+
   // @IsString()
   // is_approved_gestor?: boolean;
 
