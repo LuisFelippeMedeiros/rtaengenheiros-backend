@@ -23,4 +23,5 @@ export class BillToPay {
   deleted_by?: string;
   company_id?: string;
   bill_status?: string;
+  purchaserequest_id?: number;
 }

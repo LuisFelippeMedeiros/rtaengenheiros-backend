@@ -441,6 +441,7 @@ export class PurchaseRequestService {
         comment: '',
         invoice_attachment: '',
         company_id: purchaseRequest.company_id,
+        purchaserequest_id: purchaseRequest.identifier,
       };
 
       await this.prisma.billToPay.create({ data });

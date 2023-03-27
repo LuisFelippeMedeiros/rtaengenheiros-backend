@@ -1,4 +1,10 @@
-import { IsBoolean, IsDateString, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { BillToPay } from '../entities/billtopay.entity';
 
 export class PostBillToPayDto extends BillToPay {
@@ -43,4 +49,8 @@ export class PostBillToPayDto extends BillToPay {
 
   @IsBoolean()
   is_duty?: boolean;
+
+  @IsOptional()
+  @IsString()
+  purchaserequest_id: number;
 }
