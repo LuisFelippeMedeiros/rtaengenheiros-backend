@@ -77,6 +77,7 @@ export class BillToPayService {
   async findPagination(
     filters: IFilter_bill_to_pay,
     onlyRowCount = false,
+    onlyTotal = true,
     @Req() req: any,
   ) {
     const user = await this.prisma.user.findUnique({
@@ -147,6 +148,19 @@ export class BillToPayService {
     if (onlyRowCount) {
       const count = await this.prisma.billToPay.count({ where });
       return count;
+    }
+
+    if (onlyTotal) {
+      const total = await this.prisma.billToPay.groupBy({
+        by: ['bill_status'],
+        where,
+        _sum: {
+          price_approved: true,
+          price_updated: true
+        }
+      });
+
+      return total;
     }
 
     const billsToPay = await this.prisma.billToPay.findMany({
