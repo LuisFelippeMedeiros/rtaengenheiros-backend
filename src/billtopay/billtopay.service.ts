@@ -125,16 +125,22 @@ export class BillToPayService {
       );
 
       if (filtersParameters.type_date_filter === 'dueDate') {
+        const dateLTE = new Date(datesFilter[1])
+        dateLTE.setDate(dateLTE.getDate() + 1)
+
         where.due_date = {
           gte: datesFilter[0],
-          lte: datesFilter[1],
+          lte: dateLTE,
         };
       }
 
       if (filtersParameters.type_date_filter === 'issueDate') {
+        const dateLTE = new Date(datesFilter[1])
+        dateLTE.setDate(dateLTE.getDate() + 1)
+
         where.issue_date = {
           gte: datesFilter[0],
-          lte: datesFilter[1],
+          lte: dateLTE,
         };
       }
     }
