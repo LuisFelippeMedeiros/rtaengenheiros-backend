@@ -77,6 +77,7 @@ export class BillToPayService {
   async findPagination(
     filters: IFilter_bill_to_pay,
     onlyRowCount = false,
+    onlyTotal = true,
     @Req() req: any,
   ) {
     const user = await this.prisma.user.findUnique({
@@ -124,16 +125,22 @@ export class BillToPayService {
       );
 
       if (filtersParameters.type_date_filter === 'dueDate') {
+        const dateLTE = new Date(datesFilter[1])
+        dateLTE.setDate(dateLTE.getDate() + 1)
+
         where.due_date = {
           gte: datesFilter[0],
-          lte: datesFilter[1],
+          lte: dateLTE,
         };
       }
 
       if (filtersParameters.type_date_filter === 'issueDate') {
+        const dateLTE = new Date(datesFilter[1])
+        dateLTE.setDate(dateLTE.getDate() + 1)
+
         where.issue_date = {
           gte: datesFilter[0],
-          lte: datesFilter[1],
+          lte: dateLTE,
         };
       }
     }
@@ -142,9 +149,24 @@ export class BillToPayService {
       where.bill_status = filtersParameters.status;
     }
 
+    const whereAll = { ...where, ...whereClause }
+
     if (onlyRowCount) {
       const count = await this.prisma.billToPay.count({ where });
       return count;
+    }
+
+    if (onlyTotal) {
+      const total = await this.prisma.billToPay.groupBy({
+        by: ['bill_status'],
+        where,
+        _sum: {
+          price_approved: true,
+          price_updated: true
+        }
+      });
+
+      return total;
     }
 
     const billsToPay = await this.prisma.billToPay.findMany({
@@ -170,10 +192,7 @@ export class BillToPayService {
       orderBy: {
         due_date: 'desc',
       },
-      where: {
-        ...whereClause,
-        ...where,
-      },
+      where: where
     });
     return billsToPay;
   }
@@ -268,6 +287,7 @@ export class BillToPayService {
         comment: putBillToPayDto.comment,
         due_date: putBillToPayDto.due_date,
         scheduling: putBillToPayDto.scheduling,
+        price_approved: putBillToPayDto.price_approved,
         price_updated: putBillToPayDto.price_updated,
         invoice_attachment: putBillToPayDto.invoice_attachment,
         company_id: putBillToPayDto.company_id,
@@ -365,7 +385,7 @@ export class BillToPayService {
       };
     }
 
-    if (user.group.type === 'all') {
+    if (user.group.type === EGroupType.director) {
       const update = {
         where: { id },
         data: {

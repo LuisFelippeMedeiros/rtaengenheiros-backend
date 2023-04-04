@@ -117,7 +117,7 @@ export class PurchaseRequestBudgetService {
     try {
       await this.prisma.purchaseRequestBudget.update(update);
       return {
-        status: false,
+        status: true,
         message: `Orçamento alterado com sucesso`,
       };
     } catch (ex) {
