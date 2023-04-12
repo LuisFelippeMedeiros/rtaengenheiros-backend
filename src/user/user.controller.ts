@@ -24,6 +24,7 @@ import { RouteVersion } from 'src/statics/route.version';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { LoggerInterceptor } from 'src/interceptors/logger.interceptor';
 
 @ApiTags('Users')
 @Controller({
