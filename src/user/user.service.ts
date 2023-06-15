@@ -107,8 +107,8 @@ export class UserService {
         : { company_id: user.company_id, active: true };
 
     const users = await this.prisma.user.findMany({
-      take: 5,
-      skip: 5 * (page - 1),
+      take: 10,
+      skip: 10 * (page - 1),
       include,
       where: whereClause,
       orderBy: {

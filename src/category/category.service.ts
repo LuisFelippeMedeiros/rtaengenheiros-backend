@@ -41,8 +41,8 @@ export class CategoryService {
 
   async findPagination(page = 1, active: boolean, filter = '') {
     const categories = await this.prisma.category.findMany({
-      take: 5,
-      skip: 5 * (page - 1),
+      take: 10,
+      skip: 10 * (page - 1),
       where: {
         active,
         name: {
