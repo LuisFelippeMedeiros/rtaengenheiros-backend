@@ -125,8 +125,8 @@ export class BillToPayService {
       );
 
       if (filtersParameters.type_date_filter === 'dueDate') {
-        const dateLTE = new Date(datesFilter[1])
-        dateLTE.setDate(dateLTE.getDate() + 1)
+        const dateLTE = new Date(datesFilter[1]);
+        dateLTE.setDate(dateLTE.getDate() + 1);
 
         where.due_date = {
           gte: datesFilter[0],
@@ -135,8 +135,8 @@ export class BillToPayService {
       }
 
       if (filtersParameters.type_date_filter === 'issueDate') {
-        const dateLTE = new Date(datesFilter[1])
-        dateLTE.setDate(dateLTE.getDate() + 1)
+        const dateLTE = new Date(datesFilter[1]);
+        dateLTE.setDate(dateLTE.getDate() + 1);
 
         where.issue_date = {
           gte: datesFilter[0],
@@ -149,7 +149,7 @@ export class BillToPayService {
       where.bill_status = filtersParameters.status;
     }
 
-    const whereAll = { ...where, ...whereClause }
+    const whereAll = { ...where, ...whereClause };
 
     if (onlyRowCount) {
       const count = await this.prisma.billToPay.count({ where });
@@ -162,16 +162,16 @@ export class BillToPayService {
         where,
         _sum: {
           price_approved: true,
-          price_updated: true
-        }
+          price_updated: true,
+        },
       });
 
       return total;
     }
 
     const billsToPay = await this.prisma.billToPay.findMany({
-      take: 5,
-      skip: 5 * (filtersParameters.page - 1),
+      take: 10,
+      skip: 10 * (filtersParameters.page - 1),
       include: {
         Supplier: {
           select: {
@@ -192,7 +192,7 @@ export class BillToPayService {
       orderBy: {
         due_date: 'desc',
       },
-      where: where
+      where: whereAll,
     });
     return billsToPay;
   }
