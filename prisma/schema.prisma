@@ -122,32 +122,33 @@ model Company {
 }
 
 model Supplier {
-  id               String                  @id @default(uuid())
-  name             String
-  cnpj             String                  @unique
-  telephone        String
-  email            String?
-  account          String?
-  account_type     String?
-  operation        String?
-  agency           String?
-  bank             String?
-  pix              String?
-  address          String?
-  district         String?
-  number           String?
-  complement       String?
-  active           Boolean?                @default(true)
-  created_at       DateTime                @default(now())
-  created_by       String?
-  updated_at       DateTime?
-  updated_by       String?
-  deleted_at       DateTime?
-  deleted_by       String?
-  purchaserequests PurchaseRequestBudget[]
-  billstopay       BillToPay[]
-  Company          Company?                @relation(fields: [company_id], references: [id])
-  company_id       String?
+  id                     String                   @id @default(uuid())
+  name                   String
+  cnpj                   String                   @unique
+  telephone              String
+  email                  String?
+  account                String?
+  account_type           String?
+  operation              String?
+  agency                 String?
+  bank                   String?
+  pix                    String?
+  address                String?
+  district               String?
+  number                 String?
+  complement             String?
+  active                 Boolean?                 @default(true)
+  created_at             DateTime                 @default(now())
+  created_by             String?
+  updated_at             DateTime?
+  updated_by             String?
+  deleted_at             DateTime?
+  deleted_by             String?
+  purchaserequests       PurchaseRequestBudget[]
+  billstopay             BillToPay[]
+  Company                Company?                 @relation(fields: [company_id], references: [id])
+  company_id             String?
+  PurchaseRequestProduct PurchaseRequestProduct[]
 
   @@map("suppliers")
 }
@@ -166,8 +167,22 @@ model Product {
   Category               Category?                @relation(fields: [category_id], references: [id])
   category_id            String?
   PurchaseRequestProduct PurchaseRequestProduct[]
+  Unit                   Unit?                    @relation(fields: [unit_id], references: [id])
+  unit_id                String?
+  ProductPrice           ProductPrice[]
 
   @@map("products")
+}
+
+model ProductPrice {
+  id         String   @id @default(uuid())
+  Product    Product  @relation(fields: [product_id], references: [id])
+  product_id String
+  price      Float
+  created_by String?
+  created_at DateTime @default(now())
+
+  @@map("productprices")
 }
 
 model Category {
@@ -225,8 +240,6 @@ model PurchaseRequestBudget {
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
-  Unit               Unit?            @relation(fields: [unit_id], references: [id])
-  unit_id            String?
 
   @@map("purchaserequestbudgets")
 }
@@ -284,22 +297,24 @@ model PurchaseRequestProduct {
   product_id         String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
+  Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
+  supplier_id        String?
 
   @@map("purchaserequestproducts")
 }
 
 model Unit {
-  id                    String                  @id @default(uuid())
-  initials              String                  @unique
-  description           String
-  active                Boolean                 @default(true)
-  created_at            DateTime                @default(now())
-  created_by            String?
-  updated_at            DateTime?
-  updated_by            String?
-  deleted_at            DateTime?
-  deleted_by            String?
-  PurchaseRequestBudget PurchaseRequestBudget[]
+  id          String    @id @default(uuid())
+  initials    String    @unique
+  description String
+  active      Boolean   @default(true)
+  created_at  DateTime  @default(now())
+  created_by  String?
+  updated_at  DateTime?
+  updated_by  String?
+  deleted_at  DateTime?
+  deleted_by  String?
+  Product     Product[]
 
   @@map("units")
 }

@@ -6,5 +6,4 @@ export class PurchaseRequestBudget {
   supplier_id?: string;
   purchaserequest_id?: string;
   to_be_approved?: boolean;
-  unit_id?: string;
 }

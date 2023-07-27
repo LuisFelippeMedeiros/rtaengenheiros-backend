@@ -85,17 +85,17 @@ export class BillToPayController {
     return this.billtopayService.paid(id, req);
   }
 
-  @Patch(':id/invoice')
-  @UseInterceptors(FileInterceptor('file'))
-  async updateInvoice(
-    @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<any> {
-    const result = await this.billtopayService.uploadInvoice(
-      id,
-      file.buffer,
-      file.originalname,
-    );
-    return result;
-  }
+  // @Patch(':id/invoice')
+  // @UseInterceptors(FileInterceptor('file'))
+  // async updateInvoice(
+  //   @Param('id') id: string,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ): Promise<any> {
+  //   const result = await this.billtopayService.uploadInvoice(
+  //     id,
+  //     file.buffer,
+  //     file.originalname,
+  //   );
+  //   return result;
+  // }
 }

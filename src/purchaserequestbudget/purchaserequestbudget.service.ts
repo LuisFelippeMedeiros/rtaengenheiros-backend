@@ -14,7 +14,6 @@ export class PurchaseRequestBudgetService {
       shipping_fee: postPurchaseRequestBudgetDto.shipping_fee,
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
-      unit_id: postPurchaseRequestBudgetDto.unit_id,
       to_be_approved: null, // postPurchaseRequestBudgetDto.to_be_approved,
     };
 
@@ -40,13 +39,6 @@ export class PurchaseRequestBudgetService {
             name: true,
           },
         },
-        Unit: {
-          select: {
-            id: true,
-            initials: true,
-            description: true,
-          },
-        },
       },
     });
   }
@@ -59,13 +51,6 @@ export class PurchaseRequestBudgetService {
           select: {
             id: true,
             name: true,
-          },
-        },
-        Unit: {
-          select: {
-            id: true,
-            initials: true,
-            description: true,
           },
         },
       },
@@ -109,7 +94,6 @@ export class PurchaseRequestBudgetService {
         shipping_fee: putPurchaseRequestBudgetDto.shipping_fee,
         purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
         supplier_id: putPurchaseRequestBudgetDto.supplier_id,
-        unit_id: putPurchaseRequestBudgetDto.unit_id,
         to_be_approved: putPurchaseRequestBudgetDto.to_be_approved,
       },
     };

@@ -14,9 +14,6 @@ export class PostPurchaseRequestBudgetDto extends PurchaseRequestBudget {
   @IsString()
   purchaserequest_id: string;
 
-  @IsString()
-  unit_id?: string;
-
   @IsOptional()
   @IsNumber()
   shipping_fee?: number;

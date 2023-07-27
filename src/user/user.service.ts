@@ -231,26 +231,26 @@ export class UserService {
     };
   }
 
-  async uploadAvatar(id: string, dataBuffer: Buffer, filename: string) {
-    const s3 = new S3();
-    try {
-      const uploadResult = await s3
-        .upload({
-          Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
-          Body: dataBuffer,
-          Key: `${uuidv4()}-${filename}`,
-        })
-        .promise();
-      const user = await this.prisma.user.update({
-        where: { id },
-        data: { avatar: uploadResult.Location },
-      });
-      return {
-        status: true,
-        message: `A foto de perfil do usuário ${user.name} foi atualizada com sucesso.`,
-      };
-    } catch (err) {
-      return { status: false, message: err.message };
-    }
-  }
+  // async uploadAvatar(id: string, dataBuffer: Buffer, filename: string) {
+  //   const s3 = new S3();
+  //   try {
+  //     const uploadResult = await s3
+  //       .upload({
+  //         Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+  //         Body: dataBuffer,
+  //         Key: `${uuidv4()}-${filename}`,
+  //       })
+  //       .promise();
+  //     const user = await this.prisma.user.update({
+  //       where: { id },
+  //       data: { avatar: uploadResult.Location },
+  //     });
+  //     return {
+  //       status: true,
+  //       message: `A foto de perfil do usuário ${user.name} foi atualizada com sucesso.`,
+  //     };
+  //   } catch (err) {
+  //     return { status: false, message: err.message };
+  //   }
+  // }
 }
