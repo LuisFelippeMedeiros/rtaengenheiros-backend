@@ -23,4 +23,7 @@ export class PutPurchaseRequestBudgetDto extends PartialType(
   @IsOptional()
   @IsNumber()
   shipping_fee?: number;
+
+  @IsString()
+  product_id?: string;
 }

@@ -230,13 +230,21 @@ export class PurchaseRequestService {
 
     const purchaseRequest = await this.prisma.purchaseRequest.findUnique({
       where: { id },
+      include: {
+        Status: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
-    const statusPurchaseRequest = await this.prisma.status.findFirst({
-      where: { id: purchaseRequest.status_id },
-    });
+    // const statusPurchaseRequest = await this.prisma.status.findFirst({
+    //   where: { id: purchaseRequest.status_id },
+    // });
 
-    if (statusPurchaseRequest.name === EStatus.approvedDiretor) {
+    if (purchaseRequest.Status.name === EStatus.approvedDiretor) {
       return {
         status: false,
         message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,
@@ -357,11 +365,11 @@ export class PurchaseRequestService {
         },
       };
 
-      const diretor = await this.prisma.user.findUnique({
-        where: {
-          id: update.data.approveddiretor_by,
-        },
-      });
+      // const diretor = await this.prisma.user.findUnique({
+      //   where: {
+      //     id: update.data.approveddiretor_by,
+      //   },
+      // });
 
       const status = await this.prisma.status.findFirst({
         where: {
@@ -388,8 +396,8 @@ export class PurchaseRequestService {
             userAdministrativo.email,
             process.env.FROM_EMAIL,
             `Nova Solicitação de compra para aprovação (${status.name})`,
-            `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
-            `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${diretor.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
+            `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${user.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
+            `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${user.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
                 Obs: Favor não responder este e-mail`,
           );
           await this.prisma.purchaseRequest.update(update);
