@@ -2,11 +2,11 @@ version: '3.9'
 
 services:
 
-  postgres:
-    container_name: postgres_container
+  pg:
+    container_name: pg
     image: postgres
     environment:
-      - POSTGRES_DB=db-rtaengenheiros
+      - POSTGRES_DB=rtaengenheiros
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
@@ -17,7 +17,7 @@ services:
 
   pgadmin:
     container_name: pgadmin_container
-    image: dpage/pgadmin4:6
+    image: dpage/pgadmin4:7
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@email.com
       - PGADMIN_DEFAULT_PASSWORD=admin

@@ -10,51 +10,51 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(uuid()) // Identificador único do Usuário
-  name       String // Nome do Usuário
-  email      String    @unique // E-mail do Usuário
-  password   String // Senha do usuário
-  active     Boolean   @default(true) // Usuário ativo ou não
-  created_at DateTime  @default(now()) // Usuário criado em
-  created_by String? // Usuário criado por
-  updated_at DateTime? // Usuário alterado em
-  updated_by String? // Usuário alterado por
-  deleted_at DateTime? // Usuário excluído em
-  deleted_by String? // Usuário excluído por
+  id         String    @id @default(uuid())
+  name       String
+  email      String    @unique
+  password   String
+  active     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  created_by String?
+  updated_at DateTime?
+  updated_by String?
+  deleted_at DateTime?
+  deleted_by String?
   group      Group     @relation(fields: [group_id], references: [id])
-  group_id   String // Identificador do grupo do Usuário
+  group_id   String
   Company    Company?  @relation(fields: [company_id], references: [id])
-  company_id String? // Identificador da Empresa do Usuário
-  avatar     String? // Foto de Perfil do Usuário
+  company_id String?
+  avatar     String?
 
   @@map("users")
 }
 
 model Group {
-  id          String       @id @default(uuid()) // Identificador único do Grupo
-  name        String       @unique // Nome do Grupo
-  description String? // Descrição do Grupo
-  type        String? // Tipo do Grupo
-  active      Boolean      @default(true) // Grupo Ativo ou não
-  created_at  DateTime     @default(now()) // Grupo criado em
-  created_by  String? // Grupo criado por
-  updated_at  DateTime? // Grupo alterado em
-  updated_by  String? // Grupo alteado por
-  deleted_at  DateTime? // Grupo excluído em
-  deleted_by  String? // Grupo excluído por
-  roles       RolesGroup[] // Array de regras do Grupo
-  User        User[] // Array de Usuários relacionados ao Grupo
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  type        String?
+  active      Boolean      @default(true)
+  created_at  DateTime     @default(now())
+  created_by  String?
+  updated_at  DateTime?
+  updated_by  String?
+  deleted_at  DateTime?
+  deleted_by  String?
+  roles       RolesGroup[]
+  User        User[]
 
   @@map("groups")
 }
 
 model Role {
-  id         String       @id @default(uuid()) // Identificador único da Regra
-  name       String       @unique // Nome da Regra
-  active     Boolean      @default(true) // Regra ativa ou não
-  action     String? // Ação que a Regra pode ter no sistema
-  module     String? // Módulo que a regra pode realizar ações
-  type       String? //
+  id         String       @id @default(uuid())
+  name       String       @unique
+  active     Boolean      @default(true)
+  action     String?
+  module     String?
+  type       String?
   created_at DateTime     @default(now())
   created_by String?
   updated_at DateTime?
@@ -122,54 +122,57 @@ model Company {
 }
 
 model Supplier {
-  id                     String                   @id @default(uuid())
-  name                   String
-  cnpj                   String                   @unique
-  telephone              String
-  email                  String?
-  account                String?
-  account_type           String?
-  operation              String?
-  agency                 String?
-  bank                   String?
-  pix                    String?
-  address                String?
-  district               String?
-  number                 String?
-  complement             String?
-  active                 Boolean?                 @default(true)
-  created_at             DateTime                 @default(now())
-  created_by             String?
-  updated_at             DateTime?
-  updated_by             String?
-  deleted_at             DateTime?
-  deleted_by             String?
-  purchaserequests       PurchaseRequestBudget[]
-  billstopay             BillToPay[]
-  Company                Company?                 @relation(fields: [company_id], references: [id])
-  company_id             String?
-  PurchaseRequestProduct PurchaseRequestProduct[]
+  id               String                  @id @default(uuid())
+  name             String
+  cnpj             String                  @unique
+  telephone        String
+  email            String?
+  account          String?
+  account_type     String?
+  operation        String?
+  agency           String?
+  bank             String?
+  pix              String?
+  address          String?
+  district         String?
+  number           String?
+  complement       String?
+  active           Boolean?                @default(true)
+  created_at       DateTime                @default(now())
+  created_by       String?
+  updated_at       DateTime?
+  updated_by       String?
+  deleted_at       DateTime?
+  deleted_by       String?
+  purchaserequests PurchaseRequestBudget[]
+  billstopay       BillToPay[]
+  Company          Company?                @relation(fields: [company_id], references: [id])
+  company_id       String?
+  PurchaseOrder    PurchaseOrder[]
 
   @@map("suppliers")
 }
 
 model Product {
-  id                     String                   @id @default(uuid())
-  name                   String                   @unique
-  active                 Boolean                  @default(true)
-  created_at             DateTime                 @default(now())
-  type                   String?
-  created_by             String?
-  updated_at             DateTime?
-  updated_by             String?
-  deleted_at             DateTime?
-  deleted_by             String?
-  Category               Category?                @relation(fields: [category_id], references: [id])
-  category_id            String?
-  PurchaseRequestProduct PurchaseRequestProduct[]
-  Unit                   Unit?                    @relation(fields: [unit_id], references: [id])
-  unit_id                String?
-  ProductPrice           ProductPrice[]
+  id                      String                   @id @default(uuid())
+  name                    String                   @unique
+  active                  Boolean                  @default(true)
+  created_at              DateTime                 @default(now())
+  type                    String?
+  created_by              String?
+  updated_at              DateTime?
+  updated_by              String?
+  deleted_at              DateTime?
+  deleted_by              String?
+  Category                Category?                @relation(fields: [category_id], references: [id])
+  category_id             String?
+  PurchaseRequestProduct  PurchaseRequestProduct[]
+  PurchaseRequestBudget   PurchaseRequestBudget[]
+  Unit                    Unit?                    @relation(fields: [unit_id], references: [id])
+  unit_id                 String?
+  ProductPrice            ProductPrice[]
+  purchaseorderproduct_id String?
+  PurchaseOrderProduct    PurchaseOrderProduct?    @relation(fields: [purchaseorderproduct_id], references: [id])
 
   @@map("products")
 }
@@ -226,6 +229,7 @@ model PurchaseRequest {
   Company                Company?                 @relation(fields: [company_id], references: [id])
   company_id             String?
   PurchaseRequestProduct PurchaseRequestProduct[]
+  PurchaseOrder          PurchaseOrder[]
 
   @@map("purchaserequests")
 }
@@ -240,8 +244,32 @@ model PurchaseRequestBudget {
   supplier_id        String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
+  Product            Product?         @relation(fields: [product_id], references: [id])
+  product_id         String?
 
   @@map("purchaserequestbudgets")
+}
+
+model PurchaseOrder {
+  id                      String               @id @default(uuid())
+  Supplier                Supplier?            @relation(fields: [supplier_id], references: [id])
+  supplier_id             String?
+  shipping_fee            Float                @default(0)
+  PurchaseRequest         PurchaseRequest[]
+  PurchaseOrderProduct    PurchaseOrderProduct @relation(fields: [purchaseorderproduct_id], references: [id])
+  purchaseorderproduct_id String
+
+  @@map("purchaseorders")
+}
+
+model PurchaseOrderProduct {
+  id            String          @id @default(uuid())
+  PurchaseOrder PurchaseOrder[]
+  Product       Product[]
+  quantity      Int
+  price         Float
+
+  @@map("purchaseorderproducts")
 }
 
 model Status {
@@ -297,8 +325,6 @@ model PurchaseRequestProduct {
   product_id         String?
   PurchaseRequest    PurchaseRequest? @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id String?
-  Supplier           Supplier?        @relation(fields: [supplier_id], references: [id])
-  supplier_id        String?
 
   @@map("purchaserequestproducts")
 }

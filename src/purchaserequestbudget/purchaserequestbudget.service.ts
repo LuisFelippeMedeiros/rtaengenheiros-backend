@@ -8,6 +8,36 @@ export class PurchaseRequestBudgetService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postPurchaseRequestBudgetDto: PostPurchaseRequestBudgetDto) {
+    const products = await this.prisma.purchaseRequestProduct.findMany({
+      where: {
+        id: postPurchaseRequestBudgetDto.purchaserequest_id,
+      },
+    });
+
+    const productArray = products.length;
+
+    try {
+      for (let i = 0; i < productArray; i++) {
+        await this.prisma.purchaseRequestBudget.create({
+          data: {
+            quantity: postPurchaseRequestBudgetDto.quantity,
+            budget: postPurchaseRequestBudgetDto.budget,
+            shipping_fee: postPurchaseRequestBudgetDto.shipping_fee,
+            purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
+            supplier_id: postPurchaseRequestBudgetDto.supplier_id,
+            to_be_approved: null, // postPurchaseRequestBudgetDto.to_be_approved,
+            product_id: postPurchaseRequestBudgetDto.product_id,
+          },
+        });
+      }
+    } catch (ex) {
+      return {
+        status: false,
+        message: `Não foi possível realizar a alteração`,
+        error: ex.message,
+      };
+    }
+
     const data = {
       quantity: postPurchaseRequestBudgetDto.quantity,
       budget: postPurchaseRequestBudgetDto.budget,
@@ -15,6 +45,7 @@ export class PurchaseRequestBudgetService {
       purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
       supplier_id: postPurchaseRequestBudgetDto.supplier_id,
       to_be_approved: null, // postPurchaseRequestBudgetDto.to_be_approved,
+      product_id: postPurchaseRequestBudgetDto.product_id,
     };
 
     await this.prisma.purchaseRequestBudget.create({ data });
@@ -84,32 +115,42 @@ export class PurchaseRequestBudgetService {
     id: string,
     putPurchaseRequestBudgetDto: PutPurchaseRequestBudgetDto,
   ) {
-    const update = {
+    const products = await this.prisma.purchaseRequestProduct.findMany({
       where: {
         id,
       },
-      data: {
-        quantity: putPurchaseRequestBudgetDto.quantity,
-        budget: putPurchaseRequestBudgetDto.budget,
-        shipping_fee: putPurchaseRequestBudgetDto.shipping_fee,
-        purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
-        supplier_id: putPurchaseRequestBudgetDto.supplier_id,
-        to_be_approved: putPurchaseRequestBudgetDto.to_be_approved,
-      },
-    };
+    });
+
+    const productArray = products.length;
 
     try {
-      await this.prisma.purchaseRequestBudget.update(update);
-      return {
-        status: true,
-        message: `Orçamento alterado com sucesso`,
-      };
+      for (let i = 0; i < productArray; i++) {
+        await this.prisma.purchaseRequestBudget.update({
+          where: {
+            id: id,
+          },
+          data: {
+            product_id: putPurchaseRequestBudgetDto.product_id[i],
+            quantity: putPurchaseRequestBudgetDto.quantity,
+            budget: putPurchaseRequestBudgetDto.budget,
+            shipping_fee: putPurchaseRequestBudgetDto.shipping_fee,
+            purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
+            supplier_id: putPurchaseRequestBudgetDto.supplier_id,
+            to_be_approved: putPurchaseRequestBudgetDto.to_be_approved,
+          },
+        });
+      }
     } catch (ex) {
       return {
         status: false,
-        message: `Não foi possível fazer a alteração do orçamento`,
-        inner: ex,
+        message: `Não foi possível realizar a alteração`,
+        error: ex.message,
       };
     }
+
+    return {
+      status: true,
+      message: `A orçamento foi alterado com sucesso`,
+    };
   }
 }

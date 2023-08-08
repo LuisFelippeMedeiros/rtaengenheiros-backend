@@ -26,6 +26,8 @@ import { SendGridModule } from '@anchan828/nest-sendgrid';
 
 // INFRA
 import { RowCountModule } from './infra/counters/rowcount.module';
+import { PurchaseorderModule } from './purchaseorder/purchaseorder.module';
+import { PurchaseorderproductModule } from './purchaseorderproduct/purchaseorderproduct.module';
 
 @Module({
   imports: [
@@ -64,6 +66,8 @@ import { RowCountModule } from './infra/counters/rowcount.module';
     SendGridModule.forRoot({
       apikey: process.env.SENDGRID_API_KEY,
     }),
+    PurchaseorderModule,
+    PurchaseorderproductModule,
   ],
   controllers: [],
   providers: [

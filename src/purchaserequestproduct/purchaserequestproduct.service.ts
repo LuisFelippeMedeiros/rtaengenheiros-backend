@@ -11,7 +11,6 @@ export class PurchaseRequestProductService {
     const data = {
       purchaserequest_id: postPurchaseRequestProductDto.purchaserequest_id,
       product_id: postPurchaseRequestProductDto.product_id,
-      supplier_id: postPurchaseRequestProductDto.supplier_id,
     };
 
     await this.prisma.purchaseRequestProduct.create({ data });
@@ -46,7 +45,6 @@ export class PurchaseRequestProductService {
       data: {
         purchaserequest_id: putPurchaseRequestProductDto.purchaserequest_id,
         product_id: putPurchaseRequestProductDto.product_id,
-        supplier_id: putPurchaseRequestProductDto.supplier_id,
       },
     };
 

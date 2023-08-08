@@ -10,7 +10,4 @@ export class PutPurchaseRequestProductDto extends PartialType(
 
   @IsString()
   purchaserequest_id?: string;
-
-  @IsString()
-  supplier_id?: string;
 }
