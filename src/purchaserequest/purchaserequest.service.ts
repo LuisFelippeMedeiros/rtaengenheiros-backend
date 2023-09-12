@@ -46,10 +46,12 @@ export class PurchaseRequestService {
     });
 
     try {
-      const statusWaiting = await this.prisma.status.findFirst({
-        where: { name: EStatus.waiting },
-      });
-      data.status_id = statusWaiting.id;
+      const { id: status_id, name: status_name } =
+        await this.prisma.status.findFirst({
+          where: { name: EStatus.waiting },
+        });
+
+      data.status_id = status_id;
 
       const result = await this.prisma.purchaseRequest.create({ data });
 
@@ -67,7 +69,6 @@ export class PurchaseRequestService {
               id: result.id,
             },
           });
-          console.log(ex);
         }
       }
 
@@ -91,7 +92,7 @@ export class PurchaseRequestService {
               await this.sendEmail(
                 userGestor.email,
                 process.env.FROM_EMAIL,
-                `Nova Solicitação de compra para aprovação (${statusWaiting.name})`,
+                `Nova Solicitação de compra para aprovação (${status_name})`,
                 `Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br`,
                 `<strong>Olá ${userGestor.name}, há uma nova solicitação de compra criada pelo(a) ${userCreateReq.name}, aguardando aprovação. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
                 Obs: Favor não responder este e-mail`,
@@ -106,7 +107,6 @@ export class PurchaseRequestService {
         message: `A Solicitação de compra foi criada com sucesso`,
       };
     } catch (ex) {
-      console.log(ex);
       return {
         status: false,
         message: `Não foi possível criar uma nova solicitação`,
@@ -129,24 +129,23 @@ export class PurchaseRequestService {
       };
     }
 
-    const purchaseRequestApproved =
-      await this.prisma.purchaseRequest.findUnique({
-        where: {
-          id,
-        },
-        include: {
-          Status: {
-            select: {
-              name: true,
-            },
+    const { Status } = await this.prisma.purchaseRequest.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        Status: {
+          select: {
+            name: true,
           },
         },
-      });
+      },
+    });
 
-    if (purchaseRequestApproved.Status.name === EStatus.approvedDiretor) {
+    if (Status.name === EStatus.approvedDiretor) {
       return {
         status: false,
-        message: `Essa solicitação de compra se encontra com o status de APROVADA, não podendo ser alterada`,
+        message: `A solicitação encontra-se aprovada, não sendo possível realizar alteração`,
       };
     }
 
@@ -228,7 +227,7 @@ export class PurchaseRequestService {
       };
     }
 
-    const purchaseRequest = await this.prisma.purchaseRequest.findUnique({
+    const { Status } = await this.prisma.purchaseRequest.findUnique({
       where: { id },
       include: {
         Status: {
@@ -244,10 +243,10 @@ export class PurchaseRequestService {
     //   where: { id: purchaseRequest.status_id },
     // });
 
-    if (purchaseRequest.Status.name === EStatus.approvedDiretor) {
+    if (Status.name === EStatus.approvedDiretor) {
       return {
         status: false,
-        message: `A solicitação de compra já se encontra aprovada, não sendo possível realizar alteração`,
+        message: `A solicitação encontra-se aprovada, não sendo possível realizar alteração`,
       };
     }
 
@@ -265,7 +264,7 @@ export class PurchaseRequestService {
           comment: patchPurchaseRequestDto.comment,
           approvedgestor_at: new Date(),
           approvedgestor_by: req.user.id,
-          is_approved_gestor: patchPurchaseRequestDto.is_approved,
+          is_approved_gestor: true,
         },
       };
 
@@ -310,7 +309,7 @@ export class PurchaseRequestService {
 
       return {
         status: true,
-        message: `A solicitação de compra foi aprovada pelo Gestor, agora precisa da aprovação do Diretor.`,
+        message: `A solicitação de compra foi aprovada pelo Gestor, necessitando da aprovação do Diretor.`,
       };
     }
   }
@@ -347,6 +346,16 @@ export class PurchaseRequestService {
       },
     });
 
+    if (
+      purchaseRequest.is_approved_gestor === false ||
+      purchaseRequest.is_approved_gestor === null
+    ) {
+      return {
+        status: false,
+        message: `A solicitação não foi aprovada pelo gestor.`,
+      };
+    }
+
     if (purchaseRequest.is_approved_gestor === true) {
       const statusApprovedDirector = await this.prisma.status.findFirst({
         where: {
@@ -361,7 +370,7 @@ export class PurchaseRequestService {
           comment: patchPurchaseRequestDto.comment,
           approveddiretor_at: new Date(),
           approveddiretor_by: req.user.id,
-          is_approved_diretor: patchPurchaseRequestDto.is_approved,
+          is_approved_diretor: true,
         },
       };
 
@@ -371,11 +380,11 @@ export class PurchaseRequestService {
       //   },
       // });
 
-      const status = await this.prisma.status.findFirst({
-        where: {
-          id: update.data.status_id,
-        },
-      });
+      // const status = await this.prisma.status.findFirst({
+      //   where: {
+      //     id: update.data.status_id,
+      //   },
+      // });
 
       if (process.env.NODE_ENV === 'production') {
         const administrativoGroup = await this.prisma.group.findFirst({
@@ -395,7 +404,7 @@ export class PurchaseRequestService {
           await this.sendEmail(
             userAdministrativo.email,
             process.env.FROM_EMAIL,
-            `Nova Solicitação de compra para aprovação (${status.name})`,
+            `Nova Solicitação de compra para aprovação (${statusApprovedDirector.name})`,
             `Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${user.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br`,
             `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${user.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
                 Obs: Favor não responder este e-mail`,
@@ -404,16 +413,10 @@ export class PurchaseRequestService {
         }
       }
 
-      const findBudget = await this.prisma.purchaseRequestBudget.findFirst({
+      const findBudget = await this.prisma.purchaseRequestBudget.findMany({
         where: {
-          id: req.query.id,
+          purchaserequest_id: req.query.id,
           to_be_approved: true,
-        },
-      });
-
-      const productName = await this.prisma.purchaseRequestProduct.findMany({
-        where: {
-          id: req.query.id,
         },
         include: {
           Product: {
@@ -426,38 +429,57 @@ export class PurchaseRequestService {
 
       let nameNewBillToPay = '';
 
-      if (productName.length > 0) {
-        for (let i = 0; i < productName.length; i++) {
+      if (findBudget.length > 0) {
+        for (let i = 0; i < findBudget.length; i++) {
           if (i < 1) {
-            nameNewBillToPay = productName[i].Product.name;
+            nameNewBillToPay = findBudget[i].Product.name;
           } else {
             nameNewBillToPay =
-              nameNewBillToPay + '/' + productName[i].Product.name;
+              nameNewBillToPay + '/' + findBudget[i].Product.name;
           }
         }
       }
 
-      const data = {
-        name: nameNewBillToPay,
-        type: 'SC',
-        supplier_id: findBudget.supplier_id,
-        price_approved: findBudget.budget + findBudget.shipping_fee,
-        price_updated: findBudget.budget + findBudget.shipping_fee,
-        created_by: req.user.id,
-        bill_status: 'A',
-        payment_info: '',
-        comment: '',
-        invoice_attachment: '',
-        company_id: purchaseRequest.company_id,
-        purchaserequest_id: purchaseRequest.identifier,
-      };
+      if (findBudget.length > 0) {
+        for (let i = 0; i < findBudget.length; i++) {}
+      }
 
-      await this.prisma.billToPay.create({ data });
+      console.log(findBudget);
 
-      return {
-        status: true,
-        message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
-      };
+      // const orders = await this.prisma.purchaseRequest.findFirst({
+      //   where: {
+      //     id: id,
+      //   },
+      //   include: {
+      //     PurchaseOrder: {
+      //       select: {
+      //         id: true,
+      //       },
+      //     },
+      //   },
+      // });
+
+      // const data = {
+      //   name: nameNewBillToPay,
+      //   type: 'SC',
+      //   supplier_id: findBudget.supplier_id,
+      //   price_approved: findBudget.budget + findBudget.shipping_fee,
+      //   price_updated: findBudget.budget + findBudget.shipping_fee,
+      //   created_by: req.user.id,
+      //   bill_status: 'A',
+      //   payment_info: '',
+      //   comment: '',
+      //   invoice_attachment: '',
+      //   company_id: purchaseRequest.company_id,
+      //   purchaserequest_id: purchaseRequest.identifier,
+      // };
+
+      // await this.prisma.billToPay.create({ data });
+
+      // return {
+      //   status: true,
+      //   message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
+      // };
     }
   }
 

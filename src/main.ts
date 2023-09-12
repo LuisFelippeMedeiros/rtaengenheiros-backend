@@ -39,7 +39,9 @@ async function bootstrap() {
     region: process.env.AWS_REGION,
   });
 
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+  });
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
