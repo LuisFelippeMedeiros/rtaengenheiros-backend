@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PostPurchaseOrderDto } from './dto/post-purchaseorder.dto';
-import { PutPurchaseOrderDto } from './dto/put-purchaseorder.dto';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -12,15 +11,11 @@ export class PurchaseOrderService {
     return `This action returns all purchaseorder`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} purchaseorder`;
   }
 
-  update(id: number, putPurchaseOrderDto: PutPurchaseOrderDto) {
-    return `This action updates a #${id} purchaseorder`;
-  }
-
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} purchaseorder`;
   }
 }

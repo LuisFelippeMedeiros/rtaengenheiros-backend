@@ -8,11 +8,8 @@ export class PatchPurchaseRequestDto extends PartialType(
   @IsString()
   comment: string;
 
-  @IsBoolean()
-  is_approved: boolean;
-
   @IsString()
-  purchaserequest_id: number;
+  purchaserequest_id: string;
 
   // @IsString()
   // is_approved_gestor?: boolean;

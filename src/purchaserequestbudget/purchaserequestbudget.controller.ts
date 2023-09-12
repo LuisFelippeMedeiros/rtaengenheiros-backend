@@ -36,8 +36,8 @@ export class PurchaserequestbudgetController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.purchaseRequestBudgetService.findOne(id);
+  async findOne(@Param('purchaserequest_id') purchaserequest_id: string) {
+    return this.purchaseRequestBudgetService.findOne(purchaserequest_id);
   }
 
   @Put('approval/:id')
