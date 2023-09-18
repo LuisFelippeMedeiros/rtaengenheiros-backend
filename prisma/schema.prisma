@@ -176,11 +176,10 @@ model Product {
   deleted_at DateTime?
   deleted_by String?
 
-  Category                Category? @relation(fields: [category_id], references: [id])
-  category_id             String?
-  Unit                    Unit?     @relation(fields: [unit_id], references: [id])
-  unit_id                 String?
-  purchaseorderproduct_id String?
+  Category    Category? @relation(fields: [category_id], references: [id])
+  category_id String?
+  Unit        Unit?     @relation(fields: [unit_id], references: [id])
+  unit_id     String?
 
   PurchaseRequestProduct PurchaseRequestProduct[]
   PurchaseRequestBudget  PurchaseRequestBudget[]
@@ -288,6 +287,8 @@ model PurchaseOrder {
   PurchaseRequest      PurchaseRequest?       @relation(fields: [purchaserequest_id], references: [id])
   purchaserequest_id   String?
   PurchaseOrderProduct PurchaseOrderProduct[]
+  billtopay            BillToPay?             @relation(fields: [billtopay_id], references: [identifier])
+  billtopay_id         Int?                   @unique
 
   @@map("purchaseorders")
 }
@@ -322,10 +323,10 @@ model Status {
 }
 
 model BillToPay {
-  id                 String    @id @default(uuid())
+  id                 String    @id @unique @default(uuid())
   type               String?
   name               String
-  identifier         Int       @default(autoincrement())
+  identifier         Int       @unique @default(autoincrement())
   payment_info       String?
   due_date           DateTime?
   scheduling         DateTime?
@@ -351,6 +352,7 @@ model BillToPay {
   purchaserequest_identifier Int?
   Supplier                   Supplier?        @relation(fields: [supplier_id], references: [id])
   supplier_id                String?
+  PurchaseOrder              PurchaseOrder?
 
   @@map("billstopay")
 }
