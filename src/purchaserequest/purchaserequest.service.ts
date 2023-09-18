@@ -374,17 +374,7 @@ export class PurchaseRequestService {
         },
       };
 
-      // const diretor = await this.prisma.user.findUnique({
-      //   where: {
-      //     id: update.data.approveddiretor_by,
-      //   },
-      // });
-
-      // const status = await this.prisma.status.findFirst({
-      //   where: {
-      //     id: update.data.status_id,
-      //   },
-      // });
+      await this.prisma.purchaseRequest.update(update);
 
       if (process.env.NODE_ENV === 'production') {
         const administrativoGroup = await this.prisma.group.findFirst({
@@ -409,11 +399,11 @@ export class PurchaseRequestService {
             `<strong>Olá ${userAdministrativo.name}, há uma nova solicitação de compra aprovada pelo(a) ${user.name}, aprovada com sucesso. Para visualizar acesse: https://sistema.rta.eng.br</strong><br><br><br><br>
                 Obs: Favor não responder este e-mail`,
           );
-          await this.prisma.purchaseRequest.update(update);
+          // await this.prisma.purchaseRequest.update(update);
         }
       }
 
-      const findBudget = await this.prisma.purchaseRequestBudget.findMany({
+      const findBudgets = await this.prisma.purchaseRequestBudget.findMany({
         where: {
           purchaserequest_id: req.query.id,
           to_be_approved: true,
@@ -427,59 +417,118 @@ export class PurchaseRequestService {
         },
       });
 
-      let nameNewBillToPay = '';
+      const comprasPorFornecedor = new Map();
 
-      if (findBudget.length > 0) {
-        for (let i = 0; i < findBudget.length; i++) {
-          if (i < 1) {
-            nameNewBillToPay = findBudget[i].Product.name;
-          } else {
-            nameNewBillToPay =
-              nameNewBillToPay + '/' + findBudget[i].Product.name;
-          }
+      for (const compra of findBudgets) {
+        const {
+          supplier_id,
+          product_id,
+          Product,
+          to_be_approved,
+          budget,
+          quantity,
+          shipping_fee,
+        } = compra;
+
+        if (!comprasPorFornecedor.has(supplier_id)) {
+          comprasPorFornecedor.set(supplier_id, {
+            fornecedor: supplier_id,
+            produtosAprovados: [],
+            nomeProdutos: [],
+            budget,
+            quantity,
+            shipping_fee,
+          });
+        }
+
+        if (to_be_approved) {
+          comprasPorFornecedor
+            .get(supplier_id)
+            .produtosAprovados.push(product_id),
+            comprasPorFornecedor
+              .get(supplier_id)
+              .nomeProdutos.push(Product.name);
         }
       }
 
-      if (findBudget.length > 0) {
-        for (let i = 0; i < findBudget.length; i++) {}
+      for (const compra of comprasPorFornecedor.values()) {
+        const {
+          fornecedor,
+          produtosAprovados,
+          nomeProdutos,
+          budget,
+          quantity,
+          shipping_fee,
+        } = compra;
+
+        let nomeProduto = '';
+
+        if (nomeProdutos.length > 0) {
+          for (let i = 0; i < nomeProdutos.length; i++) {
+            if (i < 1) {
+              nomeProduto = nomeProdutos[i].trim();
+            } else {
+              nomeProduto = nomeProduto + '/' + nomeProdutos[i].trim();
+            }
+          }
+        }
+
+        const order = await this.prisma.purchaseOrder.create({
+          data: {
+            supplier_id: fornecedor,
+            purchaserequest_id: req.query.id,
+          },
+        });
+
+        const data = await this.prisma.billToPay.create({
+          data: {
+            name: nomeProduto,
+            type: 'SC',
+            supplier_id: compra.supplier_id,
+            price_approved: compra.budget + compra.shipping_fee,
+            price_updated: compra.budget + compra.shipping_fee,
+            created_by: req.user.id,
+            bill_status: 'A',
+            payment_info: '',
+            comment: '',
+            invoice_attachment: '',
+            company_id: purchaseRequest.company_id,
+            purchaserequest_identifier: purchaseRequest.identifier,
+          },
+        });
+        await this.prisma.purchaseOrder.update({
+          where: {
+            id: order.id,
+          },
+          data: {
+            billtopay_id: data.identifier,
+          },
+        });
+
+        for (const produto of produtosAprovados) {
+          await this.prisma.purchaseOrderProduct.create({
+            data: {
+              quantity: quantity,
+              price: budget + shipping_fee,
+              purchaseorder_id: order.id,
+              product_id: produto,
+            },
+          });
+
+          await this.prisma.productPrice.create({
+            data: {
+              product_id: produto,
+              price: budget,
+              created_by: req.user.id,
+            },
+          });
+        }
       }
 
-      console.log(findBudget);
-
-      // const orders = await this.prisma.purchaseRequest.findFirst({
-      //   where: {
-      //     id: id,
-      //   },
-      //   include: {
-      //     PurchaseOrder: {
-      //       select: {
-      //         id: true,
-      //       },
-      //     },
-      //   },
-      // });
-
-      // const data = {
-      //   name: nameNewBillToPay,
-      //   type: 'SC',
-      //   supplier_id: findBudget.supplier_id,
-      //   price_approved: findBudget.budget + findBudget.shipping_fee,
-      //   price_updated: findBudget.budget + findBudget.shipping_fee,
-      //   created_by: req.user.id,
-      //   bill_status: 'A',
-      //   payment_info: '',
-      //   comment: '',
-      //   invoice_attachment: '',
-      //   company_id: purchaseRequest.company_id,
-      //   purchaserequest_id: purchaseRequest.identifier,
-      // };
-
-      // await this.prisma.billToPay.create({ data });
-
-      // return {
-      //   status: true,
-      //   message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
-      // };
+      return {
+        status: true,
+        message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
+      };
     }
   }
 
