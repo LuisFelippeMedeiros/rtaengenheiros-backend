@@ -43,6 +43,6 @@ export class PurchaseOrderController {
 
   @Post(':id/enviar-ordem')
   async enviarOrdemCompra(@Param('id') id: string) {
-    return await this.purchaseOrderService.enviarOrdemCompra();
+    return await this.purchaseOrderService.enviarOrdemCompra(id);
   }
 }
