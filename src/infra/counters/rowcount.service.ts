@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
-import { EBillStatus } from 'src/common/enum/billstatus.enum'
+import { EBillStatus } from 'src/common/enum/billstatus.enum';
 
 @Injectable()
 export class RowCountService {
@@ -138,33 +138,33 @@ export class RowCountService {
           },
         });
     }
-  };
+  }
 
-  async countBills () {
+  async countBills() {
     const bills_closed = await this.prisma.billToPay.count({
       where: {
-        bill_status: EBillStatus.fechada
-      }
-    })
+        bill_status: EBillStatus.fechada,
+      },
+    });
 
     const bills_open = await this.prisma.billToPay.count({
       where: {
-        bill_status: EBillStatus.aberta
-      }
-    })
+        bill_status: EBillStatus.aberta,
+      },
+    });
 
     const bills_canceled = await this.prisma.billToPay.count({
       where: {
-        bill_status: EBillStatus.cancelada
-      }
-    })
+        bill_status: EBillStatus.cancelada,
+      },
+    });
 
     return {
       bills_canceled,
       bills_closed,
-      bills_open
-    }
-  };
+      bills_open,
+    };
+  }
 
   // async count
 }

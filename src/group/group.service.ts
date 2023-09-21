@@ -47,8 +47,8 @@ export class GroupService {
 
   async findAll(page = 1, active = true, filter = '') {
     const groups = await this.prisma.group.findMany({
-      take: 10,
-      skip: 10 * (page - 1),
+      take: 9,
+      skip: 9 * (page - 1),
       where: {
         active: active,
         OR: [
