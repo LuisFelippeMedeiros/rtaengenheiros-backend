@@ -170,8 +170,8 @@ export class BillToPayService {
     }
 
     const billsToPay = await this.prisma.billToPay.findMany({
-      take: 10,
-      skip: 10 * (filtersParameters.page - 1),
+      take: 9,
+      skip: 9 * (filtersParameters.page - 1),
       include: {
         Supplier: {
           select: {

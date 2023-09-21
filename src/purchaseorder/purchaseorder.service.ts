@@ -77,8 +77,8 @@ export class PurchaseOrderService {
 
   async findPagination(page = 1) {
     const purchaseRequest = await this.prisma.purchaseOrder.findMany({
-      take: 10,
-      skip: 10 * (page - 1),
+      take: 9,
+      skip: 9 * (page - 1),
       orderBy: {
         identifier: 'desc',
       },
