@@ -87,7 +87,12 @@ export class PurchaseOrderService {
     return purchaseRequest;
   }
 
-  async enviarOrdemCompra() {
+  async enviarOrdemCompra(id: string) {
+    await this.prisma.purchaseOrder.findUnique({
+      where: {
+        id,
+      },
+    });
     if (process.env.NODE_ENV === 'production') {
     }
   }

@@ -12,6 +12,7 @@ export class ProductService {
       name: postProductDto.name.trim(),
       category_id: postProductDto.category_id,
       created_by: req.user.id,
+      unit_id: postProductDto.unit_id,
     };
 
     const productExists = await this.findByName(data.name);
@@ -148,6 +149,7 @@ export class ProductService {
       data: {
         name: putProductDto.name.trim(),
         category_id: putProductDto.category_id,
+        unit_id: putProductDto.unit_id,
         active: putProductDto.active,
         updated_by: req.user.id,
         updated_at: new Date(),
