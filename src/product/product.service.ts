@@ -104,6 +104,14 @@ export class ProductService {
             name: true,
           },
         },
+        Unit: {
+          select: {
+            id: true,
+            description: true,
+            initials: true,
+            active: true,
+          },
+        },
       },
     });
 
