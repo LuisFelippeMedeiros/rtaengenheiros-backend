@@ -75,6 +75,12 @@ export class PurchaseRequestBudgetService {
             name: true,
           },
         },
+        Product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
   }
@@ -106,31 +112,21 @@ export class PurchaseRequestBudgetService {
     id: string,
     putPurchaseRequestBudgetDto: PutPurchaseRequestBudgetDto,
   ) {
-    const products = await this.prisma.purchaseRequestProduct.findMany({
-      where: {
-        id,
-      },
-    });
-
-    const productArray = products.length;
-
     try {
-      for (let i = 0; i < productArray; i++) {
-        await this.prisma.purchaseRequestBudget.update({
-          where: {
-            id: id,
-          },
-          data: {
-            product_id: putPurchaseRequestBudgetDto.product_id[i],
-            quantity: putPurchaseRequestBudgetDto.quantity,
-            budget: putPurchaseRequestBudgetDto.budget,
-            shipping_fee: putPurchaseRequestBudgetDto.shipping_fee,
-            purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
-            supplier_id: putPurchaseRequestBudgetDto.supplier_id,
-            to_be_approved: putPurchaseRequestBudgetDto.to_be_approved,
-          },
-        });
-      }
+      await this.prisma.purchaseRequestBudget.update({
+        where: {
+          id: id,
+        },
+        data: {
+          product_id: putPurchaseRequestBudgetDto.product_id,
+          quantity: putPurchaseRequestBudgetDto.quantity,
+          budget: putPurchaseRequestBudgetDto.budget,
+          shipping_fee: putPurchaseRequestBudgetDto.shipping_fee,
+          purchaserequest_id: putPurchaseRequestBudgetDto.purchaserequest_id,
+          supplier_id: putPurchaseRequestBudgetDto.supplier_id,
+          to_be_approved: putPurchaseRequestBudgetDto.to_be_approved,
+        },
+      });
     } catch (ex) {
       return {
         status: false,
