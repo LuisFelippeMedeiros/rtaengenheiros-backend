@@ -82,9 +82,9 @@ export class ProductService {
             id: true,
             description: true,
             initials: true,
-            active: true
-          }
-        }
+            active: true,
+          },
+        },
       },
       orderBy: {
         name: 'asc',

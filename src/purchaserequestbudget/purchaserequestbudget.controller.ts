@@ -17,9 +17,11 @@ export class PurchaserequestbudgetController {
 
   @Post('create-purchase-request-budget')
   async create(
-    @Body() postPurchaseRequestBudgetDto: Array<PostPurchaseRequestBudgetDto>
+    @Body() postPurchaseRequestBudgetDto: Array<PostPurchaseRequestBudgetDto>,
   ) {
-    return this.purchaseRequestBudgetService.create(postPurchaseRequestBudgetDto);
+    return this.purchaseRequestBudgetService.create(
+      postPurchaseRequestBudgetDto,
+    );
   }
 
   // Não poderá ter essa rota, devido a ser retornado somente quando possui um orçamento vínculado
@@ -33,9 +35,9 @@ export class PurchaserequestbudgetController {
     return this.purchaseRequestBudgetService.findById(id);
   }
 
-  @Get(':id')
-  async findOne(@Param('purchaserequest_id') purchaserequest_id: string) {
-    return this.purchaseRequestBudgetService.findOne(purchaserequest_id);
+  @Get(':purchaserequest_id')
+  async findMany(@Param('purchaserequest_id') purchaserequest_id: string) {
+    return this.purchaseRequestBudgetService.findMany(purchaserequest_id);
   }
 
   @Put('approval/:id')
