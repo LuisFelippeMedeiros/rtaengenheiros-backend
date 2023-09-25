@@ -60,6 +60,11 @@ export class PurchaseRequestBudgetService {
           },
         },
       },
+      orderBy: {
+        Supplier: {
+          name: 'asc'
+        }
+      }
     });
 
     return result;
