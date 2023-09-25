@@ -7,23 +7,32 @@ import { PutPurchaseRequestBudgetDto } from './dto/put-purchaserequestbudget.dto
 export class PurchaseRequestBudgetService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(postPurchaseRequestBudgetDto: PostPurchaseRequestBudgetDto) {
-    await this.prisma.purchaseRequestBudget.create({
-      data: {
-        quantity: postPurchaseRequestBudgetDto.quantity,
-        budget: postPurchaseRequestBudgetDto.budget,
-        shipping_fee: postPurchaseRequestBudgetDto.shipping_fee,
-        purchaserequest_id: postPurchaseRequestBudgetDto.purchaserequest_id,
-        supplier_id: postPurchaseRequestBudgetDto.supplier_id,
-        to_be_approved: null, // postPurchaseRequestBudgetDto.to_be_approved,
-        product_id: postPurchaseRequestBudgetDto.product_id,
-      },
-    });
+  async create(postPurchaseRequestBudgetDto: Array<PostPurchaseRequestBudgetDto>) {
+    try {
+      postPurchaseRequestBudgetDto.forEach(async (value: PostPurchaseRequestBudgetDto) => {
+        await this.prisma.purchaseRequestBudget.createMany({
+          data: {
+            quantity: value.quantity,
+            budget: value.budget,
+            shipping_fee: value.shipping_fee,
+            purchaserequest_id: value.purchaserequest_id,
+            supplier_id: value.supplier_id,
+            to_be_approved: null,
+            product_id: value.product_id,
+          },
+        });
+      })
 
-    return {
-      status: true,
-      message: `Orçamento criado com sucesso`,
-    };
+      return {
+        status: true,
+        message: `Orçamento(s) criado(s) com sucesso`,
+      };
+    } catch (ex) {
+      return {
+        status: false,
+        message: `erro ao criar orçamento(s)`,
+      };
+    }
   }
 
   async findAll() {

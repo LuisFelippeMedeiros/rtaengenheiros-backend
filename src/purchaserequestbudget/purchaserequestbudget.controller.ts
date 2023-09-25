@@ -17,11 +17,9 @@ export class PurchaserequestbudgetController {
 
   @Post('create-purchase-request-budget')
   async create(
-    @Body() postPurchaseRequestBudgetDto: PostPurchaseRequestBudgetDto,
+    @Body() postPurchaseRequestBudgetDto: Array<PostPurchaseRequestBudgetDto>
   ) {
-    return this.purchaseRequestBudgetService.create(
-      postPurchaseRequestBudgetDto,
-    );
+    return this.purchaseRequestBudgetService.create(postPurchaseRequestBudgetDto);
   }
 
   // Não poderá ter essa rota, devido a ser retornado somente quando possui um orçamento vínculado
