@@ -114,9 +114,7 @@ export class PurchaseRequestBudgetService {
   ) {
     try {
       await this.prisma.purchaseRequestBudget.update({
-        where: {
-          id: id,
-        },
+        where: { id },
         data: {
           product_id: putPurchaseRequestBudgetDto.product_id,
           quantity: putPurchaseRequestBudgetDto.quantity,
