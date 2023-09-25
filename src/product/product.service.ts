@@ -9,9 +9,10 @@ export class ProductService {
 
   async create(postProductDto: PostProductDto, @Req() req: any) {
     const data = {
-      name: postProductDto.name,
+      name: postProductDto.name.trim(),
       category_id: postProductDto.category_id,
       created_by: req.user.id,
+      unit_id: postProductDto.unit_id,
     };
 
     const productExists = await this.findByName(data.name);
@@ -50,8 +51,8 @@ export class ProductService {
 
   async findPagination(page = 1, active: boolean, filter = '') {
     const products = await this.prisma.product.findMany({
-      take: 10,
-      skip: 10 * (page - 1),
+      take: 9,
+      skip: 9 * (page - 1),
       where: {
         active,
         OR: [
@@ -76,6 +77,14 @@ export class ProductService {
             name: true,
           },
         },
+        Unit: {
+          select: {
+            id: true,
+            description: true,
+            initials: true,
+            active: true,
+          },
+        },
       },
       orderBy: {
         name: 'asc',
@@ -92,7 +101,7 @@ export class ProductService {
   }
 
   async findById(id: string) {
-    return await this.prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: {
         id,
       },
@@ -103,8 +112,43 @@ export class ProductService {
             name: true,
           },
         },
+        Unit: {
+          select: {
+            id: true,
+            description: true,
+            initials: true,
+            active: true,
+          },
+        },
       },
     });
+
+    const productPrices = await this.prisma.productPrice.findMany({
+      where: {
+        product_id: id,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      select: {
+        price: true,
+      },
+      take: 6,
+    });
+
+    const prices = productPrices.map((item) => item.price);
+
+    // Calcular a média dos preços
+    const totalPrices = prices.reduce((total, price) => total + price, 0);
+    const averageProductPrice =
+      prices.length > 0 ? totalPrices / prices.length : 0;
+
+    const result = {
+      product: product,
+      averagePrice: averageProductPrice,
+    };
+
+    return result;
   }
 
   async findByName(name: string) {
@@ -119,8 +163,9 @@ export class ProductService {
     const update = {
       where: { id },
       data: {
-        name: putProductDto.name,
+        name: putProductDto.name.trim(),
         category_id: putProductDto.category_id,
+        unit_id: putProductDto.unit_id,
         active: putProductDto.active,
         updated_by: req.user.id,
         updated_at: new Date(),

@@ -17,7 +17,7 @@ export class PurchaserequestbudgetController {
 
   @Post('create-purchase-request-budget')
   async create(
-    @Body() postPurchaseRequestBudgetDto: PostPurchaseRequestBudgetDto,
+    @Body() postPurchaseRequestBudgetDto: Array<PostPurchaseRequestBudgetDto>,
   ) {
     return this.purchaseRequestBudgetService.create(
       postPurchaseRequestBudgetDto,
@@ -35,9 +35,9 @@ export class PurchaserequestbudgetController {
     return this.purchaseRequestBudgetService.findById(id);
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.purchaseRequestBudgetService.findOne(id);
+  @Get(':purchaserequest_id')
+  async findMany(@Param('purchaserequest_id') purchaserequest_id: string) {
+    return this.purchaseRequestBudgetService.findMany(purchaserequest_id);
   }
 
   @Put('approval/:id')

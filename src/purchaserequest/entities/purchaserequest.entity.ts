@@ -20,7 +20,7 @@ export class PurchaseRequest {
   approveddiretor_by?: string;
   is_approved_gestor?: boolean;
   is_approved_diretor?: boolean;
-  purchaserequest_id?: number;
+  purchaserequest_id?: string;
 }
 
 export class PurchaseRequestFilter {

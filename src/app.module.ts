@@ -18,7 +18,6 @@ import { PurchaserequestbudgetModule } from './purchaserequestbudget/purchasereq
 import { BillToPayModule } from './billtopay/billtopay.module';
 import { PurchaseRequestProductModule } from './purchaserequestproduct/purchaserequestproduct.module';
 import { ConfigModule } from '@nestjs/config';
-import { MulterExtendedModule } from 'nestjs-multer-extended';
 import { UnitModule } from './unit/unit.module';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { WinstonModule } from 'nest-winston';
@@ -27,6 +26,8 @@ import { SendGridModule } from '@anchan828/nest-sendgrid';
 
 // INFRA
 import { RowCountModule } from './infra/counters/rowcount.module';
+import { PurchaseorderModule } from './purchaseorder/purchaseorder.module';
+import { PurchaseorderproductModule } from './purchaseorderproduct/purchaseorderproduct.module';
 
 @Module({
   imports: [
@@ -51,20 +52,22 @@ import { RowCountModule } from './infra/counters/rowcount.module';
     // ------------------------
     ConfigModule.forRoot(),
     WinstonModule.forRoot(winstonConfig),
-    MulterExtendedModule.register({
-      awsConfig: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: process.env.AWS_REGION,
-      },
-      bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
-      basePath: process.env.basePath,
-      fileSize: 1 * 1024 * 1024,
-    }),
+    // MulterExtendedModule.register({
+    //   awsConfig: {
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //     region: process.env.AWS_REGION,
+    //   },
+    //   bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+    //   basePath: process.env.basePath,
+    //   fileSize: 1 * 1024 * 1024,
+    // }),
     UnitModule,
     SendGridModule.forRoot({
       apikey: process.env.SENDGRID_API_KEY,
     }),
+    PurchaseorderModule,
+    PurchaseorderproductModule,
   ],
   controllers: [],
   providers: [

@@ -170,8 +170,8 @@ export class BillToPayService {
     }
 
     const billsToPay = await this.prisma.billToPay.findMany({
-      take: 10,
-      skip: 10 * (filtersParameters.page - 1),
+      take: 9,
+      skip: 9 * (filtersParameters.page - 1),
       include: {
         Supplier: {
           select: {
@@ -407,33 +407,33 @@ export class BillToPayService {
     }
   }
 
-  async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
-    try {
-      const s3 = new S3();
-      const uploadResult = await s3
-        .upload({
-          Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
-          Body: dataBuffer,
-          Key: `${uuidv4()}-${filename}`,
-        })
-        .promise();
-      const billAttachment = {
-        where: {
-          id,
-        },
-        data: {
-          invoice_attachment: uploadResult.Location,
-        },
-      };
+  // async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
+  //   try {
+  //     const s3 = new S3();
+  //     const uploadResult = await s3
+  //       .upload({
+  //         Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+  //         Body: dataBuffer,
+  //         Key: `${uuidv4()}-${filename}`,
+  //       })
+  //       .promise();
+  //     const billAttachment = {
+  //       where: {
+  //         id,
+  //       },
+  //       data: {
+  //         invoice_attachment: uploadResult.Location,
+  //       },
+  //     };
 
-      await this.prisma.billToPay.update(billAttachment);
-    } catch (err) {
-      return { key: 'error', url: err.message };
-    }
+  //     await this.prisma.billToPay.update(billAttachment);
+  //   } catch (err) {
+  //     return { key: 'error', url: err.message };
+  //   }
 
-    return {
-      status: true,
-      message: `O cupom/nota fiscal foi inserida com sucesso.`,
-    };
-  }
+  //   return {
+  //     status: true,
+  //     message: `O cupom/nota fiscal foi inserida com sucesso.`,
+  //   };
+  // }
 }

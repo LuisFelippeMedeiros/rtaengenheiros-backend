@@ -17,13 +17,13 @@ export class PutPurchaseRequestBudgetDto extends PartialType(
   @IsString()
   purchaserequest_id: string;
 
-  @IsString()
-  unit_id?: string;
-
   @IsBoolean()
   to_be_approved?: boolean;
 
   @IsOptional()
   @IsNumber()
   shipping_fee?: number;
+
+  @IsString()
+  product_id?: string;
 }
