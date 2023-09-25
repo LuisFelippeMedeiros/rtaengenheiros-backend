@@ -7,21 +7,25 @@ import { PutPurchaseRequestBudgetDto } from './dto/put-purchaserequestbudget.dto
 export class PurchaseRequestBudgetService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(postPurchaseRequestBudgetDto: Array<PostPurchaseRequestBudgetDto>) {
+  async create(
+    postPurchaseRequestBudgetDto: Array<PostPurchaseRequestBudgetDto>,
+  ) {
     try {
-      postPurchaseRequestBudgetDto.forEach(async (value: PostPurchaseRequestBudgetDto) => {
-        await this.prisma.purchaseRequestBudget.createMany({
-          data: {
-            quantity: value.quantity,
-            budget: value.budget,
-            shipping_fee: value.shipping_fee,
-            purchaserequest_id: value.purchaserequest_id,
-            supplier_id: value.supplier_id,
-            to_be_approved: null,
-            product_id: value.product_id,
-          },
-        });
-      })
+      postPurchaseRequestBudgetDto.forEach(
+        async (value: PostPurchaseRequestBudgetDto) => {
+          await this.prisma.purchaseRequestBudget.createMany({
+            data: {
+              quantity: value.quantity,
+              budget: value.budget,
+              shipping_fee: value.shipping_fee,
+              purchaserequest_id: value.purchaserequest_id,
+              supplier_id: value.supplier_id,
+              to_be_approved: null,
+              product_id: value.product_id,
+            },
+          });
+        },
+      );
 
       return {
         status: true,
@@ -39,9 +43,9 @@ export class PurchaseRequestBudgetService {
     return this.prisma.purchaseRequestBudget.findMany();
   }
 
-  async findOne(purchaserequest_id: string) {
-    return this.prisma.purchaseRequestBudget.findMany({
-      where: { purchaserequest_id },
+  async findMany(purchaserequest_id: string) {
+    const result = this.prisma.purchaseRequestBudget.findMany({
+      where: { purchaserequest_id: purchaserequest_id },
       include: {
         Supplier: {
           select: {
@@ -49,8 +53,16 @@ export class PurchaseRequestBudgetService {
             name: true,
           },
         },
+        Product: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
+
+    return result;
   }
 
   async findById(id: string) {

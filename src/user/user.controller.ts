@@ -86,17 +86,17 @@ export class UserController {
     return this.userService.password(id, patchUserDto, req);
   }
 
-  // @Patch('avatar/:id')
-  // @UseInterceptors(FileInterceptor('file'))
-  // async updateAvatar(
-  //   @Param('id') id: string,
-  //   @UploadedFile() file: Express.Multer.File,
-  // ): Promise<any> {
-  //   const result = await this.userService.uploadAvatar(
-  //     id,
-  //     file.buffer,
-  //     file.originalname,
-  //   );
-  //   return result;
-  // }
+  @Patch('avatar/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAvatar(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<any> {
+    const result = await this.userService.uploadAvatar(
+      id,
+      file.buffer,
+      file.originalname,
+    );
+    return result;
+  }
 }
