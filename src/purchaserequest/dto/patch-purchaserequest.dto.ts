@@ -7,7 +7,4 @@ export class PatchPurchaseRequestDto extends PartialType(
 ) {
   @IsString()
   comment: string;
-
-  @IsString()
-  purchaserequest_id: string;
 }
