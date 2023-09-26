@@ -17,8 +17,8 @@ export class PutPurchaseRequestBudgetDto extends PartialType(
   @IsString()
   purchaserequest_id: string;
 
-  @IsBoolean()
-  to_be_approved?: boolean;
+  // @IsBoolean()
+  // to_be_approved?: boolean;
 
   @IsOptional()
   @IsNumber()
