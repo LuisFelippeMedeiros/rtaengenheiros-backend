@@ -50,7 +50,7 @@ import { PurchaseorderproductModule } from './purchaseorderproduct/purchaseorder
     // INFRA,
     RowCountModule,
     // ------------------------
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     WinstonModule.forRoot(winstonConfig),
     // MulterExtendedModule.register({
     //   awsConfig: {

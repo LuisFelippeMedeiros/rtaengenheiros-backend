@@ -484,7 +484,7 @@ export class PurchaseRequestService {
           data: {
             name: nomeProduto,
             type: 'SC',
-            supplier_id: compra.supplier_id,
+            supplier_id: compra.fornecedor,
             price_approved: compra.budget + compra.shipping_fee,
             price_updated: compra.budget + compra.shipping_fee,
             created_by: req.user.id,
@@ -492,6 +492,7 @@ export class PurchaseRequestService {
             payment_info: '',
             comment: '',
             invoice_attachment: '',
+            dda: false,
             company_id: purchaseRequest.company_id,
             purchaserequest_identifier: purchaseRequest.identifier,
           },

@@ -48,6 +48,7 @@ export class PurchaseOrderService {
 
     // Adicione informações do fornecedor
     doc.fontSize(14).text('Informações do Fornecedor', { align: 'left' });
+
     doc.fontSize(12).text(`Nome do Fornecedor: ${ordemCompra.Supplier.name}`);
     doc.fontSize(12).text(`CNPJ: ${ordemCompra.Supplier.cnpj}`);
     doc.fontSize(12).text(`Telefone: ${ordemCompra.Supplier.telephone}`);
