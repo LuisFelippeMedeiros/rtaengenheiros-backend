@@ -1,10 +1,11 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
+import { PutBillToPayDto } from './dto/put-billtopay.dto';
 import { EBillStatus } from '../common/enum/billstatus.enum';
 import { EGroupType } from '../common/enum/grouptype.enum';
 import { v4 as uuidv4 } from 'uuid';
-import { S3 } from 'aws-sdk';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class BillToPayService {
@@ -14,7 +15,7 @@ export class BillToPayService {
     const data = {
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
-      type: postBillToPayDto.is_duty ? 'IMP' : 'CP',
+      type: postBillToPayDto.is_duty ? 'IMP' : 'CF',
       dda: postBillToPayDto.dda,
       reference_month: postBillToPayDto.reference_month,
       issue_date: postBillToPayDto.issue_date,
@@ -23,7 +24,7 @@ export class BillToPayService {
       supplier_id: postBillToPayDto.supplier_id,
       price_approved: postBillToPayDto.price_approved,
       price_updated: postBillToPayDto.price_approved,
-      invoice_attachment: postBillToPayDto.invoice_attachment,
+      // invoice_attachment: postBillToPayDto.invoice_attachment,
       comment: postBillToPayDto.comment,
       company_id: postBillToPayDto.company_id,
       created_by: req.user.id,
@@ -69,7 +70,7 @@ export class BillToPayService {
         },
       },
       orderBy: {
-        due_date: 'desc',
+        identifier: 'desc',
       },
     });
   }
@@ -190,7 +191,7 @@ export class BillToPayService {
         },
       },
       orderBy: {
-        due_date: 'desc',
+        identifier: 'desc',
       },
       where: whereAll,
     });
@@ -260,7 +261,7 @@ export class BillToPayService {
     });
   }
 
-  async update(id: string, putBillToPayDto: PostBillToPayDto, @Req() req: any) {
+  async update(id: string, putBillToPayDto: PutBillToPayDto, @Req() req: any) {
     const billToPay = await this.prisma.billToPay.findFirst({
       where: { id },
     });
@@ -289,7 +290,7 @@ export class BillToPayService {
         scheduling: putBillToPayDto.scheduling,
         price_approved: putBillToPayDto.price_approved,
         price_updated: putBillToPayDto.price_updated,
-        invoice_attachment: putBillToPayDto.invoice_attachment,
+        // invoice_attachment: putBillToPayDto.invoice_attachment,
         company_id: putBillToPayDto.company_id,
         updated_by: req.user.id,
         updated_at: new Date(),
@@ -407,33 +408,49 @@ export class BillToPayService {
     }
   }
 
-  // async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
-  //   try {
-  //     const s3 = new S3();
-  //     const uploadResult = await s3
-  //       .upload({
-  //         Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
-  //         Body: dataBuffer,
-  //         Key: `${uuidv4()}-${filename}`,
-  //       })
-  //       .promise();
-  //     const billAttachment = {
-  //       where: {
-  //         id,
-  //       },
-  //       data: {
-  //         invoice_attachment: uploadResult.Location,
-  //       },
-  //     };
+  // async uploadInvoice(id: string, dataBuffer: Buffer, fileName: string) {
+  //   await this.s3Client.send(
+  //     new PutObjectCommand({
+  //       Bucket: 'rtaengenheiros-bucket',
+  //       Key: fileName,
+  //       Body: `${uuidv4()}-${fileName}`,
+  //     }),
 
-  //     await this.prisma.billToPay.update(billAttachment);
-  //   } catch (err) {
-  //     return { key: 'error', url: err.message };
-  //   }
-
-  //   return {
-  //     status: true,
-  //     message: `O cupom/nota fiscal foi inserida com sucesso.`,
-  //   };
+  //   );
   // }
+  async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
+    try {
+      const s3 = new S3Client({ region: process.env.AWS_REGION }); // Defina a região apropriada
+
+      const objectKey = `${uuidv4()}-${filename}`;
+
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+          Body: dataBuffer,
+          Key: objectKey,
+        }),
+      );
+
+      const invoiceAttachmentUrl = `https://${process.env.AWS_PUBLIC_BUCKET_NAME}.s3.amazonaws.com/${objectKey}`;
+
+      const billAttachment = {
+        where: {
+          id,
+        },
+        data: {
+          invoice_attachment: invoiceAttachmentUrl,
+        },
+      };
+
+      await this.prisma.billToPay.update(billAttachment);
+    } catch (err) {
+      return { key: 'error', url: err.message };
+    }
+
+    return {
+      status: true,
+      message: `O cupom/nota fiscal foi inserida com sucesso.`,
+    };
+  }
 }
