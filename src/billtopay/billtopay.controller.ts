@@ -86,7 +86,7 @@ export class BillToPayController {
     return this.billtopayService.paid(id, req);
   }
 
-  @Patch('invoice/:id')
+  @Patch(':id/invoice')
   @UseInterceptors(FileInterceptor('file'))
   async updateInvoice(
     @Param('id') id: string,
