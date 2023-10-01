@@ -12,7 +12,20 @@ export class BillToPayService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postBillToPayDto: PostBillToPayDto, @Req() req: any) {
+    const bill = await this.prisma.billToPay.findFirst({
+      orderBy: { identifier: 'desc' },
+    });
+
+    let nextId: number;
+
+    if (bill?.identifier === null || bill?.identifier === undefined) {
+      nextId = 1;
+    } else {
+      nextId = bill.identifier + 1;
+    }
+
     const data = {
+      identifier: nextId,
       name: postBillToPayDto.name,
       payment_info: postBillToPayDto.payment_info,
       type: postBillToPayDto.is_duty ? 'IMP' : 'CF',
@@ -55,7 +68,7 @@ export class BillToPayService {
     });
 
     const whereClause =
-      group.name === EGroupType.director
+      group.type === EGroupType.director
         ? { active: true }
         : { company_id: user.company_id, active: true };
 
@@ -408,18 +421,25 @@ export class BillToPayService {
     }
   }
 
-  // async uploadInvoice(id: string, dataBuffer: Buffer, fileName: string) {
-  //   await this.s3Client.send(
-  //     new PutObjectCommand({
-  //       Bucket: 'rtaengenheiros-bucket',
-  //       Key: fileName,
-  //       Body: `${uuidv4()}-${fileName}`,
-  //     }),
+  async isFilenameValid(filename: string): Promise<boolean> {
+    // Defina os caracteres especiais permitidos (altere conforme necessário)
+    const allowedSpecialChars = '._-';
 
-  //   );
-  // }
+    // Verifique se o nome do arquivo contém apenas letras, números e caracteres especiais permitidos
+    const regexPattern = `^[A-Za-z0-9${allowedSpecialChars}]+$`;
+    const regex = new RegExp(regexPattern);
+
+    return regex.test(filename);
+  }
+
   async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
     try {
+      if (!(await this.isFilenameValid(filename))) {
+        throw new Error(
+          'O nome do arquivo contém caracteres especiais não permitidos.',
+        );
+      }
+
       const s3 = new S3Client({ region: process.env.AWS_REGION }); // Defina a região apropriada
 
       const objectKey = `${uuidv4()}-${filename}`;
@@ -445,7 +465,11 @@ export class BillToPayService {
 
       await this.prisma.billToPay.update(billAttachment);
     } catch (err) {
-      return { key: 'error', url: err.message };
+      return await this.prisma.billToPay.delete({
+        where: {
+          id,
+        },
+      });
     }
 
     return {
