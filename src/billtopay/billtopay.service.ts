@@ -12,16 +12,16 @@ export class BillToPayService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(postBillToPayDto: PostBillToPayDto, @Req() req: any) {
-    const bill = await this.prisma.billToPay.findFirst({
+    const bills = await this.prisma.billToPay.findFirst({
       orderBy: { identifier: 'desc' },
     });
 
     let nextId: number;
 
-    if (bill?.identifier === null || bill?.identifier === undefined) {
+    if (bills?.identifier === null || bills?.identifier === undefined) {
       nextId = 1;
     } else {
-      nextId = bill.identifier + 1;
+      nextId = bills.identifier + 1;
     }
 
     const data = {
@@ -46,9 +46,10 @@ export class BillToPayService {
         : EBillStatus.aberta,
     };
 
-    await this.prisma.billToPay.create({ data });
+    const bill = await this.prisma.billToPay.create({ data });
 
     return {
+      id: bill.id,
       status: true,
       message: `A conta ${postBillToPayDto.name}, foi criada com sucesso.`,
     };
@@ -455,9 +456,7 @@ export class BillToPayService {
       const invoiceAttachmentUrl = `https://${process.env.AWS_PUBLIC_BUCKET_NAME}.s3.amazonaws.com/${objectKey}`;
 
       const billAttachment = {
-        where: {
-          id,
-        },
+        where: { id },
         data: {
           invoice_attachment: invoiceAttachmentUrl,
         },
@@ -465,11 +464,15 @@ export class BillToPayService {
 
       await this.prisma.billToPay.update(billAttachment);
     } catch (err) {
-      return await this.prisma.billToPay.delete({
-        where: {
-          id,
-        },
+      await this.prisma.billToPay.delete({
+        where: { id },
       });
+      return {
+        status: false,
+        key: 'error',
+        message: 'Erro ao adicionar arquivo, tente novamente mais tarde.',
+        url: err.message,
+      };
     }
 
     return {
