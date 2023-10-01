@@ -33,9 +33,10 @@ export class BillToPayService {
         : EBillStatus.aberta,
     };
 
-    await this.prisma.billToPay.create({ data });
+    const bill = await this.prisma.billToPay.create({ data });
 
     return {
+      id: bill.id,
       status: true,
       message: `A conta ${postBillToPayDto.name}, foi criada com sucesso.`,
     };
