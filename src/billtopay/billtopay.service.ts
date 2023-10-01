@@ -436,9 +436,7 @@ export class BillToPayService {
       const invoiceAttachmentUrl = `https://${process.env.AWS_PUBLIC_BUCKET_NAME}.s3.amazonaws.com/${objectKey}`;
 
       const billAttachment = {
-        where: {
-          id,
-        },
+        where: { id },
         data: {
           invoice_attachment: invoiceAttachmentUrl,
         },
@@ -446,7 +444,15 @@ export class BillToPayService {
 
       await this.prisma.billToPay.update(billAttachment);
     } catch (err) {
-      return { key: 'error', url: err.message };
+      await this.prisma.billToPay.delete({
+        where: { id }
+      });
+      return {
+        status: false,
+        key: 'error',
+        message: 'Erro ao adicionar arquivo, tente novamente mais tarde.',
+        url: err.message
+      };
     }
 
     return {
