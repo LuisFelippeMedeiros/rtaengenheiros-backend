@@ -90,14 +90,14 @@ export class BillToPayController {
   @UseInterceptors(FileInterceptor('file'))
   async updateInvoice(
     @Param('id') id: string,
-    @Param('isUpdate') isUpdate: Boolean,
+    @Param('isCreate') isCreate: Boolean,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<any> {
     const result = await this.billtopayService.uploadInvoice(
       id,
       file.buffer,
       file.originalname,
-      isUpdate
+      isCreate
     );
     return result;
   }

@@ -435,7 +435,7 @@ export class BillToPayService {
 
   //   );
   // }
-  async uploadInvoice(id: string, dataBuffer: Buffer, filename: string, isUpdate: Boolean = false) {
+  async uploadInvoice(id: string, dataBuffer: Buffer, filename: string, isCreate: Boolean = true) {
     try {
       if (!(await this.isFilenameValid(filename))) {
         throw new Error(
@@ -466,7 +466,7 @@ export class BillToPayService {
 
       await this.prisma.billToPay.update(billAttachment);
     } catch (err) {
-      if (!isUpdate) {
+      if (isCreate) {
         await this.prisma.billToPay.delete({
           where: { id }
         });
