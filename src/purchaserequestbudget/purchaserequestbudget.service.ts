@@ -13,6 +13,19 @@ export class PurchaseRequestBudgetService {
     try {
       postPurchaseRequestBudgetDto.forEach(
         async (value: PostPurchaseRequestBudgetDto) => {
+          const has_supplier =
+            await this.prisma.purchaseRequestBudget.findFirst({
+              where: {
+                supplier_id: value.supplier_id,
+              },
+            });
+          if (has_supplier) {
+            return {
+              status: false,
+              message:
+                'O fornecedor já possui um orçamento lançado para esta ordem de compra',
+            };
+          }
           await this.prisma.purchaseRequestBudget.createMany({
             data: {
               quantity: value.quantity,
@@ -24,6 +37,15 @@ export class PurchaseRequestBudgetService {
               product_id: value.product_id,
             },
           });
+          const has = await this.prisma.purchaseRequest.update({
+            where: {
+              id: value.purchaserequest_id,
+            },
+            data: {
+              has_budget: true,
+            },
+          });
+          console.log(has);
         },
       );
 

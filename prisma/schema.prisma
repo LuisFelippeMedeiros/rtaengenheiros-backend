@@ -235,6 +235,7 @@ model PurchaseRequest {
   deleted_by          String?
   rejected_at         DateTime?
   rejected_by         String?
+  has_budget          Boolean?
 
   Status     Status?  @relation(fields: [status_id], references: [id])
   status_id  String?
@@ -279,7 +280,7 @@ model PurchaseRequestBudget {
 
 model PurchaseOrder {
   id         String @id @default(uuid())
-  identifier Int?   @unique @default(autoincrement())
+  identifier Int?   @unique
 
   Supplier             Supplier?              @relation(fields: [supplier_id], references: [id])
   supplier_id          String?

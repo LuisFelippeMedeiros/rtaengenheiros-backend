@@ -20,6 +20,17 @@ export class PurchaseRequestService {
     postPurchaseRequestDto: PostPurchaseRequestDto,
     @Req() req: any,
   ) {
+    const bill = await this.prisma.billToPay.findFirst({
+      orderBy: { identifier: 'desc' },
+    });
+
+    let nextId: number;
+
+    if (bill?.identifier === null || bill?.identifier === undefined) {
+      nextId = 1;
+    } else {
+      nextId = bill.identifier + 1;
+    }
     const sizeArrayProductId = postPurchaseRequestDto.product_id.length;
 
     if (sizeArrayProductId === 0) {
@@ -30,6 +41,7 @@ export class PurchaseRequestService {
     }
 
     const data = {
+      identifier: nextId,
       reason: postPurchaseRequestDto.reason,
       status_id: '',
       active: postPurchaseRequestDto.active,
@@ -166,6 +178,20 @@ export class PurchaseRequestService {
       });
 
       try {
+        const { has_budget } = await this.prisma.purchaseRequest.findFirst({
+          where: {
+            id,
+          },
+        });
+
+        if (has_budget === true) {
+          return {
+            status: false,
+            message:
+              'O produto não pode ser excluído, pois já existe orçamento lançado para esta ordem.',
+          };
+        }
+
         await this.prisma.purchaseRequestProduct.deleteMany({
           where: {
             purchaserequest_id: id,
