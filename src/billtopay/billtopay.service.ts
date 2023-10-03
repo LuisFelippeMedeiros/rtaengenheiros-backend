@@ -419,7 +419,7 @@ export class BillToPayService {
 
   //   );
   // }
-  async uploadInvoice(id: string, dataBuffer: Buffer, filename: string) {
+  async uploadInvoice(id: string, dataBuffer: Buffer, filename: string, isUpdate: Boolean = false) {
     try {
       const s3 = new S3Client({ region: process.env.AWS_REGION }); // Defina a região apropriada
 
@@ -444,9 +444,11 @@ export class BillToPayService {
 
       await this.prisma.billToPay.update(billAttachment);
     } catch (err) {
-      await this.prisma.billToPay.delete({
-        where: { id }
-      });
+      if (!isUpdate) {
+        await this.prisma.billToPay.delete({
+          where: { id }
+        });
+      }
       return {
         status: false,
         key: 'error',
