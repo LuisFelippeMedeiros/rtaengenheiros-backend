@@ -10,8 +10,14 @@ import {
 import { PurchaseorderproductService } from './purchaseorderproduct.service';
 import { CreatePurchaseorderproductDto } from './dto/create-purchaseorderproduct.dto';
 import { UpdatePurchaseorderproductDto } from './dto/update-purchaseorderproduct.dto';
+import { RouteVersion } from 'src/statics/route.version';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('purchaseorderproduct')
+@ApiTags('Order Products')
+@Controller({
+  path: RouteVersion.route + 'order-products',
+  version: RouteVersion.version,
+})
 export class PurchaseorderproductController {
   constructor(
     private readonly purchaseorderproductService: PurchaseorderproductService,

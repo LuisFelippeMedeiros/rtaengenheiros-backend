@@ -4,9 +4,9 @@ import { Response } from 'express';
 import { RouteVersion } from 'src/statics/route.version';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('PurchaseRequest')
+@ApiTags('Order')
 @Controller({
-  path: RouteVersion.route + 'purchaseorder',
+  path: RouteVersion.route + 'order',
   version: RouteVersion.version,
 })
 export class PurchaseOrderController {
