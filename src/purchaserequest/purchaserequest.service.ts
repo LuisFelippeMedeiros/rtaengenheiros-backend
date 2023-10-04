@@ -854,6 +854,24 @@ export class PurchaseRequestService {
       },
     });
 
+    if (name === 'TODOS') {
+      status.id = null;
+    }
+
+    let where = {}
+
+    if (!status.id) {
+      where = {
+        active
+      }
+    } else {
+      where = {
+        active,
+        status_id: status.id
+      }
+    }
+
+
     return await this.prisma.purchaseRequest.count({
       where: { active, status_id: status.id },
     });
