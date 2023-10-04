@@ -800,16 +800,30 @@ export class PurchaseRequestService {
       },
     });
 
+    if (statusName === 'TODOS') {
+      status.id = null;
+    }
+
+    let where = {}
+
+    if (!status.id) {
+      where = {
+        active
+      }
+    } else {
+      where = {
+        active,
+        status_id: status.id
+      }
+    }
+
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 9,
       skip: 9 * (page - 1),
       orderBy: {
         identifier: 'desc',
       },
-      where: {
-        active,
-        status_id: status.id,
-      },
+      where,
       include: {
         Status: {
           select: {
