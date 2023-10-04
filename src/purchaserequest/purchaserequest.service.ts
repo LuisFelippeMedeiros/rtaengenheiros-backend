@@ -452,8 +452,8 @@ export class PurchaseRequestService {
           Product,
           to_be_approved,
           budget,
-          quantity,
           shipping_fee,
+          quantity,
         } = compra;
 
         if (!comprasPorFornecedor.has(supplier_id)) {
@@ -461,19 +461,21 @@ export class PurchaseRequestService {
             fornecedor: supplier_id,
             produtosAprovados: [],
             nomeProdutos: [],
-            budget,
-            quantity,
-            shipping_fee,
+            totalValue: 0, // Inicialize o totalValue para somar mais tarde
+            quantity: 0,
+            shipping_fee: 0,
+            budget: 0,
           });
         }
 
         if (to_be_approved) {
-          comprasPorFornecedor
-            .get(supplier_id)
-            .produtosAprovados.push(product_id),
-            comprasPorFornecedor
-              .get(supplier_id)
-              .nomeProdutos.push(Product.name);
+          const fornecedorData = comprasPorFornecedor.get(supplier_id);
+          fornecedorData.produtosAprovados.push(product_id);
+          fornecedorData.nomeProdutos.push(Product.name);
+          fornecedorData.totalValue += budget * quantity + shipping_fee; // Acumule o valor total da compra
+          fornecedorData.budget = budget;
+          fornecedorData.quantity = quantity;
+          fornecedorData.shipping_fee = shipping_fee;
         }
       }
 
@@ -482,6 +484,7 @@ export class PurchaseRequestService {
           fornecedor,
           produtosAprovados,
           nomeProdutos,
+          totalValue,
           budget,
           quantity,
           shipping_fee,
@@ -510,9 +513,9 @@ export class PurchaseRequestService {
           data: {
             name: nomeProduto,
             type: 'SC',
-            supplier_id: compra.fornecedor,
-            price_approved: compra.budget + compra.shipping_fee,
-            price_updated: compra.budget + compra.shipping_fee,
+            supplier_id: fornecedor,
+            price_approved: totalValue, // Use o valor total calculado aqui
+            price_updated: totalValue, // Use o valor total calculado aqui
             created_by: req.user.id,
             bill_status: 'A',
             payment_info: '',
@@ -523,6 +526,7 @@ export class PurchaseRequestService {
             purchaserequest_identifier: purchaseRequest.identifier,
           },
         });
+
         await this.prisma.purchaseOrder.update({
           where: {
             id: order.id,
@@ -536,7 +540,8 @@ export class PurchaseRequestService {
           await this.prisma.purchaseOrderProduct.create({
             data: {
               quantity: quantity,
-              price: budget + shipping_fee,
+              price: budget,
+              shipping_fee: shipping_fee,
               purchaseorder_id: order.id,
               product_id: produto,
             },

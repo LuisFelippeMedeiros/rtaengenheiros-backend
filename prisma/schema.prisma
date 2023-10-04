@@ -280,7 +280,7 @@ model PurchaseRequestBudget {
 
 model PurchaseOrder {
   id         String @id @default(uuid())
-  identifier Int?   @unique
+  identifier Int?   @unique @default(autoincrement())
 
   Supplier             Supplier?              @relation(fields: [supplier_id], references: [id])
   supplier_id          String?
@@ -294,9 +294,10 @@ model PurchaseOrder {
 }
 
 model PurchaseOrderProduct {
-  id       String @id @default(uuid())
-  quantity Int
-  price    Float
+  id           String @id @default(uuid())
+  quantity     Int
+  price        Float
+  shipping_fee Float
 
   PurchaseOrder    PurchaseOrder @relation(fields: [purchaseorder_id], references: [id])
   purchaseorder_id String
