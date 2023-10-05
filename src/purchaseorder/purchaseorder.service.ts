@@ -83,6 +83,38 @@ export class PurchaseOrderService {
       orderBy: {
         identifier: 'desc',
       },
+      include: {
+        PurchaseOrderProduct: {
+          select: {
+            id: true,
+            price: true,
+            quantity: true,
+            shipping_fee: true,
+            Product: {
+              select: {
+                id: true,
+                name: true,
+              }
+            },
+          }
+        },
+        Supplier: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            cnpj: true,
+          }
+        },
+        PurchaseRequest: {
+          select: {
+            id: true,
+            identifier: true,
+            reason: true,
+            comment: true,
+          }
+        }
+      }
     });
 
     return purchaseRequest;
