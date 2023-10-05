@@ -804,17 +804,17 @@ export class PurchaseRequestService {
       status.id = null;
     }
 
-    let where = {}
+    let where = {};
 
     if (!status.id) {
       where = {
-        active
-      }
+        active,
+      };
     } else {
       where = {
         active,
-        status_id: status.id
-      }
+        status_id: status.id,
+      };
     }
 
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
@@ -858,19 +858,18 @@ export class PurchaseRequestService {
       status.id = null;
     }
 
-    let where = {}
+    let where = {};
 
     if (!status.id) {
       where = {
-        active
-      }
+        active,
+      };
     } else {
       where = {
         active,
-        status_id: status.id
-      }
+        status_id: status.id,
+      };
     }
-
 
     return await this.prisma.purchaseRequest.count({
       where: { active, status_id: status.id },

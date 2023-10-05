@@ -42,6 +42,12 @@ export class ProductService {
             name: true,
           },
         },
+        ProductPrice: {
+          select: {
+            id: true,
+            price: true,
+          },
+        },
       },
       orderBy: {
         name: 'asc',
@@ -85,13 +91,40 @@ export class ProductService {
             active: true,
           },
         },
+        ProductPrice: {
+          select: {
+            id: true,
+            price: true,
+          },
+          orderBy: {
+            created_at: 'desc',
+          },
+          take: 6,
+        },
       },
       orderBy: {
         name: 'asc',
       },
     });
 
-    return products;
+    const productsWithAverage = products.map((product) => {
+      const latestPrices = product.ProductPrice || [];
+      const sumPrices = latestPrices.reduce(
+        (total, price) => total + price.price,
+        0,
+      );
+      const average =
+        latestPrices.length > 0
+          ? (sumPrices / latestPrices.length).toFixed(2)
+          : '0.00';
+
+      return {
+        ...product,
+        averagePrice: average,
+      };
+    });
+
+    return productsWithAverage;
   }
 
   async rowCount(active = true) {
@@ -118,6 +151,12 @@ export class ProductService {
             description: true,
             initials: true,
             active: true,
+          },
+        },
+        ProductPrice: {
+          select: {
+            id: true,
+            price: true,
           },
         },
       },
