@@ -505,7 +505,7 @@ export class PurchaseRequestService {
         const order = await this.prisma.purchaseOrder.create({
           data: {
             supplier_id: fornecedor,
-            purchaserequest_id: req.query.id,
+            purchaserequest_id: purchaseRequest.id,
           },
         });
 
