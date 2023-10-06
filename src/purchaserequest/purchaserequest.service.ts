@@ -431,7 +431,7 @@ export class PurchaseRequestService {
 
       const findBudgets = await this.prisma.purchaseRequestBudget.findMany({
         where: {
-          purchaserequest_id: req.query.id,
+          purchaserequest_id: id,
           to_be_approved: true,
         },
         include: {
@@ -460,44 +460,39 @@ export class PurchaseRequestService {
           comprasPorFornecedor.set(supplier_id, {
             fornecedor: supplier_id,
             produtosAprovados: [],
-            nomeProdutos: [],
-            totalValue: 0, // Inicialize o totalValue para somar mais tarde
-            quantity: 0,
-            shipping_fee: 0,
-            budget: 0,
+            produtosData: [], // Array para armazenar dados de produtos
+            totalValue: 0,
           });
         }
 
-        if (to_be_approved) {
+        if (to_be_approved === true) {
           const fornecedorData = comprasPorFornecedor.get(supplier_id);
           fornecedorData.produtosAprovados.push(product_id);
-          fornecedorData.nomeProdutos.push(Product.name);
-          fornecedorData.totalValue += budget * quantity + shipping_fee; // Acumule o valor total da compra
-          fornecedorData.budget = budget;
-          fornecedorData.quantity = quantity;
-          fornecedorData.shipping_fee = shipping_fee;
+
+          fornecedorData.produtosData.push({
+            nomeProduto: Product.name,
+            product_id,
+            budget,
+            quantity,
+            shipping_fee,
+          });
+
+          fornecedorData.totalValue += budget * quantity + shipping_fee;
         }
       }
 
       for (const compra of comprasPorFornecedor.values()) {
-        const {
-          fornecedor,
-          produtosAprovados,
-          nomeProdutos,
-          totalValue,
-          budget,
-          quantity,
-          shipping_fee,
-        } = compra;
+        const { fornecedor, produtosData, totalValue } = compra;
 
         let nomeProduto = '';
 
-        if (nomeProdutos.length > 0) {
-          for (let i = 0; i < nomeProdutos.length; i++) {
+        if (produtosData.length > 0) {
+          for (let i = 0; i < produtosData.length; i++) {
             if (i < 1) {
-              nomeProduto = nomeProdutos[i].trim();
+              nomeProduto = produtosData[i].nomeProduto.trim();
             } else {
-              nomeProduto = nomeProduto + '/' + nomeProdutos[i].trim();
+              nomeProduto =
+                nomeProduto + '/' + produtosData[i].nomeProduto.trim();
             }
           }
         }
@@ -514,8 +509,8 @@ export class PurchaseRequestService {
             name: nomeProduto,
             type: 'SC',
             supplier_id: fornecedor,
-            price_approved: totalValue, // Use o valor total calculado aqui
-            price_updated: totalValue, // Use o valor total calculado aqui
+            price_approved: totalValue,
+            price_updated: totalValue,
             created_by: req.user.id,
             bill_status: 'A',
             payment_info: '',
@@ -536,21 +531,21 @@ export class PurchaseRequestService {
           },
         });
 
-        for (const produto of produtosAprovados) {
+        for (const produtoData of produtosData) {
           await this.prisma.purchaseOrderProduct.create({
             data: {
-              quantity: quantity,
-              price: budget,
-              shipping_fee: shipping_fee,
+              quantity: produtoData.quantity,
+              price: produtoData.budget,
+              shipping_fee: produtoData.shipping_fee,
               purchaseorder_id: order.id,
-              product_id: produto,
+              product_id: produtoData.product_id,
             },
           });
 
           await this.prisma.productPrice.create({
             data: {
-              product_id: produto,
-              price: budget,
+              product_id: produtoData.product_id,
+              price: produtoData.budget,
               created_by: req.user.id,
             },
           });
@@ -559,7 +554,7 @@ export class PurchaseRequestService {
 
       return {
         status: true,
-        message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
+        message: `A solicitação de compra foi aprovada com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
       };
     }
   }
