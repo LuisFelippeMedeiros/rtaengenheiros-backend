@@ -28,10 +28,9 @@ export class PurchaseOrderController {
   }
 
   @Get(':id/pdf')
-  async gerarPdf(@Param('id') id: string, @Res() res: Response) {
+  async generatePdf(@Param('id') id: string, @Res() res: Response) {
     try {
-      // const ordemCompraId = parseInt(id, 10);
-      const nomeArquivo = await this.purchaseOrderService.gerarPdf(id);
+      const nomeArquivo = await this.purchaseOrderService.generatePdf(id);
 
       res.download(nomeArquivo);
     } catch (error) {
@@ -42,7 +41,7 @@ export class PurchaseOrderController {
   }
 
   @Post(':id/enviar-ordem')
-  async enviarOrdemCompra(@Param('id') id: string) {
-    return await this.purchaseOrderService.enviarOrdemCompra(id);
+  async sendOrder(@Param('id') id: string) {
+    return await this.purchaseOrderService.sendOrder(id);
   }
 }

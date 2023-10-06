@@ -15,7 +15,9 @@ export class PurchaseOrderService {
     return this.prisma.purchaseOrder.findMany();
   }
 
-  async gerarPdf(ordemCompraId: string): Promise<string> {
+  //
+
+  async generatePdf(ordemCompraId: string): Promise<string> {
     const ordemCompra = await this.prisma.purchaseOrder.findUnique({
       where: { id: ordemCompraId },
       include: {
@@ -65,6 +67,8 @@ export class PurchaseOrderService {
     // Finalize e salve o PDF
     doc.end();
 
+    console.log(doc);
+
     return nomeArquivo;
   }
 
@@ -94,9 +98,9 @@ export class PurchaseOrderService {
               select: {
                 id: true,
                 name: true,
-              }
+              },
             },
-          }
+          },
         },
         Supplier: {
           select: {
@@ -104,7 +108,7 @@ export class PurchaseOrderService {
             name: true,
             email: true,
             cnpj: true,
-          }
+          },
         },
         PurchaseRequest: {
           select: {
@@ -112,15 +116,15 @@ export class PurchaseOrderService {
             identifier: true,
             reason: true,
             comment: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     return purchaseRequest;
   }
 
-  async enviarOrdemCompra(id: string) {
+  async sendOrder(id: string) {
     await this.prisma.purchaseOrder.findUnique({
       where: {
         id,
