@@ -522,14 +522,16 @@ export class PurchaseRequestService {
           },
         });
 
-        await this.prisma.purchaseOrder.update({
-          where: {
-            id: order.id,
-          },
-          data: {
-            billtopay_id: data.identifier,
-          },
-        });
+        if (data.identifier) {
+          await this.prisma.purchaseOrder.update({
+            where: {
+              id: order.id,
+            },
+            data: {
+              billtopay_id: data.identifier,
+            },
+          });
+        }
 
         for (const produtoData of produtosData) {
           await this.prisma.purchaseOrderProduct.create({
