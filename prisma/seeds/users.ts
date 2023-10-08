@@ -7,6 +7,7 @@ export const users = [
     active: true,
     created_at: new Date(),
     group_id: 'c7c88193-1b34-4250-beed-226b06d1fc18',
+    is_responsible: true,
   },
   {
     id: '12a16c4b-b6fc-4dda-8d76-675950d90162',
@@ -16,5 +17,6 @@ export const users = [
     active: true,
     created_at: new Date(),
     group_id: 'c7c88193-1b34-4250-beed-226b06d1fc18',
+    is_responsible: true,
   },
 ];
