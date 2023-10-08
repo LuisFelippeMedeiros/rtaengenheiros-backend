@@ -32,7 +32,9 @@ export class PurchaseOrderController {
     try {
       const nomeArquivo = await this.purchaseOrderService.generatePdf(id);
 
-      res.download(nomeArquivo);
+      res.setHeader('Content-Type', 'application/pdf');
+
+      res.send(nomeArquivo);
     } catch (error) {
       res
         .status(500)
