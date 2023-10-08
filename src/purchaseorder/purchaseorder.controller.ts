@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Req, Res } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseorder.service';
 import { Response } from 'express';
 import { RouteVersion } from 'src/statics/route.version';
@@ -13,18 +13,18 @@ export class PurchaseOrderController {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
   @Get('all')
-  findAll() {
-    return this.purchaseOrderService.findAll();
+  findAll(@Req() req: any) {
+    return this.purchaseOrderService.findAll(req);
   }
 
   @Get()
-  async findPagination(@Query('page') page: number) {
-    return await this.purchaseOrderService.findPagination(page);
+  async findPagination(@Query('page') page: number, @Req() req: any) {
+    return await this.purchaseOrderService.findPagination(page, req);
   }
 
   @Get('rowCount')
-  async countRows() {
-    return await this.purchaseOrderService.rowCount();
+  async countRows(@Req() req: any) {
+    return await this.purchaseOrderService.rowCount(req);
   }
 
   @Get(':id/pdf')

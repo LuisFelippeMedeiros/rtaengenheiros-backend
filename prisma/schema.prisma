@@ -10,18 +10,19 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(uuid())
-  name       String
-  email      String    @unique
-  password   String
-  active     Boolean   @default(true)
-  created_at DateTime  @default(now())
-  created_by String?
-  updated_at DateTime?
-  updated_by String?
-  deleted_at DateTime?
-  deleted_by String?
-  avatar     String?
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  password       String
+  active         Boolean   @default(true)
+  created_at     DateTime  @default(now())
+  created_by     String?
+  updated_at     DateTime?
+  updated_by     String?
+  deleted_at     DateTime?
+  deleted_by     String?
+  avatar         String?
+  is_responsible Boolean?  @default(false)
 
   group      Group    @relation(fields: [group_id], references: [id])
   group_id   String
@@ -126,6 +127,7 @@ model Company {
   Billtopay       BillToPay[]
   Supplier        Supplier[]
   PurchaseRequest PurchaseRequest[]
+  PurchaseOrder   PurchaseOrder[]
 
   @@map("companies")
 }
@@ -289,6 +291,8 @@ model PurchaseOrder {
   PurchaseOrderProduct PurchaseOrderProduct[]
   billtopay            BillToPay?             @relation(fields: [billtopay_id], references: [identifier])
   billtopay_id         Int?                   @unique
+  Company              Company?               @relation(fields: [company_id], references: [id])
+  company_id           String?
 
   @@map("purchaseorders")
 }

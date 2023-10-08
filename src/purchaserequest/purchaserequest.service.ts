@@ -97,6 +97,7 @@ export class PurchaseRequestService {
               where: {
                 group_id: managerGroups[g].id,
                 company_id: userCreateReq.company_id,
+                is_responsible: true,
               },
             });
 
@@ -414,6 +415,7 @@ export class PurchaseRequestService {
             where: {
               group_id: administrativoGroup.id,
               company_id: purchaseRequest.company_id,
+              is_responsible: true,
             },
           });
 
@@ -501,6 +503,7 @@ export class PurchaseRequestService {
           data: {
             supplier_id: fornecedor,
             purchaserequest_id: purchaseRequest.id,
+            company_id: purchaseRequest.company_id,
           },
         });
 
@@ -611,6 +614,7 @@ export class PurchaseRequestService {
           where: {
             group_id: administrativoGroup.id,
             company_id: purchaseRequest.company_id,
+            is_responsible: true,
           },
         });
 

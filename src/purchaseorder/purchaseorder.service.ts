@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import { SendGridService } from '@anchan828/nest-sendgrid';
+import { EGroupType } from 'src/common/enum/grouptype.enum';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -11,8 +12,27 @@ export class PurchaseOrderService {
     private readonly sendGrid: SendGridService,
   ) {}
 
-  findAll() {
-    return this.prisma.purchaseOrder.findMany();
+  async findAll(@Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
+    return this.prisma.purchaseOrder.findMany({
+      where: whereClause,
+    });
   }
 
   //
@@ -67,21 +87,56 @@ export class PurchaseOrderService {
     // Finalize e salve o PDF
     doc.end();
 
-    console.log(doc);
-
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     return nomeArquivo;
   }
 
-  async rowCount() {
+  async rowCount(@Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
     return await this.prisma.purchaseOrder.count({
+      where: whereClause,
       orderBy: {
         identifier: 'desc',
       },
     });
   }
 
-  async findPagination(page = 1) {
+  async findPagination(page = 1, @Req() req: any) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: user.group_id,
+      },
+    });
+
+    const whereClause =
+      group.type === EGroupType.director
+        ? { active: true }
+        : { company_id: user.company_id, active: true };
+
     const purchaseRequest = await this.prisma.purchaseOrder.findMany({
+      where: whereClause,
       take: 9,
       skip: 9 * (page - 1),
       orderBy: {
