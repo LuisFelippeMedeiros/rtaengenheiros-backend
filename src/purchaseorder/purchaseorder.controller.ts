@@ -3,6 +3,7 @@ import { PurchaseOrderService } from './purchaseorder.service';
 import { Response } from 'express';
 import { RouteVersion } from 'src/statics/route.version';
 import { ApiTags } from '@nestjs/swagger';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @ApiTags('Order')
 @Controller({
@@ -36,6 +37,7 @@ export class PurchaseOrderController {
 
       res.send(nomeArquivo);
     } catch (error) {
+      console.log(error);
       res
         .status(500)
         .json({ message: 'Erro ao gerar o PDF da ordem de compra.' });
@@ -45,5 +47,11 @@ export class PurchaseOrderController {
   @Post(':id/enviar-ordem')
   async sendOrder(@Param('id') id: string) {
     return await this.purchaseOrderService.sendOrder(id);
+  }
+
+  @IsPublic()
+  @Get('get/:id')
+  async getOrder(@Param('id') id: string) {
+    return await this.purchaseOrderService.getOrder(id);
   }
 }

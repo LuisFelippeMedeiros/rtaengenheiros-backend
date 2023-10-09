@@ -4,6 +4,8 @@ import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import { SendGridService } from '@anchan828/nest-sendgrid';
 import { EGroupType } from 'src/common/enum/grouptype.enum';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -203,5 +205,214 @@ export class PurchaseOrderService {
       text,
       html,
     });
+  }
+
+  async getOrder(id: string) {
+    const logoPath = 'src/assets/semfundo.png';
+
+    const ordemCompra = await this.prisma.purchaseOrder.findUnique({
+      where: { id },
+      include: {
+        Supplier: true,
+      },
+    });
+
+    const produtos = await this.prisma.purchaseOrderProduct.findMany({
+      where: {
+        purchaseorder_id: id,
+      },
+      include: {
+        Product: {
+          select: {
+            name: true,
+            // Unit: true,
+          },
+        },
+      },
+    });
+
+    if (!ordemCompra) {
+      throw new Error('Ordem de compra não encontrada.');
+    }
+
+    const company = await this.prisma.company.findUnique({
+      where: {
+        id: ordemCompra.company_id,
+      },
+    });
+
+    const city = await this.prisma.city.findUnique({
+      where: {
+        id: company.city_id,
+      },
+      include: {
+        State: true,
+      },
+    });
+
+    const supplier = await this.prisma.supplier.findUnique({
+      where: {
+        id: ordemCompra.supplier_id,
+      },
+    });
+
+    function retornarFormatoMoeda(valor) {
+      return parseFloat(valor).toLocaleString('pt-br', {
+        style: 'currency',
+        currency: 'BRL',
+      });
+    }
+
+    const doc = new jsPDF();
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: `Logo`,
+            styles: {
+              halign: 'left',
+              fontSize: 20,
+              textColor: '#fff',
+            },
+          },
+          {
+            content: `Ordem de compra`,
+            styles: {
+              halign: 'right',
+              fontSize: 20,
+              textColor: '#fff',
+            },
+          },
+        ],
+      ],
+      theme: 'plain',
+      styles: {
+        fillColor: '#3366ff',
+      },
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: `Nº da ordem: #${ordemCompra.identifier}\nDate: 2022-01-27`,
+            styles: {
+              halign: 'right',
+            },
+          },
+        ],
+      ],
+      theme: 'plain',
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: `Faturado por: \n${supplier.name}\n${supplier.cnpj}\n${supplier.address}, ${supplier.district}`,
+            styles: {
+              halign: 'left',
+            },
+          },
+          {
+            content: `Faturado para: \n${company.name}\n${company.cnpj}\n${city.name}, ${city.State.name}`,
+            styles: {
+              halign: 'left',
+            },
+          },
+        ],
+      ],
+      theme: 'plain',
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Produdos e Serviços',
+            styles: {
+              halign: 'left',
+              fontSize: 14,
+            },
+          },
+        ],
+      ],
+      theme: 'plain',
+    });
+
+    let totalAmount = 0;
+
+    autoTable(doc, {
+      head: [
+        [
+          { content: 'Item', styles: { halign: 'left' } },
+          { content: 'Quantidade', styles: { halign: 'right' } },
+          { content: 'Valor unitário', styles: { halign: 'right' } },
+          { content: 'Frete', styles: { halign: 'right' } },
+          { content: 'Valor Total', styles: { halign: 'right' } },
+        ],
+      ],
+      body: produtos.map((produto) => {
+        const amount = produto.quantity * produto.price + produto.shipping_fee;
+        totalAmount += amount;
+        return [
+          { content: produto.Product.name, styles: { halign: 'left' } },
+          { content: produto.quantity.toString(), styles: { halign: 'right' } },
+          {
+            content: retornarFormatoMoeda(produto.price),
+            // )`R$${produto.price.toFixed(2)}`,
+            styles: { halign: 'right' },
+          },
+          {
+            content: retornarFormatoMoeda(produto.shipping_fee),
+            styles: { halign: 'right' },
+          },
+          {
+            content: retornarFormatoMoeda(amount),
+            styles: { halign: 'right' },
+          },
+        ];
+      }),
+      theme: 'striped',
+      headStyles: {
+        fillColor: '#343a40',
+      },
+    });
+
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Total:',
+            styles: {
+              halign: 'right',
+              fontSize: 14,
+            },
+          },
+        ],
+        [
+          {
+            content: retornarFormatoMoeda(totalAmount),
+            styles: {
+              halign: 'right',
+              fontSize: 14,
+              textColor: '#3366ff',
+            },
+          },
+        ],
+        [
+          {
+            content: `Data da solicitação: ${ordemCompra.id}`,
+            styles: {
+              halign: 'right',
+            },
+          },
+        ],
+      ],
+      theme: 'plain',
+    });
+
+    doc.save(`OrdemDeCompra#${ordemCompra.identifier}.pdf`);
   }
 }
