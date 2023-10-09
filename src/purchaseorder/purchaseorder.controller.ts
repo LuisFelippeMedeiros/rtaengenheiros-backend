@@ -28,29 +28,7 @@ export class PurchaseOrderController {
     return await this.purchaseOrderService.rowCount(req);
   }
 
-  @Get(':id/pdf')
-  async generatePdf(@Param('id') id: string, @Res() res: Response) {
-    try {
-      const nomeArquivo = await this.purchaseOrderService.generatePdf(id);
-
-      res.setHeader('Content-Type', 'application/pdf');
-
-      res.send(nomeArquivo);
-    } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .json({ message: 'Erro ao gerar o PDF da ordem de compra.' });
-    }
-  }
-
-  @Post(':id/enviar-ordem')
-  async sendOrder(@Param('id') id: string) {
-    return await this.purchaseOrderService.sendOrder(id);
-  }
-
-  @IsPublic()
-  @Get('get/:id')
+  @Get('pdf/:id')
   async getOrder(@Param('id') id: string) {
     return await this.purchaseOrderService.getOrder(id);
   }
