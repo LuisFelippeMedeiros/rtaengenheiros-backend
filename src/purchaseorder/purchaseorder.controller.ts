@@ -1,6 +1,5 @@
-import { Controller, Get, Param, Post, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseorder.service';
-import { Response } from 'express';
 import { RouteVersion } from 'src/statics/route.version';
 import { ApiTags } from '@nestjs/swagger';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
@@ -28,8 +27,9 @@ export class PurchaseOrderController {
     return await this.purchaseOrderService.rowCount(req);
   }
 
+  @IsPublic()
   @Get('pdf/:id')
-  async getOrder(@Param('id') id: string) {
-    return await this.purchaseOrderService.getOrder(id);
+  async getOrder(@Res() res: any, @Param('id') id: string) {
+    return await this.purchaseOrderService.getOrder(id, res);
   }
 }

@@ -6,7 +6,6 @@ import { SendGridService } from '@anchan828/nest-sendgrid';
 import { EGroupType } from 'src/common/enum/grouptype.enum';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import base64 from 'base64-js';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -124,7 +123,7 @@ export class PurchaseOrderService {
     return purchaseRequest;
   }
 
-  async getOrder(id: string) {
+  async getOrder(id: string, res: any) {
     const logoPath = 'src/assets/sem-fundo.png';
 
     let base64Data = '';
@@ -302,7 +301,6 @@ export class PurchaseOrderService {
           { content: produto.quantity.toString(), styles: { halign: 'right' } },
           {
             content: retornarFormatoMoeda(produto.price),
-            // )`R$${produto.price.toFixed(2)}`,
             styles: { halign: 'right' },
           },
           {
@@ -354,11 +352,14 @@ export class PurchaseOrderService {
       theme: 'plain',
     });
 
-    const fileName = `OrdemDeCompra#${ordemCompra.identifier}.pdf`;
+    const buffer = doc.output();
 
-    doc.save(fileName);
-    doc.autoPrint();
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=OrdemDeCompra-${id}.pdf`,
+    );
+    res.setHeader('Content-Type', 'application/pdf');
 
-    doc.output('dataurlnewwindow');
+    res.send(buffer);
   }
 }
