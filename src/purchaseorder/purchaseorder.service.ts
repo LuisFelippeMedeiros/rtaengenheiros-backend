@@ -6,6 +6,7 @@ import { SendGridService } from '@anchan828/nest-sendgrid';
 import { EGroupType } from 'src/common/enum/grouptype.enum';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import base64 from 'base64-js';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -206,7 +207,19 @@ export class PurchaseOrderService {
   }
 
   async getOrder(id: string) {
-    const logoPath = 'src/assets/semfundo.png';
+    const logoPath = 'src/assets/sem-fundo.png';
+
+    let base64Data = '';
+
+    fs.readFile(logoPath, (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      // Converte os dados do arquivo em base64.
+      base64Data = Buffer.from(data).toString('base64');
+    });
 
     const ordemCompra = await this.prisma.purchaseOrder.findUnique({
       where: { id },
@@ -263,11 +276,13 @@ export class PurchaseOrderService {
 
     const doc = new jsPDF();
 
+    doc.addImage(base64Data, 'PNG', 10, 10, 40, 20);
+
     autoTable(doc, {
       body: [
         [
           {
-            content: `Logo`,
+            content: '',
             styles: {
               halign: 'left',
               fontSize: 20,
@@ -279,15 +294,12 @@ export class PurchaseOrderService {
             styles: {
               halign: 'right',
               fontSize: 20,
-              textColor: '#fff',
+              textColor: '#000',
             },
           },
         ],
       ],
       theme: 'plain',
-      styles: {
-        fillColor: '#3366ff',
-      },
     });
 
     autoTable(doc, {
@@ -308,15 +320,15 @@ export class PurchaseOrderService {
       body: [
         [
           {
-            content: `Faturado por: \n${supplier.name}\n${supplier.cnpj}\n${supplier.address}, ${supplier.district}`,
+            content: `Faturado por: \n${supplier.name}\n${supplier.cnpj}\n${supplier.telephone}\n${supplier.address}, \n${supplier.district}`,
             styles: {
               halign: 'left',
             },
           },
           {
-            content: `Faturado para: \n${company.name}\n${company.cnpj}\n${city.name}, ${city.State.name}`,
+            content: `Faturado para: \n${company.internal_name}\n${company.cnpj}\n${city.name} ${city.State.name} \n${company.address} \n${company.telephone} \n${company.zip_code}`,
             styles: {
-              halign: 'left',
+              halign: 'right',
             },
           },
         ],
@@ -328,7 +340,7 @@ export class PurchaseOrderService {
       body: [
         [
           {
-            content: 'Produdos e Serviços',
+            content: 'Produtos e Serviços',
             styles: {
               halign: 'left',
               fontSize: 14,
@@ -411,6 +423,11 @@ export class PurchaseOrderService {
       theme: 'plain',
     });
 
-    doc.save(`OrdemDeCompra#${ordemCompra.identifier}.pdf`);
+    const fileName = `OrdemDeCompra#${ordemCompra.identifier}.pdf`;
+
+    doc.save(fileName);
+    doc.autoPrint();
+
+    doc.output('dataurlnewwindow');
   }
 }

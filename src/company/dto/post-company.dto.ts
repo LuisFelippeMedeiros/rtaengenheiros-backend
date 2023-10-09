@@ -14,4 +14,16 @@ export class PostCompanyDto extends Company {
 
   @IsInt()
   city_id: number;
+
+  @IsString()
+  telephone?: string;
+
+  @IsString()
+  zip_code?: string;
+
+  @IsString()
+  address?: string;
+
+  @IsString()
+  internal_name?: string;
 }

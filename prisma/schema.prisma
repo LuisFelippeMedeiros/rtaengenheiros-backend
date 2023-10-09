@@ -108,17 +108,21 @@ model State {
 }
 
 model Company {
-  id         String    @id @default(uuid())
-  name       String?
-  cnpj       String    @unique()
-  ie         String?
-  active     Boolean   @default(true)
-  created_at DateTime  @default(now())
-  created_by String?
-  updated_at DateTime?
-  updated_by String?
-  deleted_at DateTime?
-  deleted_by String?
+  id            String    @id @default(uuid())
+  name          String?
+  internal_name String?
+  cnpj          String    @unique()
+  ie            String?
+  address       String?
+  zip_code      String?
+  telephone     String?
+  active        Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  created_by    String?
+  updated_at    DateTime?
+  updated_by    String?
+  deleted_at    DateTime?
+  deleted_by    String?
 
   City    City @relation(fields: [city_id], references: [id])
   city_id Int
@@ -293,6 +297,7 @@ model PurchaseOrder {
   billtopay_id         Int?                   @unique
   Company              Company?               @relation(fields: [company_id], references: [id])
   company_id           String?
+  created_at           DateTime               @default(now())
 
   @@map("purchaseorders")
 }
