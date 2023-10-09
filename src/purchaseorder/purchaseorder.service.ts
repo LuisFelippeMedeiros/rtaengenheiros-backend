@@ -306,7 +306,7 @@ export class PurchaseOrderService {
       body: [
         [
           {
-            content: `Nº da ordem: #${ordemCompra.identifier}\nDate: 2022-01-27`,
+            content: `Nº da ordem: #${ordemCompra.identifier}`,
             styles: {
               halign: 'right',
             },
@@ -320,13 +320,13 @@ export class PurchaseOrderService {
       body: [
         [
           {
-            content: `Faturado por: \n${supplier.name}\n${supplier.cnpj}\n${supplier.telephone}\n${supplier.address}, \n${supplier.district}`,
+            content: `Faturado por: \n\n${supplier.name}\n${supplier.cnpj}\n${supplier.telephone}\n${supplier.address}, \n${supplier.district}`,
             styles: {
               halign: 'left',
             },
           },
           {
-            content: `Faturado para: \n${company.internal_name}\n${company.cnpj}\n${city.name} ${city.State.name} \n${company.address} \n${company.telephone} \n${company.zip_code}`,
+            content: `Faturado para: \n\n${company.internal_name}\n${company.cnpj}\n${city.name} ${city.State.name} \n${company.address} \n${company.telephone} \n${company.zip_code}`,
             styles: {
               halign: 'right',
             },
@@ -352,6 +352,19 @@ export class PurchaseOrderService {
     });
 
     let totalAmount = 0;
+
+    const data = new Date(ordemCompra.created_at);
+
+    const dia = data.getDate();
+    const mes = data.getMonth() + 1;
+    const ano = data.getFullYear();
+
+    const dataFormatada =
+      dia.toString().padStart(2, '0') +
+      '/' +
+      mes.toString().padStart(2, '0') +
+      '/' +
+      ano;
 
     autoTable(doc, {
       head: [
@@ -413,7 +426,7 @@ export class PurchaseOrderService {
         ],
         [
           {
-            content: `Data da solicitação: ${ordemCompra.id}`,
+            content: `Data da solicitação: ${dataFormatada}`,
             styles: {
               halign: 'right',
             },
