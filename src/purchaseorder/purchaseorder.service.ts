@@ -1,6 +1,5 @@
 import { Injectable, Req } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
-import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import { SendGridService } from '@anchan828/nest-sendgrid';
 import { EGroupType } from 'src/common/enum/grouptype.enum';
@@ -360,6 +359,6 @@ export class PurchaseOrderService {
     );
     res.setHeader('Content-Type', 'application/pdf');
 
-    res.send(buffer);
+    res.end(buffer, 'binary');
   }
 }
