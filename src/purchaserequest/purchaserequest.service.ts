@@ -873,7 +873,7 @@ export class PurchaseRequestService {
     }
 
     return await this.prisma.purchaseRequest.count({
-      where: { active, status_id: status.id },
+      where,
     });
   }
 

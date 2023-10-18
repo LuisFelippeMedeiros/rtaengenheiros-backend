@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Req, Res } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseorder.service';
 import { RouteVersion } from 'src/statics/route.version';
 import { ApiTags } from '@nestjs/swagger';
@@ -31,5 +31,11 @@ export class PurchaseOrderController {
   @Get('pdf/:id')
   async getOrder(@Res() res: any, @Param('id') id: string) {
     return await this.purchaseOrderService.getOrder(id, res);
+  }
+
+  @IsPublic()
+  @Post('sendpdf/:id')
+  async sendEmail(@Res() res: any, @Param('id') id: string) {
+    return await this.purchaseOrderService.sendPdf(id, res);
   }
 }
