@@ -5,7 +5,6 @@ import * as fs from 'fs';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { SendGridService } from '@anchan828/nest-sendgrid';
-import { from } from 'rxjs';
 
 @Injectable()
 export class PurchaseOrderService {
