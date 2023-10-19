@@ -6,7 +6,8 @@ export const users = [
     password: '$2b$10$/U/GW2/M3zs9TrI3JgUdiuQDeeoP2lTlLt05EAfM1p9aJwWcd6L8G',
     active: true,
     created_at: new Date(),
-    group_id: '8815bce0-0f6e-4cda-addc-9591eaf8a035',
+    group_id: 'c7c88193-1b34-4250-beed-226b06d1fc18',
+    is_responsible: true,
   },
   {
     id: '12a16c4b-b6fc-4dda-8d76-675950d90162',
@@ -15,6 +16,7 @@ export const users = [
     password: '$2b$10$/4q9gqvI4s92sspzFTEe3u2hw19WaAEcqFLykd0nI75UerRWdnbqC',
     active: true,
     created_at: new Date(),
-    group_id: '8815bce0-0f6e-4cda-addc-9591eaf8a035',
+    group_id: 'c7c88193-1b34-4250-beed-226b06d1fc18',
+    is_responsible: true,
   },
 ];

@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { PostPurchaseRequestBudgetDto } from './post-purchaserequestbudget.dto';
 
 export class PutPurchaseRequestBudgetDto extends PartialType(
@@ -17,13 +17,13 @@ export class PutPurchaseRequestBudgetDto extends PartialType(
   @IsString()
   purchaserequest_id: string;
 
-  @IsString()
-  unit_id?: string;
-
-  @IsBoolean()
-  to_be_approved?: boolean;
+  // @IsBoolean()
+  // to_be_approved?: boolean;
 
   @IsOptional()
   @IsNumber()
   shipping_fee?: number;
+
+  @IsString()
+  product_id?: string;
 }

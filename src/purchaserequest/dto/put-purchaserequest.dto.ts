@@ -22,5 +22,5 @@ export class PutPurchaseRequestDto extends PartialType(PostPurchaseRequestDto) {
   company_id?: string;
 
   @IsString()
-  purchaserequest_id: number;
+  purchaserequest_id: string;
 }

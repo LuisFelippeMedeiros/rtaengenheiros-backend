@@ -46,7 +46,21 @@ export class UserService {
       company_id,
       created_by: req.user.id,
       created_at: new Date(),
+      is_responsible: false,
     };
+
+    const group = await this.prisma.group.findUnique({
+      where: {
+        id: group_id,
+      },
+    });
+
+    if (
+      group.type === EGroupType.director ||
+      group.type === EGroupType.manager
+    ) {
+      data.is_responsible = true;
+    }
 
     const emailExists = await this.findByEmail(email);
 
@@ -57,6 +71,7 @@ export class UserService {
           'Este e-mail já se encontra cadastrado em nossa base de dados, favor verificar.',
       };
     }
+
     await this.prisma.user.create({ data });
 
     return {
@@ -107,8 +122,8 @@ export class UserService {
         : { company_id: user.company_id, active: true };
 
     const users = await this.prisma.user.findMany({
-      take: 10,
-      skip: 10 * (page - 1),
+      take: 9,
+      skip: 9 * (page - 1),
       include,
       where: whereClause,
       orderBy: {

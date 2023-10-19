@@ -17,6 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { RouteVersion } from 'src/statics/route.version';
 import { BillToPayService } from './billtopay.service';
 import { PostBillToPayDto } from './dto/post-billtopay.dto';
+import { PutBillToPayDto } from './dto/put-billtopay.dto';
 
 @ApiTags('BillToPay')
 @Controller({
@@ -69,7 +70,7 @@ export class BillToPayController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() putBillToPayDto: PostBillToPayDto,
+    @Body() putBillToPayDto: PutBillToPayDto,
     @Req() req: any,
   ) {
     return this.billtopayService.update(id, putBillToPayDto, req);
@@ -85,16 +86,18 @@ export class BillToPayController {
     return this.billtopayService.paid(id, req);
   }
 
-  @Patch(':id/invoice')
+  @Patch(':id/invoice/:isCreate')
   @UseInterceptors(FileInterceptor('file'))
   async updateInvoice(
     @Param('id') id: string,
+    @Param('isCreate') isCreate: boolean,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<any> {
     const result = await this.billtopayService.uploadInvoice(
       id,
       file.buffer,
       file.originalname,
+      isCreate,
     );
     return result;
   }

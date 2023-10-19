@@ -64,8 +64,8 @@ export class UnitService {
 
   async findPagination(page = 1, active = true, filter = '') {
     const unit = await this.prisma.unit.findMany({
-      take: 10,
-      skip: 10 * (page - 1),
+      take: 9,
+      skip: 9 * (page - 1),
       where: {
         active,
         OR: [

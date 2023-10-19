@@ -65,8 +65,8 @@ export class SupplierService {
         : { company_id: user.company_id, active: true };
 
     const suppliers = await this.prisma.supplier.findMany({
-      take: 10,
-      skip: 10 * (page - 1),
+      take: 9,
+      skip: 9 * (page - 1),
       where: {
         OR: [
           {
