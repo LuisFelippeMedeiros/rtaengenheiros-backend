@@ -21,6 +21,7 @@ export class PurchaseRequest {
   is_approved_gestor?: boolean;
   is_approved_diretor?: boolean;
   purchaserequest_id?: string;
+  has_budget?: boolean;
 }
 
 export class PurchaseRequestFilter {

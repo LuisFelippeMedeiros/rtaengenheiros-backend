@@ -2,6 +2,10 @@ export class Company {
   id?: string;
   cnpj: string;
   ie?: string;
+  address?: string;
+  zip_code?: string;
+  telephone?: string;
+  internal_name?: string;
   city_id: number;
   active?: boolean;
   created_at: Date;

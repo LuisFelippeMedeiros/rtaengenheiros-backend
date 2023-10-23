@@ -12,6 +12,7 @@ export class User {
   // @Exclude()
   company_id?: string;
   avatar?: string;
+  is_responsible?: boolean;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
@@ -25,5 +26,6 @@ export class UserPost {
   password: string;
   group_id: string;
   company_id?: string;
+  is_responsible?: boolean;
   // avatar?: string;
 }

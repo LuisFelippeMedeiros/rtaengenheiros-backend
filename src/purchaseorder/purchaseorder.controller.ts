@@ -1,48 +1,41 @@
-import { Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Req, Res } from '@nestjs/common';
 import { PurchaseOrderService } from './purchaseorder.service';
-import { Response } from 'express';
 import { RouteVersion } from 'src/statics/route.version';
 import { ApiTags } from '@nestjs/swagger';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
-@ApiTags('PurchaseRequest')
+@ApiTags('Order')
 @Controller({
-  path: RouteVersion.route + 'purchaseorder',
+  path: RouteVersion.route + 'order',
   version: RouteVersion.version,
 })
 export class PurchaseOrderController {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
   @Get('all')
-  findAll() {
-    return this.purchaseOrderService.findAll();
+  findAll(@Req() req: any) {
+    return this.purchaseOrderService.findAll(req);
   }
 
   @Get()
-  async findPagination(@Query('page') page: number) {
-    return await this.purchaseOrderService.findPagination(page);
+  async findPagination(@Query('page') page: number, @Req() req: any) {
+    return await this.purchaseOrderService.findPagination(page, req);
   }
 
   @Get('rowCount')
-  async countRows() {
-    return await this.purchaseOrderService.rowCount();
+  async countRows(@Req() req: any) {
+    return await this.purchaseOrderService.rowCount(req);
   }
 
-  @Get(':id/pdf')
-  async gerarPdf(@Param('id') id: string, @Res() res: Response) {
-    try {
-      // const ordemCompraId = parseInt(id, 10);
-      const nomeArquivo = await this.purchaseOrderService.gerarPdf(id);
-
-      res.download(nomeArquivo);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: 'Erro ao gerar o PDF da ordem de compra.' });
-    }
+  @IsPublic()
+  @Get('pdf/:id')
+  async getOrder(@Res() res: any, @Param('id') id: string) {
+    return await this.purchaseOrderService.getOrder(id, res);
   }
 
-  @Post(':id/enviar-ordem')
-  async enviarOrdemCompra(@Param('id') id: string) {
-    return await this.purchaseOrderService.enviarOrdemCompra(id);
+  @IsPublic()
+  @Post('sendpdf/:id')
+  async sendEmail(@Res() res: any, @Param('id') id: string) {
+    return await this.purchaseOrderService.sendPdf(id, res);
   }
 }

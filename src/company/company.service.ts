@@ -14,6 +14,10 @@ export class CompanyService {
       ie: postCompanyDto.ie,
       created_by: req.user.id,
       city_id: postCompanyDto.city_id,
+      telephone: postCompanyDto.telephone,
+      zip_code: postCompanyDto.zip_code,
+      address: postCompanyDto.address,
+      internal_name: postCompanyDto.internal_name,
     };
 
     const companyExists = await this.findByCnpj(data.cnpj);
@@ -45,6 +49,10 @@ export class CompanyService {
         city_id: putCompanyDto.city_id,
         updated_by: req.user.id,
         updated_at: new Date(),
+        telephone: putCompanyDto.telephone,
+        zip_code: putCompanyDto.zip_code,
+        address: putCompanyDto.address,
+        internal_name: putCompanyDto.internal_name,
       },
     };
 

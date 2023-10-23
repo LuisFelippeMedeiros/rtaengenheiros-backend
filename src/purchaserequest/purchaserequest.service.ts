@@ -20,6 +20,17 @@ export class PurchaseRequestService {
     postPurchaseRequestDto: PostPurchaseRequestDto,
     @Req() req: any,
   ) {
+    const bill = await this.prisma.billToPay.findFirst({
+      orderBy: { identifier: 'desc' },
+    });
+
+    let nextId: number;
+
+    if (bill?.identifier === null || bill?.identifier === undefined) {
+      nextId = 1;
+    } else {
+      nextId = bill.identifier + 1;
+    }
     const sizeArrayProductId = postPurchaseRequestDto.product_id.length;
 
     if (sizeArrayProductId === 0) {
@@ -30,6 +41,7 @@ export class PurchaseRequestService {
     }
 
     const data = {
+      identifier: nextId,
       reason: postPurchaseRequestDto.reason,
       status_id: '',
       active: postPurchaseRequestDto.active,
@@ -85,6 +97,7 @@ export class PurchaseRequestService {
               where: {
                 group_id: managerGroups[g].id,
                 company_id: userCreateReq.company_id,
+                is_responsible: true,
               },
             });
 
@@ -166,6 +179,20 @@ export class PurchaseRequestService {
       });
 
       try {
+        const { has_budget } = await this.prisma.purchaseRequest.findFirst({
+          where: {
+            id,
+          },
+        });
+
+        if (has_budget === true) {
+          return {
+            status: false,
+            message:
+              'O produto não pode ser excluído, pois já existe orçamento lançado para esta ordem.',
+          };
+        }
+
         await this.prisma.purchaseRequestProduct.deleteMany({
           where: {
             purchaserequest_id: id,
@@ -388,6 +415,7 @@ export class PurchaseRequestService {
             where: {
               group_id: administrativoGroup.id,
               company_id: purchaseRequest.company_id,
+              is_responsible: true,
             },
           });
 
@@ -405,7 +433,7 @@ export class PurchaseRequestService {
 
       const findBudgets = await this.prisma.purchaseRequestBudget.findMany({
         where: {
-          purchaserequest_id: req.query.id,
+          purchaserequest_id: id,
           to_be_approved: true,
         },
         include: {
@@ -426,49 +454,47 @@ export class PurchaseRequestService {
           Product,
           to_be_approved,
           budget,
-          quantity,
           shipping_fee,
+          quantity,
         } = compra;
 
         if (!comprasPorFornecedor.has(supplier_id)) {
           comprasPorFornecedor.set(supplier_id, {
             fornecedor: supplier_id,
             produtosAprovados: [],
-            nomeProdutos: [],
+            produtosData: [], // Array para armazenar dados de produtos
+            totalValue: 0,
+          });
+        }
+
+        if (to_be_approved === true) {
+          const fornecedorData = comprasPorFornecedor.get(supplier_id);
+          fornecedorData.produtosAprovados.push(product_id);
+
+          fornecedorData.produtosData.push({
+            nomeProduto: Product.name,
+            product_id,
             budget,
             quantity,
             shipping_fee,
           });
-        }
 
-        if (to_be_approved) {
-          comprasPorFornecedor
-            .get(supplier_id)
-            .produtosAprovados.push(product_id),
-            comprasPorFornecedor
-              .get(supplier_id)
-              .nomeProdutos.push(Product.name);
+          fornecedorData.totalValue += budget * quantity + shipping_fee;
         }
       }
 
       for (const compra of comprasPorFornecedor.values()) {
-        const {
-          fornecedor,
-          produtosAprovados,
-          nomeProdutos,
-          budget,
-          quantity,
-          shipping_fee,
-        } = compra;
+        const { fornecedor, produtosData, totalValue } = compra;
 
         let nomeProduto = '';
 
-        if (nomeProdutos.length > 0) {
-          for (let i = 0; i < nomeProdutos.length; i++) {
+        if (produtosData.length > 0) {
+          for (let i = 0; i < produtosData.length; i++) {
             if (i < 1) {
-              nomeProduto = nomeProdutos[i].trim();
+              nomeProduto = produtosData[i].nomeProduto.trim();
             } else {
-              nomeProduto = nomeProduto + '/' + nomeProdutos[i].trim();
+              nomeProduto =
+                nomeProduto + '/' + produtosData[i].nomeProduto.trim();
             }
           }
         }
@@ -476,7 +502,8 @@ export class PurchaseRequestService {
         const order = await this.prisma.purchaseOrder.create({
           data: {
             supplier_id: fornecedor,
-            purchaserequest_id: req.query.id,
+            purchaserequest_id: purchaseRequest.id,
+            company_id: purchaseRequest.company_id,
           },
         });
 
@@ -484,41 +511,46 @@ export class PurchaseRequestService {
           data: {
             name: nomeProduto,
             type: 'SC',
-            supplier_id: compra.supplier_id,
-            price_approved: compra.budget + compra.shipping_fee,
-            price_updated: compra.budget + compra.shipping_fee,
+            supplier_id: fornecedor,
+            price_approved: totalValue,
+            price_updated: totalValue,
             created_by: req.user.id,
             bill_status: 'A',
             payment_info: '',
             comment: '',
             invoice_attachment: '',
+            dda: false,
             company_id: purchaseRequest.company_id,
             purchaserequest_identifier: purchaseRequest.identifier,
           },
         });
-        await this.prisma.purchaseOrder.update({
-          where: {
-            id: order.id,
-          },
-          data: {
-            billtopay_id: data.identifier,
-          },
-        });
 
-        for (const produto of produtosAprovados) {
+        if (data.identifier) {
+          await this.prisma.purchaseOrder.update({
+            where: {
+              id: order.id,
+            },
+            data: {
+              billtopay_id: data.identifier,
+            },
+          });
+        }
+
+        for (const produtoData of produtosData) {
           await this.prisma.purchaseOrderProduct.create({
             data: {
-              quantity: quantity,
-              price: budget + shipping_fee,
+              quantity: produtoData.quantity,
+              price: produtoData.budget,
+              shipping_fee: produtoData.shipping_fee,
               purchaseorder_id: order.id,
-              product_id: produto,
+              product_id: produtoData.product_id,
             },
           });
 
           await this.prisma.productPrice.create({
             data: {
-              product_id: produto,
-              price: budget,
+              product_id: produtoData.product_id,
+              price: produtoData.budget,
               created_by: req.user.id,
             },
           });
@@ -527,7 +559,7 @@ export class PurchaseRequestService {
 
       return {
         status: true,
-        message: `A solicitação de compra, foi aprovado com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
+        message: `A solicitação de compra foi aprovada com sucesso. Acesse contas a pagar para terminar de editar a nova conta criada.`,
       };
     }
   }
@@ -584,6 +616,7 @@ export class PurchaseRequestService {
           where: {
             group_id: administrativoGroup.id,
             company_id: purchaseRequest.company_id,
+            is_responsible: true,
           },
         });
 
@@ -768,16 +801,30 @@ export class PurchaseRequestService {
       },
     });
 
+    if (statusName === 'TODOS') {
+      status.id = null;
+    }
+
+    let where = {};
+
+    if (!status.id) {
+      where = {
+        active,
+      };
+    } else {
+      where = {
+        active,
+        status_id: status.id,
+      };
+    }
+
     const purchaseRequest = await this.prisma.purchaseRequest.findMany({
       take: 9,
       skip: 9 * (page - 1),
       orderBy: {
         identifier: 'desc',
       },
-      where: {
-        active,
-        status_id: status.id,
-      },
+      where,
       include: {
         Status: {
           select: {
@@ -808,8 +855,25 @@ export class PurchaseRequestService {
       },
     });
 
+    if (name === 'TODOS') {
+      status.id = null;
+    }
+
+    let where = {};
+
+    if (!status.id) {
+      where = {
+        active,
+      };
+    } else {
+      where = {
+        active,
+        status_id: status.id,
+      };
+    }
+
     return await this.prisma.purchaseRequest.count({
-      where: { active, status_id: status.id },
+      where,
     });
   }
 

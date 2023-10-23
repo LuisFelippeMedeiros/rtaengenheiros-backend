@@ -13,6 +13,23 @@ export class PurchaseRequestBudgetService {
     try {
       postPurchaseRequestBudgetDto.forEach(
         async (value: PostPurchaseRequestBudgetDto) => {
+          const has_supplier =
+            await this.prisma.purchaseRequestBudget.findFirst({
+              where: {
+                supplier_id: value.supplier_id,
+                purchaserequest_id: value.purchaserequest_id,
+                product_id: value.product_id,
+              },
+            });
+
+          if (has_supplier) {
+            return {
+              status: false,
+              message:
+                'O fornecedor já possui um orçamento lançado para esta ordem de compra',
+            };
+          }
+
           await this.prisma.purchaseRequestBudget.createMany({
             data: {
               quantity: value.quantity,
@@ -22,6 +39,14 @@ export class PurchaseRequestBudgetService {
               supplier_id: value.supplier_id,
               to_be_approved: null,
               product_id: value.product_id,
+            },
+          });
+          await this.prisma.purchaseRequest.update({
+            where: {
+              id: value.purchaserequest_id,
+            },
+            data: {
+              has_budget: true,
             },
           });
         },
@@ -62,9 +87,9 @@ export class PurchaseRequestBudgetService {
       },
       orderBy: {
         Supplier: {
-          name: 'asc'
-        }
-      }
+          name: 'asc',
+        },
+      },
     });
 
     return result;
@@ -92,12 +117,44 @@ export class PurchaseRequestBudgetService {
 
   async approvalReproval(id: string, action: boolean) {
     try {
+      const selectedBudget = await this.prisma.purchaseRequestBudget.findUnique(
+        {
+          where: {
+            id,
+          },
+        },
+      );
+
+      if (selectedBudget.budget == 0 || selectedBudget.quantity == 0) {
+        return {
+          status: false,
+          message: `O registro não pode ser marcado para ser aprovado, pois encontra-se zerado`,
+        };
+      }
+
+      const existingRecord = await this.prisma.purchaseRequestBudget.findFirst({
+        where: {
+          product_id: selectedBudget.product_id,
+          purchaserequest_id: selectedBudget.purchaserequest_id,
+          to_be_approved: true,
+          NOT: { supplier_id: selectedBudget.supplier_id },
+        },
+      });
+
+      if (existingRecord) {
+        return {
+          status: false,
+          message: `Não é possível solicitar aprovação para este item, pois já existe um registro para um fornecedor diferente`,
+        };
+      }
+
       await this.prisma.purchaseRequestBudget.update({
         where: { id },
         data: {
           to_be_approved: action,
         },
       });
+
       const message = action ? 'aprovado' : 'reprovado';
 
       return {
