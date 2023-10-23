@@ -463,8 +463,7 @@ export class PurchaseOrderService {
       supplier.email === ''
     ) {
       return res.status(400).json({
-        message:
-          'Email do fornecedor não encontrado, não sendo possível realizar o envio da ordem.',
+        message: 'Email do fornecedor não encontrado.',
       });
     }
 
