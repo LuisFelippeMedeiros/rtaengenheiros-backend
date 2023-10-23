@@ -7,6 +7,10 @@ export const companies = [
     created_at: new Date(),
     created_by: 'bff37aa4-faaa-4e9a-9295-5c8ac7d107ef',
     city_id: 2313,
+    address: 'Rua Dev, 123',
+    telephone: '65999999999',
+    zip_code: '78080000',
+    internal_name: 'RTA ENGENHEIROS CONSULTORES',
   },
   {
     id: '94ffce6b-340d-4094-b78c-1cb7d2175e35',
@@ -16,6 +20,10 @@ export const companies = [
     created_at: new Date(),
     created_by: 'bff37aa4-faaa-4e9a-9295-5c8ac7d107ef',
     city_id: 979,
+    address: '',
+    telephone: '',
+    zip_code: '',
+    internal_name: 'RTA ENGENHEIROS CONSULTORES',
   },
   {
     id: 'eff98a94-141a-487d-8af5-6d6a7e5ed4a7',
@@ -25,5 +33,9 @@ export const companies = [
     created_at: new Date(),
     created_by: 'bff37aa4-faaa-4e9a-9295-5c8ac7d107ef',
     city_id: 2313,
+    address: 'Rua Quarenta e Quatro, 487, Boa Esperança',
+    telephone: '6530544934',
+    zip_code: '78068-505',
+    internal_name: 'RTA ENGENHEIROS CONSULTORES',
   },
 ];

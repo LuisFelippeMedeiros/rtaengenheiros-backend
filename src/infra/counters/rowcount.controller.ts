@@ -27,6 +27,6 @@ export class RowCountController {
 
   @Get('bill_status')
   async billStatus() {
-    return await this.rowCountService.countBills()
+    return await this.rowCountService.countBills();
   }
 }

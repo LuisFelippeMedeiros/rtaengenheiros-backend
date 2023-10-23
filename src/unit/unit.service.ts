@@ -40,6 +40,7 @@ export class UnitService {
   async findAll(active = true) {
     const units = await this.prisma.unit.findMany({
       where: { active },
+      orderBy: { description: 'asc' },
     });
 
     return units;
