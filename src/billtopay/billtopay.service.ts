@@ -174,7 +174,7 @@ export class BillToPayService {
     if (onlyTotal) {
       const total = await this.prisma.billToPay.groupBy({
         by: ['bill_status'],
-        where,
+        where: whereAll,
         _sum: {
           price_approved: true,
           price_updated: true,
