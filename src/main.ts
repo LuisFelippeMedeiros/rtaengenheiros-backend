@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { config } from 'aws-sdk';
+import { S3 } from '@aws-sdk/client-s3';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './configs/winston.config';
 
@@ -33,6 +34,7 @@ async function bootstrap() {
   );
 
   //Configuração Bucket AWS
+  // const s3 = new S3()
   config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -42,6 +44,6 @@ async function bootstrap() {
   app.enableCors({
     origin: '*',
   });
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 3001);
 }
 bootstrap();

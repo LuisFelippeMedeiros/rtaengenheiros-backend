@@ -4,4 +4,5 @@ interface IFilter_bill_to_pay {
   date_filter: Array<Date>;
   supplier_id_filter: string;
   status: string;
+  company_id: string;
 }
