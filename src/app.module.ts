@@ -52,16 +52,6 @@ import { PurchaseorderproductModule } from './purchaseorderproduct/purchaseorder
     // ------------------------
     ConfigModule.forRoot({ isGlobal: true }),
     WinstonModule.forRoot(winstonConfig),
-    // MulterExtendedModule.register({
-    //   awsConfig: {
-    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    //     region: process.env.AWS_REGION,
-    //   },
-    //   bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
-    //   basePath: process.env.basePath,
-    //   fileSize: 1 * 1024 * 1024,
-    // }),
     UnitModule,
     SendGridModule.forRoot({
       apikey: process.env.SENDGRID_API_KEY,

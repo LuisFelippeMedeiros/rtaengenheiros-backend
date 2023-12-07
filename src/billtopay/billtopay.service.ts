@@ -114,6 +114,7 @@ export class BillToPayService {
     const where: any = {};
     let supplier = null;
     let datesFilter = null;
+    let company = null;
 
     if (filtersParameters.supplier_id_filter) {
       supplier = await this.prisma.supplier.findFirst({
@@ -129,6 +130,22 @@ export class BillToPayService {
         };
       }
       where.supplier_id = supplier.id;
+    }
+
+    if (filtersParameters.company_id) {
+      company = await this.prisma.company.findFirst({
+        where: {
+          id: filtersParameters.company_id,
+        },
+      });
+
+      if (!company) {
+        return {
+          status: false,
+          message: 'Local de trabalho não encontrado',
+        };
+      }
+      where.company_id = company.id;
     }
 
     if (
@@ -174,7 +191,7 @@ export class BillToPayService {
     if (onlyTotal) {
       const total = await this.prisma.billToPay.groupBy({
         by: ['bill_status'],
-        where,
+        where: whereAll,
         _sum: {
           price_approved: true,
           price_updated: true,

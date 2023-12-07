@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Injectable, Req, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
 import { PostPurchaseRequestDto } from './dto/post-purchaserequest.dto';
 import { PutPurchaseRequestDto } from './dto/put-purchaserequest.dto';
@@ -184,6 +184,27 @@ export class PurchaseRequestService {
             id,
           },
         });
+
+        const writeDocs = await this.prisma.user.findUnique({
+          where: {
+            id,
+          },
+        });
+
+        console.log(writeDocs);
+
+        const newBillToPay = await this.prisma.billToPay.update({
+          where: {
+            id,
+          },
+          data,
+        });
+
+        if (newBillToPay.name === PostPurchaseRequestDto.name) {
+          throw new UnauthorizedException(
+            'Permissão não concedida ao grupo do usuário',
+          );
+        }
 
         if (has_budget === true) {
           return {
