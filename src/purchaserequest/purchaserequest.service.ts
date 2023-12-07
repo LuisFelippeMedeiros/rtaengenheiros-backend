@@ -20,16 +20,19 @@ export class PurchaseRequestService {
     postPurchaseRequestDto: PostPurchaseRequestDto,
     @Req() req: any,
   ) {
-    const bill = await this.prisma.billToPay.findFirst({
+    const purchaseRequest = await this.prisma.purchaseRequest.findFirst({
       orderBy: { identifier: 'desc' },
     });
 
     let nextId: number;
 
-    if (bill?.identifier === null || bill?.identifier === undefined) {
+    if (
+      purchaseRequest?.identifier === null ||
+      purchaseRequest?.identifier === undefined
+    ) {
       nextId = 1;
     } else {
-      nextId = bill.identifier + 1;
+      nextId = purchaseRequest.identifier + 1;
     }
     const sizeArrayProductId = postPurchaseRequestDto.product_id.length;
 
