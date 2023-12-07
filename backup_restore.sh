@@ -1,24 +1,15 @@
 #!/bin/bash
 
-# Não precisa carregar .env no Heroku, as variáveis de ambiente já estão configuradas
-# export $(egrep -v '^#' .env | xargs)
+# Substitua com o seu token de API do Heroku
+HEROKU_API_TOKEN="ce3353f3-6139-4df5-bf61-e26ff8849681"
 
-# Passo 1: Backup (ajuste conforme necessário)
-BACKUP_URL=$(heroku pg:backups:capture --app $PROD_APP_NAME --json | jq -r '.url')
+# Obter a URL do último backup
+BACKUP_URL=$(curl -s -X GET -H "Authorization: Bearer $HEROKU_API_TOKEN" -H "Content-Type: application/json" "https://api.heroku.com/apps/$PROD_APP_NAME/pg-backups" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
 
-# Verifique se a URL do backup foi obtida com sucesso
+# Verificar se a URL foi obtida
 if [ -z "$BACKUP_URL" ]; then
   echo "Erro: Não foi possível obter a URL do backup."
   exit 1
 fi
 
-# Passo 2: Restauração em Develop (ajuste conforme necessário)
-heroku pg:backups:restore $BACKUP_URL DATABASE_URL --app $DEV_APP_NAME --confirm $DEV_APP_NAME
-
-# Passo 3: Restauração Local (ajuste conforme necessário)
-curl -o latest.dump "$BACKUP_URL"
-docker cp latest.dump $CONTAINER_ID_OR_NAME:/latest.dump
-docker exec $CONTAINER_ID_OR_NAME pg_restore --verbose --clean --no-acl --no-owner -h localhost -U $DB_USER -d $DB_NAME /latest.dump
-
-# Cleanup
-rm latest.dump
+# Restante do script...
